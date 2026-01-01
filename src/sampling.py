@@ -37,6 +37,95 @@ USAGE:
     Run locally: `python src/sampling.py`
     *Keep raw data private; only share the generated sample.*
 """
+
+def prepare_sampling_columns(df: pd.DataFrame) -> pd.DataFrame:
+	"""
+	Add helper columns used for stratified sampling.
+
+	Logic Flow:
+	    (1) sigungu --------> [ split ] ------> district (e.g., 강남구)
+	    (2) contract_yyyymm -> [ slice ] ------> year     (e.g., 2023)
+	    (3) district + year -> [ combine ] ----> strata   (e.g., 강남구_2023)
+
+	Infographic:
+	    Input Row:  "서울 강남구 개포동", "202312"
+	                   |               |
+	                   v               v
+	    Derived:    [district:강남구] [year:2023]
+	                       \           /
+	                        v         v
+	    Final Strata:      "강남구_2023" (Key for balancing)
+
+	Args:
+	    df (pd.DataFrame): DataFrame with 'sigungu' and 'contract_yyyymm'.
+
+	Returns:
+	    pd.DataFrame: DataFrame with additional 'district', 'year', and 'strata' columns.
+	"""
+	out = df.copy()
+	out["district"] = out["sigungu"].astype(str).str.split().str[1].fillna("Unknown")
+	out["year"] = pd.to_numeric(out["contract_yyyymm"].astype(str).str[:4], errors="coerce").astype("Int64")
+	out["strata"] = out["district"].astype(str) + "_" + out["year"].astype(str)
+	return out
+
+def build_stratified_sample(df: pd.DataFrame, n: int = 100_000, seed: int = 42) -> pd.DataFrame:
+	"""
+	Build a stratified sample across (district, year) to preserve distribution.
+
+	Mathematical Concept:
+	    The number of samples for each strata (s) is proportional to its weight (W)
+	    in the total population (N).
+	    
+	    Formula: n_s = n_target * (count_s / total_count)
+
+	Visual Process:
+	    [ Population ]          [ Sample (100k) ]
+	    |  G_2023: 20% |  --->  |  G_2023: 20%  |  (Balanced)
+	    |  S_2022: 15% |  --->  |  S_2022: 15%  |
+	    |  Others: 65% |  --->  |  Others: 65%  |
+	    ----------------          ---------------
+	           ^                         ^
+	      (1.1M rows)               (Lightweight)
+
+	Args:
+	    df (pd.DataFrame): Full dataset.
+	    n (int): Targeted sample size (default: 100,000).
+	    seed (int): Random state for reproducibility.
+
+	Returns:
+	    pd.DataFrame: Proportionally balanced representative sample.
+	"""
+	required = [
+	    "sigungu",          # 지역 문자열 (예: "서울특별시 강남구 개포동")
+	    "apartment_name",   # 아파트명
+	    "area_m2",          # 전용면적
+	    "built_year",       # 준공연도
+	    "contract_yyyymm",  # 계약연월 (연도 추출용)
+	    "floor",            # 층
+	    "price_10k_krw",    # 타깃 가격
+	]
+	base = df[[c for c in required if c in df.columns]].copy()
+	base = prepare_sampling_columns(base)
+
+	counts = base["strata"].value_counts(dropna=False)
+	weights = counts / counts.sum()
+	per_strata = (weights * n).round().astype(int)
+
+	parts = []
+	for s, k in per_strata.items():
+		if k <= 0:
+			continue
+		chunk = base[base["strata"] == s]
+		if len(chunk) == 0:
+			continue
+		parts.append(chunk.sample(n=min(k, len(chunk)), random_state=seed))
+
+	sample = pd.concat(parts, ignore_index=True)
+	if len(sample) > n:
+		sample = sample.sample(n=n, random_state=seed).reset_index(drop=True)
+
+	return sample.drop(columns=["strata"])
+
 def rename_columns_to_english(df: pd.DataFrame) -> pd.DataFrame:
 	"""
 	Rename known Korean column names to English equivalents.
@@ -131,7 +220,7 @@ def make_sample_parquet(raw_csv_path: str, out_parquet_path: str, n: int = 100_0
 	    out_parquet_path (str): Output destination for the Parquet file.
 	    n (int): Number of rows to sample.
 	"""
-	df = pd.read_csv(raw_csv_path)
+	df = pd.read_csv(raw_csv_path, low_memory=False)
 	df = rename_columns_to_english(df)
 	sample = build_stratified_sample(df, n=n, seed=42)
 	sample.to_parquet(out_parquet_path, index=False)
