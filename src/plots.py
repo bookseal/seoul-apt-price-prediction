@@ -13,11 +13,11 @@ def ensure_district_column(df: pd.DataFrame) -> pd.DataFrame:
 		return df
 	
 	out = df.copy()
-	if "singungu" not in out.columns:
+	if "sigungu" not in out.columns:
 		out["district"] = "Unknown"
 		return out
 	
-	out["district"] = out["singungu"].astype(str).str.split().str[1].fillna("Unknown")
+	out["district"] = out["sigungu"].astype(str).str.split().str[1].fillna("Unknown")
 	return out
 
 def plot_price_histogram(df: pd.DataFrame):
