@@ -97,30 +97,25 @@ The challenge? The dataset has **1.1M+ rows**, but you need to ship fast without
 
 ---
 
-## 🚀 Navigation
+## 🚀 Quick Navigation
 
-Use the left sidebar to explore the app:
 	""")
 	
 	col1, col2, col3 = st.columns(3)
 	with col1:
-		st.markdown("""
-**Explore Data**
-- 📊 [Data](pages/1_Data) – sample overview
-- 🔍 [EDA](pages/2_EDA) – distribution insights
-		""")
+		st.markdown("**Explore Data**")
+		st.page_link("pages/1_Data.py", label="📊 Data – sample overview")
+		st.page_link("pages/2_EDA.py", label="🔍 EDA – distribution insights")
+	
 	with col2:
-		st.markdown("""
-**Try Features**
-- 🤖 [Model](pages/3_Model) – architecture plan
-- 🎮 [Demo](pages/4_Demo) – live estimator
-		""")
+		st.markdown("**Try Features**")
+		st.page_link("pages/3_Model.py", label="🤖 Model – architecture plan")
+		st.page_link("pages/4_Demo.py", label="🎮 Demo – live estimator")
+	
 	with col3:
-		st.markdown("""
-**Reflect & Learn**
-- 💭 [Retro](pages/5_Retro) – decisions & trade-offs
-- 📚 [GitHub](https://github.com/bookseal/seoul-apt-price-prediction) – full project
-		""")
+		st.markdown("**Reflect & Learn**")
+		st.page_link("pages/5_Retro.py", label="💭 Retro – decisions & trade-offs")
+		st.link_button("📚 GitHub", "https://github.com/bookseal/seoul-apt-price-prediction")
 	
 	st.divider()
 	
