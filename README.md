@@ -2,6 +2,11 @@
 
 A portfolio-friendly, production-lean ML app to explore, sample, and preview Seoul apartment prices. It focuses on fast UX, clean engineering, and deployability on Streamlit Cloud.
 
+## 🔗 Live Demo
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://bookseal-seoul-apt-price-prediction.streamlit.app)
+
+Direct link: https://bookseal-seoul-apt-price-prediction.streamlit.app
+
 ## 🚀 What You Get
 - Fast Streamlit app with a stratified 100k Parquet sample (from 1.1M+ rows)
 - Clear EDA visuals (distribution, district medians)
