@@ -48,10 +48,11 @@ def render_retro_page() -> None:
 
     # Optional: allow user to append more notes and export
     st.subheader("📝 Add More Notes (Optional)")
+    st.caption("💡 Tip: On mobile, just tap Enter to create new lines. On desktop, use Shift+Enter for line breaks.")
     extra_notes = st.text_area(
         "Append details to this retro (won't change the on-screen content)",
         placeholder="Write additional learnings, decisions, or to-dos...",
-        height=150,
+        height=100,
     )
 
     # Compose markdown for download (base content + extra notes if any)
