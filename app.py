@@ -20,49 +20,49 @@ The challenge? The dataset has **1.1M+ rows**, but you need to ship fast without
 ## 🔄 End-to-End Pipeline
 	""")
 	
-	# Visual flow using columns instead of Mermaid
+	# Visual flow using columns (dark-mode compatible colors)
 	col1, col2, col3, col4, col5 = st.columns(5)
 	
 	with col1:
 		st.markdown("""
-		<div style="text-align: center; padding: 20px; background: #fff4e6; border-radius: 8px;">
+		<div style="text-align: center; padding: 20px; background: rgba(255, 152, 0, 0.15); border-radius: 8px; border-left: 4px solid #FF9800;">
 		<div style="font-size: 24px; margin-bottom: 8px;">📊</div>
-		<div style="font-weight: bold; font-size: 12px;">Raw CSV</div>
-		<div style="font-size: 10px; color: #666; margin-top: 4px;">1.1M rows</div>
+		<div style="font-weight: bold; font-size: 12px; color: #FF9800;">Raw CSV</div>
+		<div style="font-size: 10px; color: rgba(255, 152, 0, 0.7); margin-top: 4px;">1.1M rows</div>
 		</div>
 		""", unsafe_allow_html=True)
 	
 	with col2:
 		st.markdown("""
 		<div style="text-align: center; padding: 20px;">
-		<div style="font-size: 20px; color: #1f77b4;">↓</div>
-		<div style="font-size: 11px; color: #1f77b4; font-weight: bold;">Stratified<br/>Sampling</div>
+		<div style="font-size: 20px; color: #00BCD4;">↓</div>
+		<div style="font-size: 11px; color: #00BCD4; font-weight: bold;">Stratified<br/>Sampling</div>
 		</div>
 		""", unsafe_allow_html=True)
 	
 	with col3:
 		st.markdown("""
-		<div style="text-align: center; padding: 20px; background: #e8f4f8; border-radius: 8px;">
+		<div style="text-align: center; padding: 20px; background: rgba(0, 188, 212, 0.15); border-radius: 8px; border-left: 4px solid #00BCD4;">
 		<div style="font-size: 24px; margin-bottom: 8px;">📦</div>
-		<div style="font-weight: bold; font-size: 12px;">Parquet</div>
-		<div style="font-size: 10px; color: #666; margin-top: 4px;">100k rows</div>
+		<div style="font-weight: bold; font-size: 12px; color: #00BCD4;">Parquet</div>
+		<div style="font-size: 10px; color: rgba(0, 188, 212, 0.7); margin-top: 4px;">100k rows</div>
 		</div>
 		""", unsafe_allow_html=True)
 	
 	with col4:
 		st.markdown("""
 		<div style="text-align: center; padding: 20px;">
-		<div style="font-size: 20px; color: #1f77b4;">↓</div>
-		<div style="font-size: 11px; color: #1f77b4; font-weight: bold;">Fast<br/>I/O</div>
+		<div style="font-size: 20px; color: #4CAF50;">↓</div>
+		<div style="font-size: 11px; color: #4CAF50; font-weight: bold;">Fast<br/>I/O</div>
 		</div>
 		""", unsafe_allow_html=True)
 	
 	with col5:
 		st.markdown("""
-		<div style="text-align: center; padding: 20px; background: #c8e6c9; border-radius: 8px;">
+		<div style="text-align: center; padding: 20px; background: rgba(76, 175, 80, 0.15); border-radius: 8px; border-left: 4px solid #4CAF50;">
 		<div style="font-size: 24px; margin-bottom: 8px;">🚀</div>
-		<div style="font-weight: bold; font-size: 12px;">Streamlit</div>
-		<div style="font-size: 10px; color: #666; margin-top: 4px;">Live App</div>
+		<div style="font-weight: bold; font-size: 12px; color: #4CAF50;">Streamlit</div>
+		<div style="font-size: 10px; color: rgba(76, 175, 80, 0.7); margin-top: 4px;">Live App</div>
 		</div>
 		""", unsafe_allow_html=True)
 	
