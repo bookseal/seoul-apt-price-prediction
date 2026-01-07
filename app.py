@@ -106,20 +106,20 @@ Use the left sidebar to explore the app:
 	with col1:
 		st.markdown("""
 **Explore Data**
-- [📊 Data](./1_Data) – sample overview
-- [🔍 EDA](./2_EDA) – distribution insights
+- 📊 [Data](pages/1_Data) – sample overview
+- 🔍 [EDA](pages/2_EDA) – distribution insights
 		""")
 	with col2:
 		st.markdown("""
 **Try Features**
-- [🤖 Model](./3_Model) – architecture plan
-- [🎮 Demo](./4_Demo) – live estimator
+- 🤖 [Model](pages/3_Model) – architecture plan
+- 🎮 [Demo](pages/4_Demo) – live estimator
 		""")
 	with col3:
 		st.markdown("""
 **Reflect & Learn**
-- [💭 Retro](./5_Retro) – decisions & trade-offs
-- [📚 README](https://github.com/bookseal/seoul-apt-price-prediction) – full details
+- 💭 [Retro](pages/5_Retro) – decisions & trade-offs
+- 📚 [GitHub](https://github.com/bookseal/seoul-apt-price-prediction) – full project
 		""")
 	
 	st.divider()
