@@ -25,20 +25,20 @@ def get_user_inputs(df: pd.DataFrame) -> dict:
     - Input Area (m2)
     - Select Floor & Built Year
     """
-    st.sidebar.header("Input Features")
+    st.subheader("🧩 Input Features")
     
     # 1. District Selection
     districts = sorted(df['district'].unique())
-    selected_district = st.sidebar.selectbox("📍 Select District (구)", districts)
+    selected_district = st.selectbox("📍 Select District (구)", districts)
     
     # 2. Area Input
-    selected_area = st.sidebar.number_input("📏 Exclusive Area (전용면적 ㎡)", min_value=10.0, max_value=300.0, value=84.0)
+    selected_area = st.number_input("📏 Exclusive Area (전용면적 ㎡)", min_value=10.0, max_value=300.0, value=84.0)
     
     # 3. Floor Slider
-    selected_floor = st.sidebar.slider("🏢 Floor (층)", min_value=-1, max_value=70, value=10)
+    selected_floor = st.slider("🏢 Floor (층)", min_value=-1, max_value=70, value=10)
     
     # 4. Built Year Input
-    selected_year = st.sidebar.number_input("🏗️ Built Year (건축년도)", min_value=1960, max_value=2026, value=2010)
+    selected_year = st.number_input("🏗️ Built Year (건축년도)", min_value=1960, max_value=2026, value=2010)
     
     return {
         "district": selected_district,
