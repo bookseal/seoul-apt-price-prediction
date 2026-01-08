@@ -33,6 +33,21 @@ def display_header() -> None:
     """Display Level 1 introduction."""
     st.title("🎯 Level 1: Heuristic Prediction")
     
+    # Explain what "Heuristic" means
+    with st.expander("💡 What does 'Heuristic' mean?", expanded=True):
+        st.markdown("""
+        **Heuristic** = A simple rule-of-thumb approach
+        
+        - Not perfect, but **quick and easy**
+        - Based on **common sense**, not complex math
+        - Example: *"Apartments in expensive areas cost more per m²"*
+        
+        Think of it like this:
+        > 🍕 "A large pizza costs about 2x a small pizza" - That's a heuristic!
+        
+        We use simple logic, **not machine learning**. ML comes in Level 2!
+        """)
+    
     st.success("""
     **Goal**: Predict apartment price using the simplest possible method.
     
@@ -574,6 +589,59 @@ print(f"Predicted: {{predicted_price:,}} 만원")  # {predicted_price:,.0f} 만�
         """, language="python")
 
 
+def display_questions() -> None:
+    """Show common questions users might have."""
+    st.header("🤔 Questions You Might Have")
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "Is this really Machine Learning?"</b><br>
+        <span style="color: #FFC107;">→ NO!</span> This is just statistics (median calculation). 
+        Real ML starts in <b>Level 2</b> where the computer <b>learns</b> from data!
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "Why median, not average (mean)?"</b><br>
+        <span style="color: #FFC107;">→ Outliers!</span> One $100M penthouse would skew the average. 
+        Median is <b>robust</b> - it ignores extreme values.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q3: "Same district = Same price per m²? Really?"</b><br>
+        <span style="color: #FFC107;">→ That's the weakness!</span> A 20-year-old apartment and a brand new one 
+        in Gangnam get the same price/m². That's obviously wrong!
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q4: "What about floor, building age, complex name?"</b><br>
+        <span style="color: #FFC107;">→ Great question!</span> We ignore them here. 
+        <b>Level 3</b> will use multiple features!
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(33,150,243,0.15); border-radius: 10px; 
+                border-left: 4px solid #2196F3; margin: 10px 0;">
+        <b>Q5: "How is Level 2 different?"</b><br>
+        <span style="color: #2196F3;">→ Level 2 uses Linear Regression!</span><br>
+        • Level 1: We <b>calculate</b> median (no learning)<br>
+        • Level 2: Computer <b>learns</b> optimal w, b from data<br>
+        • Formula: <code>Price = w × Area + b</code><br>
+        • The machine finds the best w and b automatically!
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def display_limitations() -> None:
     """Show method limitations and next steps."""
     st.header("⚠️ Limitations & Next Steps")
@@ -646,6 +714,8 @@ def main() -> None:
         display_step5_median(df)
         st.markdown("---")
         display_step6_predict(df)
+        st.markdown("---")
+        display_questions()
         st.markdown("---")
         display_limitations()
         
