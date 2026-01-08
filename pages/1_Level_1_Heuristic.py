@@ -7,8 +7,26 @@ Formula: Predicted Price = Median Price per m² (by district) × Area
 """
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from src.io import load_sample_dataset
+
+# Korean to English district name mapping
+DISTRICT_NAME_MAP = {
+    '강남구': 'Gangnam', '서초구': 'Seocho', '용산구': 'Yongsan',
+    '송파구': 'Songpa', '강동구': 'Gangdong', '마포구': 'Mapo',
+    '성동구': 'Seongdong', '광진구': 'Gwangjin', '영등포구': 'Yeongdeungpo',
+    '양천구': 'Yangcheon', '강서구': 'Gangseo', '구로구': 'Guro',
+    '동작구': 'Dongjak', '관악구': 'Gwanak', '서대문구': 'Seodaemun',
+    '종로구': 'Jongno', '중구': 'Jung', '동대문구': 'Dongdaemun',
+    '성북구': 'Seongbuk', '강북구': 'Gangbuk', '도봉구': 'Dobong',
+    '노원구': 'Nowon', '중랑구': 'Jungnang', '금천구': 'Geumcheon',
+    '은평구': 'Eunpyeong',
+}
+
+def convert_district_name(name: str) -> str:
+    """Convert Korean district name to English."""
+    return DISTRICT_NAME_MAP.get(name, name)
 
 
 def display_header() -> None:
@@ -257,28 +275,129 @@ def display_step3_eda(df: pd.DataFrame) -> None:
     </div>
     """, unsafe_allow_html=True)
     
-    # Single row layout for charts
-    st.markdown("**Price Distribution**")
+    # ========== 1. Price Distribution ==========
+    st.markdown("### 1️⃣ Price Distribution")
+    
     fig, ax = plt.subplots(figsize=(10, 3))
     ax.hist(df['price_10k_krw'], bins=50, color='#9C27B0', alpha=0.7, edgecolor='white')
     ax.set_xlabel('Price (10K KRW)')
     ax.set_ylabel('Count')
+    ax.axvline(df['price_10k_krw'].median(), color='red', linestyle='--', linewidth=2, label=f"Median: {df['price_10k_krw'].median():,.0f}")
+    ax.axvline(df['price_10k_krw'].mean(), color='orange', linestyle='--', linewidth=2, label=f"Mean: {df['price_10k_krw'].mean():,.0f}")
+    ax.legend()
     ax.grid(True, alpha=0.3)
     st.pyplot(fig, use_container_width=True)
     plt.close()
     
-    st.markdown("**Area vs Price**")
-    sample = df.sample(n=min(2000, len(df)), random_state=42)
-    fig, ax = plt.subplots(figsize=(10, 3))
+    # Insight for Price Distribution
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Median Price", f"{df['price_10k_krw'].median():,.0f} 만원")
+    col2.metric("Mean Price", f"{df['price_10k_krw'].mean():,.0f} 만원")
+    col3.metric("Difference", f"{df['price_10k_krw'].mean() - df['price_10k_krw'].median():,.0f} 만원")
+    
+    st.markdown("""
+    <div style="padding: 12px; background: rgba(156,39,176,0.1); border-radius: 8px; margin: 10px 0;">
+        <b>🔍 What we learned:</b><br>
+        • <b>Right-skewed distribution</b> - Most apartments are cheap, few are very expensive<br>
+        • <b>Mean > Median</b> - Expensive apartments pull the average UP<br>
+        • <b>Outliers exist</b> - Some apartments cost 10x more than typical ones!<br>
+        • <b>Why it matters:</b> We should use <b>MEDIAN</b>, not mean (outlier-proof!)
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # ========== 2. Area vs Price ==========
+    st.markdown("### 2️⃣ Area vs Price Relationship")
+    
+    sample = df.sample(n=min(3000, len(df)), random_state=42)
+    
+    # Calculate correlation
+    corr = df['area_m2'].corr(df['price_10k_krw'])
+    
+    fig, ax = plt.subplots(figsize=(10, 4))
     ax.scatter(sample['area_m2'], sample['price_10k_krw'], 
-               alpha=0.3, s=10, c='#2196F3')
+               alpha=0.3, s=15, c='#2196F3')
     ax.set_xlabel('Area (m²)')
     ax.set_ylabel('Price (10K KRW)')
     ax.grid(True, alpha=0.3)
+    
+    # Add trend line
+    z = np.polyfit(sample['area_m2'], sample['price_10k_krw'], 1)
+    p = np.poly1d(z)
+    x_line = np.linspace(sample['area_m2'].min(), sample['area_m2'].max(), 100)
+    ax.plot(x_line, p(x_line), 'r--', linewidth=2, label=f'Trend (r={corr:.2f})')
+    ax.legend()
     st.pyplot(fig, use_container_width=True)
     plt.close()
     
-    st.info("💡 **Key Insight**: Larger area → Higher price. But same area can have VERY different prices! Why? **LOCATION!**")
+    # Insight for Area vs Price
+    col1, col2 = st.columns(2)
+    col1.metric("Correlation (r)", f"{corr:.3f}", "Strong positive!")
+    col2.metric("Trend", f"+{z[0]:,.0f} 만원/m²", "Price increase per m²")
+    
+    st.markdown("""
+    <div style="padding: 12px; background: rgba(33,150,243,0.1); border-radius: 8px; margin: 10px 0;">
+        <b>🔍 What we learned:</b><br>
+        • <b>Strong positive correlation</b> - Bigger area = Higher price (obvious!)<br>
+        • <b>BUT look at the spread!</b> - Same 85m² can be 5억 or 20억. Why?<br>
+        • <b>Hidden variable</b> - Something else affects price. What is it?<br>
+        • <b>Answer:</b> <span style="color: #FF9800; font-weight: bold;">LOCATION (District)!</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # ========== 3. Price by District ==========
+    st.markdown("### 3️⃣ Price by District (The Hidden Factor!)")
+    
+    # Calculate price per m2 and get top/bottom districts
+    df_calc = df.copy()
+    df_calc['price_per_m2'] = df_calc['price_10k_krw'] / df_calc['area_m2']
+    district_median = df_calc.groupby('district')['price_per_m2'].median().sort_values(ascending=False)
+    
+    # Convert Korean district names to English for chart
+    district_median_en = district_median.copy()
+    district_median_en.index = [convert_district_name(d) for d in district_median_en.index]
+    
+    fig, ax = plt.subplots(figsize=(10, 4))
+    colors = ['#4CAF50' if i < 5 else '#F44336' if i >= len(district_median_en) - 5 else '#9E9E9E' 
+              for i in range(len(district_median_en))]
+    district_median_en.plot(kind='bar', ax=ax, color=colors, edgecolor='white')
+    ax.set_xlabel('District')
+    ax.set_ylabel('Median Price per m² (10K KRW)')
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontsize=8)
+    ax.grid(True, alpha=0.3, axis='y')
+    st.pyplot(fig, use_container_width=True)
+    plt.close()
+    
+    # Show top and bottom (with both Korean and English names)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**🏆 Top 5 (Most Expensive)**")
+        for i, (district, price) in enumerate(district_median.head(5).items()):
+            en_name = convert_district_name(district)
+            st.markdown(f"{i+1}. **{en_name}** ({district}): {price:,.0f}")
+    with col2:
+        st.markdown("**📉 Bottom 5 (Cheapest)**")
+        for i, (district, price) in enumerate(district_median.tail(5).items()):
+            en_name = convert_district_name(district)
+            st.markdown(f"{i+1}. **{en_name}** ({district}): {price:,.0f}")
+    
+    # Price gap
+    price_gap = district_median.iloc[0] / district_median.iloc[-1]
+    
+    st.markdown(f"""
+    <div style="padding: 12px; background: rgba(255,152,0,0.1); border-radius: 8px; margin: 10px 0;">
+        <b>🔍 What we learned:</b><br>
+        • <b>Huge price gap!</b> - Top district is <b>{price_gap:.1f}x</b> more expensive than bottom<br>
+        • <b>Gangnam effect</b> - 강남, 서초, 용산 are premium areas<br>
+        • <b>Location = Everything</b> - Same apartment, different district = VERY different price<br>
+        • <b>Conclusion:</b> We MUST consider district when predicting price!
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.success("💡 **Final EDA Insight**: Price depends on AREA and DISTRICT. Our heuristic model uses both!")
 
 
 def display_step4_group(df: pd.DataFrame) -> None:
