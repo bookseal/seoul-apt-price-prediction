@@ -11,6 +11,28 @@ Usage:
 import streamlit as st
 
 
+def render_flow_box(emoji: str, title: str, subtitle: str, color: str) -> str:
+    """Create a styled flow box."""
+    return f"""
+    <div style="text-align: center; padding: 15px; 
+                background: rgba({color}, 0.15); border-radius: 10px; 
+                border: 2px solid rgba({color}, 0.5); min-width: 100px;">
+        <div style="font-size: 24px;">{emoji}</div>
+        <div style="font-weight: bold; font-size: 13px;">{title}</div>
+        <div style="font-size: 11px; color: gray;">{subtitle}</div>
+    </div>
+    """
+
+
+def render_arrow() -> str:
+    """Create an arrow element."""
+    return """
+    <div style="text-align: center; padding: 10px; font-size: 24px; color: #666;">
+        →
+    </div>
+    """
+
+
 def home_page():
     """Render the home page."""
     st.title("📚 Seoul Apartment Price Prediction")
@@ -24,17 +46,27 @@ def home_page():
     ## 🎯 Key Concept: Each Level is End-to-End
     """)
     
-    # Main concept diagram
+    # Main pipeline concept
     st.markdown("""
-    ```mermaid
-    flowchart LR
-        subgraph Pipeline["Every Level = Complete Pipeline"]
-            A[📊 Data] --> B[🧮 Method] --> C[🔮 Prediction]
-        end
-        
-        style Pipeline fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
-    ```
-    """)
+    <div style="display: flex; align-items: center; justify-content: center; 
+                gap: 10px; padding: 20px; background: rgba(76, 175, 80, 0.1); 
+                border-radius: 15px; border: 2px solid #4CAF50; margin: 20px 0;">
+        <div style="text-align: center; padding: 15px;">
+            <div style="font-size: 30px;">📊</div>
+            <div style="font-weight: bold;">Data</div>
+        </div>
+        <div style="font-size: 30px; color: #4CAF50;">→</div>
+        <div style="text-align: center; padding: 15px;">
+            <div style="font-size: 30px;">🧮</div>
+            <div style="font-weight: bold;">Method</div>
+        </div>
+        <div style="font-size: 30px; color: #4CAF50;">→</div>
+        <div style="text-align: center; padding: 15px;">
+            <div style="font-size: 30px;">🔮</div>
+            <div style="font-weight: bold;">Prediction</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.info("**The difference between levels is COMPLEXITY, not steps!**")
     
@@ -43,121 +75,191 @@ def home_page():
     # Level Overview
     st.markdown("## 📊 Level Overview")
     
-    # Level 1
+    # ========== LEVEL 1 ==========
     st.markdown("### 🎯 Level 1: Heuristic (No ML)")
     
     st.markdown("""
-    ```mermaid
-    flowchart LR
-        subgraph L1["Level 1: Heuristic"]
-            D1[("🏠 Data<br/>100K apartments")] --> M1["📍 Group by<br/>District"]
-            M1 --> C1["📊 Calculate<br/>Median $/m²"]
-            C1 --> P1["🔮 Price =<br/>Median × Area"]
-        end
-        
-        style L1 fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
-    ```
-    """)
+    <div style="display: flex; align-items: center; justify-content: center; 
+                flex-wrap: wrap; gap: 8px; padding: 20px; 
+                background: rgba(76, 175, 80, 0.08); border-radius: 15px; 
+                border-left: 4px solid #4CAF50; margin: 15px 0;">
+        <div style="text-align: center; padding: 12px; background: rgba(76, 175, 80, 0.15); 
+                    border-radius: 10px; min-width: 80px;">
+            <div style="font-size: 20px;">🏠</div>
+            <div style="font-size: 11px; font-weight: bold;">Data</div>
+            <div style="font-size: 9px; color: gray;">100K apts</div>
+        </div>
+        <div style="font-size: 20px; color: #4CAF50;">→</div>
+        <div style="text-align: center; padding: 12px; background: rgba(76, 175, 80, 0.15); 
+                    border-radius: 10px; min-width: 80px;">
+            <div style="font-size: 20px;">📍</div>
+            <div style="font-size: 11px; font-weight: bold;">Group</div>
+            <div style="font-size: 9px; color: gray;">by District</div>
+        </div>
+        <div style="font-size: 20px; color: #4CAF50;">→</div>
+        <div style="text-align: center; padding: 12px; background: rgba(76, 175, 80, 0.15); 
+                    border-radius: 10px; min-width: 80px;">
+            <div style="font-size: 20px;">📊</div>
+            <div style="font-size: 11px; font-weight: bold;">Median</div>
+            <div style="font-size: 9px; color: gray;">$/m² calc</div>
+        </div>
+        <div style="font-size: 20px; color: #4CAF50;">→</div>
+        <div style="text-align: center; padding: 12px; background: rgba(76, 175, 80, 0.25); 
+                    border-radius: 10px; min-width: 100px; border: 2px solid #4CAF50;">
+            <div style="font-size: 20px;">🔮</div>
+            <div style="font-size: 11px; font-weight: bold;">Price</div>
+            <div style="font-size: 9px; color: #4CAF50;">Median × Area</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns([3, 1])
     with col1:
-        st.markdown("""
-        **Method**: District Median × Area
-        
-        - No machine learning needed
-        - Uses location as the key factor
-        - Simplest possible baseline
-        """)
+        st.markdown("**Method**: `Price = Median($/m² by district) × Area`")
+        st.markdown("- No machine learning needed\n- Uses location as the key factor\n- Simplest possible baseline")
     with col2:
-        st.success("✅ Start here if new to ML!")
+        st.success("✅ Start here!")
     
     st.markdown("---")
     
-    # Level 2
+    # ========== LEVEL 2 ==========
     st.markdown("### 📐 Level 2: Linear Regression (Single Feature)")
     
     st.markdown("""
-    ```mermaid
-    flowchart LR
-        subgraph L2["Level 2: Linear Regression"]
-            D2[("🏠 Data<br/>Area, Price")] --> T2["🎓 Train<br/>Find w, b"]
-            T2 --> F2["📐 Formula<br/>y = wx + b"]
-            F2 --> P2["🔮 Price =<br/>w×Area + b"]
-        end
-        
-        style L2 fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
-    ```
-    """)
+    <div style="display: flex; align-items: center; justify-content: center; 
+                flex-wrap: wrap; gap: 8px; padding: 20px; 
+                background: rgba(33, 150, 243, 0.08); border-radius: 15px; 
+                border-left: 4px solid #2196F3; margin: 15px 0;">
+        <div style="text-align: center; padding: 12px; background: rgba(33, 150, 243, 0.15); 
+                    border-radius: 10px; min-width: 80px;">
+            <div style="font-size: 20px;">🏠</div>
+            <div style="font-size: 11px; font-weight: bold;">Data</div>
+            <div style="font-size: 9px; color: gray;">Area, Price</div>
+        </div>
+        <div style="font-size: 20px; color: #2196F3;">→</div>
+        <div style="text-align: center; padding: 12px; background: rgba(33, 150, 243, 0.15); 
+                    border-radius: 10px; min-width: 80px;">
+            <div style="font-size: 20px;">🎓</div>
+            <div style="font-size: 11px; font-weight: bold;">Train</div>
+            <div style="font-size: 9px; color: gray;">Find w, b</div>
+        </div>
+        <div style="font-size: 20px; color: #2196F3;">→</div>
+        <div style="text-align: center; padding: 12px; background: rgba(33, 150, 243, 0.15); 
+                    border-radius: 10px; min-width: 80px;">
+            <div style="font-size: 20px;">📐</div>
+            <div style="font-size: 11px; font-weight: bold;">Formula</div>
+            <div style="font-size: 9px; color: gray;">y = wx + b</div>
+        </div>
+        <div style="font-size: 20px; color: #2196F3;">→</div>
+        <div style="text-align: center; padding: 12px; background: rgba(33, 150, 243, 0.25); 
+                    border-radius: 10px; min-width: 100px; border: 2px solid #2196F3;">
+            <div style="font-size: 20px;">🔮</div>
+            <div style="font-size: 11px; font-weight: bold;">Price</div>
+            <div style="font-size: 9px; color: #2196F3;">w×Area + b</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns([3, 1])
     with col1:
-        st.markdown("""
-        **Method**: Linear Regression with Area only
-        
-        - First machine learning model
-        - Learns from data automatically
-        - Single feature: exclusive area
-        """)
+        st.markdown("**Method**: `Price = w × Area + b` (learned from data)")
+        st.markdown("- First machine learning model\n- Learns from data automatically\n- Single feature: exclusive area")
     with col2:
-        st.info("📐 First ML model!")
+        st.info("📐 First ML!")
     
     st.markdown("---")
     
-    # Level 3
+    # ========== LEVEL 3 ==========
     st.markdown("### 🚀 Level 3: Multi-Feature Model")
     
     st.markdown("""
-    ```mermaid
-    flowchart LR
-        subgraph L3["Level 3: Multiple Features"]
-            D3[("🏠 Data<br/>Area, District,<br/>Floor")] --> E3["⚙️ Encode<br/>District→Number"]
-            E3 --> T3["🎓 Train<br/>Find w₁,w₂,w₃,b"]
-            T3 --> P3["🔮 Price =<br/>w₁×Area +<br/>w₂×District +<br/>w₃×Floor + b"]
-        end
-        
-        style L3 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
-    ```
-    """)
+    <div style="display: flex; align-items: center; justify-content: center; 
+                flex-wrap: wrap; gap: 8px; padding: 20px; 
+                background: rgba(156, 39, 176, 0.08); border-radius: 15px; 
+                border-left: 4px solid #9C27B0; margin: 15px 0;">
+        <div style="text-align: center; padding: 12px; background: rgba(156, 39, 176, 0.15); 
+                    border-radius: 10px; min-width: 80px;">
+            <div style="font-size: 20px;">🏠</div>
+            <div style="font-size: 11px; font-weight: bold;">Data</div>
+            <div style="font-size: 9px; color: gray;">Area, Dist, Floor</div>
+        </div>
+        <div style="font-size: 20px; color: #9C27B0;">→</div>
+        <div style="text-align: center; padding: 12px; background: rgba(156, 39, 176, 0.15); 
+                    border-radius: 10px; min-width: 80px;">
+            <div style="font-size: 20px;">⚙️</div>
+            <div style="font-size: 11px; font-weight: bold;">Encode</div>
+            <div style="font-size: 9px; color: gray;">Dist→Num</div>
+        </div>
+        <div style="font-size: 20px; color: #9C27B0;">→</div>
+        <div style="text-align: center; padding: 12px; background: rgba(156, 39, 176, 0.15); 
+                    border-radius: 10px; min-width: 80px;">
+            <div style="font-size: 20px;">🎓</div>
+            <div style="font-size: 11px; font-weight: bold;">Train</div>
+            <div style="font-size: 9px; color: gray;">w₁,w₂,w₃,b</div>
+        </div>
+        <div style="font-size: 20px; color: #9C27B0;">→</div>
+        <div style="text-align: center; padding: 12px; background: rgba(156, 39, 176, 0.25); 
+                    border-radius: 10px; min-width: 100px; border: 2px solid #9C27B0;">
+            <div style="font-size: 20px;">🔮</div>
+            <div style="font-size: 11px; font-weight: bold;">Price</div>
+            <div style="font-size: 9px; color: #9C27B0;">Σ(wᵢ×xᵢ)+b</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns([3, 1])
     with col1:
-        st.markdown("""
-        **Method**: Linear Regression with Multiple Features
-        
-        - Area + District + Floor
-        - Model learns importance of each
-        - Better predictions!
-        """)
+        st.markdown("**Method**: `Price = w₁×Area + w₂×District + w₃×Floor + b`")
+        st.markdown("- Multiple features combined\n- Model learns importance of each\n- Better predictions!")
     with col2:
-        st.warning("🚀 More features = Better accuracy!")
+        st.warning("🚀 Best accuracy!")
     
     st.markdown("---")
     
-    # Progression diagram
+    # Learning progression
     st.markdown("## 📈 Learning Progression")
     
     st.markdown("""
-    ```mermaid
-    flowchart TB
-        subgraph Journey["Your ML Journey"]
-            L1["🎯 Level 1<br/>Heuristic<br/>No ML"] --> L2["📐 Level 2<br/>Linear Regression<br/>1 Feature"]
-            L2 --> L3["🚀 Level 3<br/>Multi-Feature<br/>3 Features"]
-            L3 --> L4["🔥 Level 4+<br/>Coming Soon<br/>Advanced ML"]
-        end
-        
-        style L1 fill:#c8e6c9,stroke:#4caf50
-        style L2 fill:#bbdefb,stroke:#2196f3
-        style L3 fill:#e1bee7,stroke:#9c27b0
-        style L4 fill:#ffe0b2,stroke:#ff9800
-    ```
-    """)
+    <div style="display: flex; justify-content: center; align-items: center; 
+                gap: 15px; padding: 25px; flex-wrap: wrap;">
+        <div style="text-align: center; padding: 20px; background: rgba(76, 175, 80, 0.15); 
+                    border-radius: 15px; border: 3px solid #4CAF50; min-width: 120px;">
+            <div style="font-size: 28px;">🎯</div>
+            <div style="font-weight: bold; margin: 5px 0;">Level 1</div>
+            <div style="font-size: 12px; color: #4CAF50;">Heuristic</div>
+            <div style="font-size: 10px; color: gray;">No ML</div>
+        </div>
+        <div style="font-size: 30px; color: #666;">→</div>
+        <div style="text-align: center; padding: 20px; background: rgba(33, 150, 243, 0.15); 
+                    border-radius: 15px; border: 3px solid #2196F3; min-width: 120px;">
+            <div style="font-size: 28px;">📐</div>
+            <div style="font-weight: bold; margin: 5px 0;">Level 2</div>
+            <div style="font-size: 12px; color: #2196F3;">Linear Reg</div>
+            <div style="font-size: 10px; color: gray;">1 Feature</div>
+        </div>
+        <div style="font-size: 30px; color: #666;">→</div>
+        <div style="text-align: center; padding: 20px; background: rgba(156, 39, 176, 0.15); 
+                    border-radius: 15px; border: 3px solid #9C27B0; min-width: 120px;">
+            <div style="font-size: 28px;">🚀</div>
+            <div style="font-weight: bold; margin: 5px 0;">Level 3</div>
+            <div style="font-size: 12px; color: #9C27B0;">Multi-Feature</div>
+            <div style="font-size: 10px; color: gray;">3 Features</div>
+        </div>
+        <div style="font-size: 30px; color: #666;">→</div>
+        <div style="text-align: center; padding: 20px; background: rgba(255, 152, 0, 0.15); 
+                    border-radius: 15px; border: 3px dashed #FF9800; min-width: 120px; opacity: 0.7;">
+            <div style="font-size: 28px;">🔥</div>
+            <div style="font-weight: bold; margin: 5px 0;">Level 4+</div>
+            <div style="font-size: 12px; color: #FF9800;">Coming Soon</div>
+            <div style="font-size: 10px; color: gray;">Advanced</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("""
     ---
     
-    ## 🎓 Learning Philosophy
-    
-    **"Start Simple, Scale Smart"**
+    ## 🎓 Summary Table
     
     | Level | Complexity | Features | ML? |
     |-------|------------|----------|-----|
