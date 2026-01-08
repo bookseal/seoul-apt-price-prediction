@@ -257,34 +257,28 @@ def display_step3_eda(df: pd.DataFrame) -> None:
     </div>
     """, unsafe_allow_html=True)
     
-    col1, col2 = st.columns(2)
+    # Single row layout for charts
+    st.markdown("**Price Distribution**")
+    fig, ax = plt.subplots(figsize=(10, 3))
+    ax.hist(df['price_10k_krw'], bins=50, color='#9C27B0', alpha=0.7, edgecolor='white')
+    ax.set_xlabel('Price (10K KRW)')
+    ax.set_ylabel('Count')
+    ax.grid(True, alpha=0.3)
+    st.pyplot(fig, use_container_width=True)
+    plt.close()
     
-    with col1:
-        st.markdown("**Price Distribution**")
-        fig, ax = plt.subplots(figsize=(6, 4))
-        ax.hist(df['price_10k_krw'], bins=50, color='#9C27B0', alpha=0.7, edgecolor='white')
-        ax.set_xlabel('Price (10K KRW)')
-        ax.set_ylabel('Count')
-        ax.set_title('Price Distribution')
-        ax.grid(True, alpha=0.3)
-        st.pyplot(fig)
-        plt.close()
+    st.markdown("**Area vs Price**")
+    sample = df.sample(n=min(2000, len(df)), random_state=42)
+    fig, ax = plt.subplots(figsize=(10, 3))
+    ax.scatter(sample['area_m2'], sample['price_10k_krw'], 
+               alpha=0.3, s=10, c='#2196F3')
+    ax.set_xlabel('Area (m²)')
+    ax.set_ylabel('Price (10K KRW)')
+    ax.grid(True, alpha=0.3)
+    st.pyplot(fig, use_container_width=True)
+    plt.close()
     
-    with col2:
-        st.markdown("**Area vs Price**")
-        sample = df.sample(n=min(2000, len(df)), random_state=42)
-        fig, ax = plt.subplots(figsize=(6, 4))
-        ax.scatter(sample['area_m2'], sample['price_10k_krw'], 
-                   alpha=0.3, s=10, c='#2196F3')
-        ax.set_xlabel('Area (m²)')
-        ax.set_ylabel('Price (10K KRW)')
-        ax.set_title('Area vs Price (sample)')
-        ax.grid(True, alpha=0.3)
-        st.pyplot(fig)
-        plt.close()
-    
-    st.markdown("**💡 Key Insight from EDA:**")
-    st.info("Larger area → Higher price. But same area can have VERY different prices! Why? **LOCATION!**")
+    st.info("💡 **Key Insight**: Larger area → Higher price. But same area can have VERY different prices! Why? **LOCATION!**")
 
 
 def display_step4_group(df: pd.DataFrame) -> None:
