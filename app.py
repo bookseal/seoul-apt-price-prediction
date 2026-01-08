@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Seoul Apartment Price Prediction - Learning Roadmap
+Seoul Apartment Price Prediction - ML Learning Roadmap
 
-A step-by-step guide to learn machine learning through apartment price prediction.
-Built for beginners who want to become AI developers.
+End-to-end machine learning journey from simple heuristics to advanced models.
+Each level is a complete pipeline with increasing complexity.
 
 Usage:
     streamlit run app.py
@@ -12,50 +12,100 @@ import streamlit as st
 
 
 def home_page():
-    """Render the home page with learning roadmap."""
+    """Render the home page."""
     st.title("📚 Seoul Apartment Price Prediction")
-    st.markdown("### Your Journey to Become an AI Developer")
+    st.markdown("### End-to-End ML Learning Roadmap")
     
     st.markdown("""
-    Welcome! This project guides you through machine learning step by step.
-    Start from **Level 1** and work your way up to becoming an ML practitioner.
+    Welcome! This project teaches machine learning through **apartment price prediction**.
     
     ---
     
-    ### 🎯 Learning Philosophy
+    ## 🎯 Key Concept: Each Level is End-to-End
+    
+    Every level is a **complete pipeline**:
+    
+    **Data → Method → Prediction**
+    
+    The difference is **complexity** - start simple, then improve!
+    
+    ---
+    
+    ## 📊 Level Overview
+    """)
+    
+    # Level cards
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="padding: 20px; background: rgba(76, 175, 80, 0.1); 
+                    border-radius: 10px; border-left: 4px solid #4CAF50; height: 200px;">
+        <h3>🎯 Level 1</h3>
+        <p><b>Heuristic</b></p>
+        <p style="font-size: 14px;">
+        District Median × Area<br/>
+        No ML needed<br/>
+        Simplest baseline
+        </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="padding: 20px; background: rgba(33, 150, 243, 0.1); 
+                    border-radius: 10px; border-left: 4px solid #2196F3; height: 200px;">
+        <h3>📐 Level 2</h3>
+        <p><b>Linear Regression</b></p>
+        <p style="font-size: 14px;">
+        Area only<br/>
+        First ML model<br/>
+        Single feature
+        </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="padding: 20px; background: rgba(156, 39, 176, 0.1); 
+                    border-radius: 10px; border-left: 4px solid #9C27B0; height: 200px;">
+        <h3>🚀 Level 3</h3>
+        <p><b>Multi-Feature LR</b></p>
+        <p style="font-size: 14px;">
+        Area + District + Floor<br/>
+        Multiple features<br/>
+        Better accuracy
+        </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    ---
+    
+    ## 🎓 Learning Philosophy
     
     **"Start Simple, Scale Smart"**
     
-    - Begin with the simplest working model
-    - Understand why it works (or doesn't)
-    - Gradually add complexity
-    - Learn from each iteration
+    1. **Level 1**: No ML - just statistics
+    2. **Level 2**: Simplest ML possible
+    3. **Level 3**: Add features to improve
+    4. **Level 4+**: Advanced techniques (coming soon)
+    
+    Each level builds on the previous one. Don't skip ahead!
     
     ---
     
-    ### 📖 How to Use This Guide
+    ## 🚀 Quick Start
     
-    1. **Follow the sidebar** - chapters are ordered for progressive learning
-    2. **Read the explanations** - understand concepts before code
-    3. **Try the quizzes** - test your understanding
-    4. **Experiment** - modify code and see what happens
+    👈 **Select a Level from the sidebar to begin!**
     
-    ---
-    
-    ### 🗺️ Roadmap Overview
-    
-    | Level | Focus | What You'll Learn |
-    |-------|-------|-------------------|
-    | **Level 1** | Data | Exploration, EDA, Sampling |
-    | **Level 2** | First Model | Linear Regression, RMSE |
-    | **Level 3** | Better Models | Trees, Tuning (Coming Soon) |
-    | **Level 4** | Production | MLOps, Deploy (Coming Soon) |
+    Start with **Level 1** if you're new to ML.
     
     ---
     
-    **Built with** Streamlit · Python · scikit-learn · Pandas
+    **Built with** Streamlit · Python · scikit-learn
     
-    [📚 GitHub Repository](https://github.com/bookseal/seoul-apt-price-prediction)
+    [📚 GitHub](https://github.com/bookseal/seoul-apt-price-prediction)
     """)
 
 
@@ -67,21 +117,15 @@ def main() -> None:
         layout="wide",
     )
     
-    # Define pages with sections
+    # Define pages with clear level structure
     pages = {
         "🏠 Home": [
             st.Page(home_page, title="Welcome", icon="🏠"),
         ],
-        "📖 Level 1: Understanding Data": [
-            st.Page("pages/1-1_📂_Data_Overview.py", title="1.1 Data Overview", icon="📂"),
-            st.Page("pages/1-2_📊_Charts_and_Patterns.py", title="1.2 Charts & Patterns", icon="📊"),
-            st.Page("pages/1-3_🎲_Sampling_101.py", title="1.3 Sampling 101", icon="🎲"),
-        ],
-        "🤖 Level 2: First ML Model": [
-            st.Page("pages/2-1_🎯_Choose_Features.py", title="2.1 Choose Features", icon="🎯"),
-            st.Page("pages/2-2_📐_First_ML_Model.py", title="2.2 Linear Regression", icon="📐"),
-            st.Page("pages/2-3_📏_Is_It_Good.py", title="2.3 Model Evaluation", icon="📏"),
-            st.Page("pages/2-4_🔮_Try_Predictions.py", title="2.4 Try Predictions", icon="🔮"),
+        "📊 Levels": [
+            st.Page("pages/1_Level_1_Heuristic.py", title="Level 1: Heuristic", icon="🎯"),
+            st.Page("pages/2_Level_2_Linear_Regression.py", title="Level 2: Linear Regression", icon="📐"),
+            st.Page("pages/3_Level_3_Multi_Features.py", title="Level 3: Multi-Features", icon="🚀"),
         ],
     }
     
