@@ -1,89 +1,97 @@
-# 🏢 Seoul Apartment Price Prediction
+# 📚 Seoul Apartment Price Prediction - ML Roadmap
 
-A portfolio-friendly, production-lean ML app to explore, sample, and preview Seoul apartment prices. It focuses on fast UX, clean engineering, and deployability on Streamlit Cloud.
+A step-by-step guide to learn machine learning through apartment price prediction.
+Built for beginners who want to become AI developers.
 
 ## 🔗 Live Demo
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://bookseal-seoul-apt-price-prediction.streamlit.app)
 
-Direct link: https://bookseal-seoul-apt-price-prediction.streamlit.app
+## 🎯 Project Philosophy
 
-## 🚀 What You Get
-- Fast Streamlit app with a stratified 100k Parquet sample (from 1.1M+ rows)
-- Clear EDA visuals (distribution, district medians)
-- A demo page that estimates price using a heuristic placeholder (model slot-in)
-- Reproducible sampling pipeline and lightweight tests
+**"Start Simple, Scale Smart"**
+
+This project guides you from complete beginner to ML practitioner through incremental learning.
+
+## 📖 Learning Roadmap
+
+### Level 1: Understanding Data
+| Chapter | Topic | What You'll Learn |
+|---------|-------|-------------------|
+| 1.1 | Explore Data | Dataset structure, basic statistics |
+| 1.2 | EDA | Distributions, visualizations, patterns |
+| 1.3 | Sampling | Stratified sampling, Parquet format |
+
+### Level 2: Building Your First Model
+| Chapter | Topic | What You'll Learn |
+|---------|-------|-------------------|
+| 2.1 | Feature Selection | Correlation analysis, choosing features |
+| 2.2 | Linear Regression | Model fundamentals, prediction formula |
+| 2.3 | Model Evaluation | RMSE, residual analysis |
+| 2.4 | Prediction Demo | Using trained models, limitations |
+
+### Coming Soon
+- **Level 3**: Multiple features, tree-based models, cross-validation
+- **Level 4**: Ensemble methods, hyperparameter tuning, MLOps
 
 ## 📦 Repository Structure
+
 ```
-app.py                       # Streamlit entry (Home)
-pages/
-	1_Data.py                 # Data summary, preview, stats
-	2_EDA.py                  # Distribution + district analysis
-	3_Model.py                # Modeling plan placeholder
-	4_Demo.py                 # Interactive price estimate demo
-	5_Retro.py                # Decisions, trade-offs, next steps (exportable)
-src/
-	io.py                     # Cached Parquet loader
-	plots.py                  # Plotly charts used in EDA
-	sampling.py               # Stratified sampling pipeline
-data/
-	sample.parquet            # 100k stratified sample for the app
-tests/
-	2026-01-02_test_sampling.py
-	2026-01-02_12-07-19_analyze_compression_factors.py
-	README.md
-.streamlit/config.toml       # Streamlit runtime config
-requirements.txt             # Minimal deps for Streamlit Cloud
-```
-
-## 🧪 Data Sampling Pipeline (1.1M ➜ 100k)
-We avoid loading the 1.1M-row CSV at runtime. Instead, we create a representative Parquet sample using stratified sampling by `(district, year)`.
-
-Key ideas:
-- Parquet is columnar → dramatically faster I/O on Streamlit
-- Stratified sampling preserves distribution across 25 districts and 17 years
-- Small, git-tracked asset (`~951KB`) keeps the app responsive in the cloud
-
-Generate a sample locally (if you need to re-build):
-```bash
-python src/sampling.py
-```
-This reads `data/raw/train.csv`, renames columns to English, builds a 100k stratified sample, and writes `data/sample.parquet`.
-
-Tests are provided to validate size, distribution preservation, and compression factors:
-```bash
-python tests/2026-01-02_test_sampling.py
-python tests/2026-01-02_12-07-19_analyze_compression_factors.py
+seoul-apt-price-prediction/
+├── app.py                      # Learning roadmap hub
+├── pages/
+│   ├── 1_1_Explore_Data.py    # Level 1 chapters
+│   ├── 1_2_EDA.py
+│   ├── 1_3_Sampling.py
+│   ├── 2_1_Feature_Selection.py  # Level 2 chapters
+│   ├── 2_2_Linear_Regression.py
+│   ├── 2_3_Model_Evaluation.py
+│   └── 2_4_Prediction_Demo.py
+├── src/
+│   ├── config.py              # Configuration settings
+│   ├── io.py                  # Data loading utilities
+│   ├── plots.py               # Visualization functions
+│   ├── model.py               # Model utilities
+│   ├── data_loader.py         # CSV data loaders
+│   └── utils.py               # Helper functions
+├── data/
+│   ├── raw/                   # Original CSV files
+│   └── sample.parquet         # 100K stratified sample
+├── models/                    # Trained model files
+├── train.py                   # Model training script
+└── requirements.txt           # Dependencies
 ```
 
-## 📊 App Pages
-- Data: overview of the sample, quick metrics, preview, and stats
-- EDA: price distribution histogram and median price by district
-- Model: modeling plan placeholder (slot for XGBoost/scikit-learn)
-- Demo: interactive mock inference using district median price-per-㎡
-- Retro: documented decisions/trade-offs; export as Markdown
+## 🚀 Quick Start
 
-## ▶️ Run Locally
+### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
+```
+
+### 2. Run the App
+```bash
 streamlit run app.py
 ```
 
-## ☁️ Deploy on Streamlit Cloud
-1) Connect repo `bookseal/seoul-apt-price-prediction` in Streamlit Cloud.
-2) App file: `app.py`, Branch: `main`.
-3) Optional: ensure `.streamlit/config.toml` is present.
-4) Click Deploy. First boot installs `requirements.txt` and serves the app.
-
-Optional pin for runtime (add at repo root):
-```
-runtime.txt
-python-3.11
+### 3. Train Your Own Model
+```bash
+python train.py
 ```
 
-## 🧰 Tech Stack
-- Python, Streamlit, Pandas, PyArrow, Plotly
-- (Planned) scikit-learn / XGBoost for modeling
+## 📊 Dataset
+
+Seoul apartment real transaction price data:
+- **Original**: 1.1M+ rows
+- **Sample**: 100K rows (stratified by district × year)
+- **Format**: Parquet for fast I/O
+
+## 🛠️ Tech Stack
+
+- **Framework**: Streamlit
+- **ML**: scikit-learn
+- **Data**: Pandas, PyArrow
+- **Visualization**: Plotly, Matplotlib
 
 ## 🙌 Credits
-Built by Ki-chan as a portfolio-style, solution-architected ML app.
+
+Built as an educational ML project.

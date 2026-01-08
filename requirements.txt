@@ -1,5 +1,22 @@
-streamlit>=1.37
+# Seoul Apartment Price Prediction - ML Roadmap
+# Dependencies for all levels
+
+# Data Processing
 pandas>=2.1
+numpy>=1.24.0
 pyarrow>=15.0
-plotly>=5.18
+
+# Machine Learning
 scikit-learn>=1.3
+joblib>=1.3.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.18
+
+# Dashboard
+streamlit>=1.37
+
+# Progress Display
+tqdm>=4.65.0
