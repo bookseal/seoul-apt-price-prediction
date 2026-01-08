@@ -7,6 +7,7 @@ Formula: Predicted Price = Median Price per m² (by district) × Area
 """
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 from src.io import load_sample_dataset
 
 
@@ -21,20 +22,157 @@ def display_header() -> None:
     """)
 
 
+def display_pipeline() -> None:
+    """Display the end-to-end pipeline visualization."""
+    st.header("🗺️ Pipeline Overview")
+    
+    st.markdown("""
+    This is the complete journey from raw data to prediction.
+    Follow each step to understand how we build a simple price estimator!
+    """)
+    
+    # Main Pipeline Diagram - Using Streamlit columns for responsiveness
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(76,175,80,0.1) 0%, rgba(33,150,243,0.1) 100%);
+                padding: 20px; border-radius: 15px; margin: 20px 0; border: 2px solid #4CAF50;">
+        <div style="text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 15px; color: #4CAF50;">
+            📋 End-to-End Pipeline
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Use Streamlit columns for better responsiveness
+    cols = st.columns(6)
+    
+    steps = [
+        ("📥", "1. Load", "Raw Data", "76,175,80", "#4CAF50"),      # Green
+        ("👀", "2. Explore", "Overview", "33,150,243", "#2196F3"),   # Blue
+        ("📊", "3. EDA", "Visualize", "156,39,176", "#9C27B0"),      # Purple
+        ("📍", "4. Group", "by District", "255,152,0", "#FF9800"),   # Orange
+        ("📈", "5. Median", "$/m² calc", "244,67,54", "#F44336"),    # Red
+        ("🔮", "6. Predict", "Output!", "76,175,80", "#4CAF50"),     # Green
+    ]
+    
+    for i, (emoji, title, subtitle, rgb, color) in enumerate(steps):
+        with cols[i]:
+            st.markdown(f"""
+            <div style="text-align: center; padding: 10px 5px; background: rgba({rgb}, 0.25); 
+                        border-radius: 10px; border: 2px solid {color}; min-height: 80px;">
+                <div style="font-size: 20px;">{emoji}</div>
+                <div style="font-weight: bold; font-size: 11px;">{title}</div>
+                <div style="font-size: 9px; color: gray;">{subtitle}</div>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    # Arrow visualization
+    st.markdown("""
+    <div style="text-align: center; color: #4CAF50; font-size: 14px; margin: 10px 0;">
+        ──────────────────→ Flow Direction ──────────────────→
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # What happens at each step - Single column layout with motivating questions
+    st.markdown("### 🔍 What happens at each step?")
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(76,175,80,0.1); border-radius: 10px; 
+                border-left: 4px solid #4CAF50; margin: 10px 0;">
+        <b>📥 Step 1: Load Data</b><br>
+        <span style="font-size: 13px; color: #4CAF50; font-style: italic;">
+        "Can you cook without ingredients? No data = No analysis!"
+        </span><br>
+        <span style="font-size: 13px;">
+        → Read CSV/Parquet: District, Area, Price, Year, Floor...
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(33,150,243,0.1); border-radius: 10px; 
+                border-left: 4px solid #2196F3; margin: 10px 0;">
+        <b>👀 Step 2: Explore Data</b><br>
+        <span style="font-size: 13px; color: #2196F3; font-style: italic;">
+        "Would you cook without checking your ingredients? Know your data first!"
+        </span><br>
+        <span style="font-size: 13px;">
+        → How many rows? What columns? Missing values? Data types?
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(156,39,176,0.1); border-radius: 10px; 
+                border-left: 4px solid #9C27B0; margin: 10px 0;">
+        <b>📊 Step 3: EDA (Exploratory Data Analysis)</b><br>
+        <span style="font-size: 13px; color: #9C27B0; font-style: italic;">
+        "Jump into modeling blindly? See the patterns with your eyes first!"
+        </span><br>
+        <span style="font-size: 13px;">
+        → Visualize: Price distribution, Area vs Price, District differences
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
+                border-left: 4px solid #FF9800; margin: 10px 0;">
+        <b>📍 Step 4: Group by District</b><br>
+        <span style="font-size: 13px; color: #FF9800; font-style: italic;">
+        "Is Gangnam the same price as other areas? Location matters!"
+        </span><br>
+        <span style="font-size: 13px;">
+        → Group transactions by district. Different area = Different price.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(244,67,54,0.1); border-radius: 10px; 
+                border-left: 4px solid #F44336; margin: 10px 0;">
+        <b>📈 Step 5: Calculate Median $/m²</b><br>
+        <span style="font-size: 13px; color: #F44336; font-style: italic;">
+        "Use average? One $100M apartment ruins everything! Use median!"
+        </span><br>
+        <span style="font-size: 13px;">
+        → price_per_m2 = price / area → Take MEDIAN (safe from outliers!)
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(76,175,80,0.2); border-radius: 10px; 
+                border-left: 4px solid #4CAF50; margin: 10px 0;">
+        <b>🔮 Step 6: Predict!</b><br>
+        <span style="font-size: 13px; color: #4CAF50; font-style: italic;">
+        "All ready! One simple formula gives you the price!"
+        </span><br>
+        <span style="font-size: 13px;">
+        → <code style="background: #2d2d2d; padding: 4px 8px; border-radius: 4px; color: #4CAF50;">Price = Median($/m²) × Area</code> Done!
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def display_method() -> None:
-    """Explain the heuristic method."""
+    """Explain the heuristic method with formula."""
     st.header("📐 The Method")
     
     st.markdown("""
     ### Simple Logic
     
-    1. Calculate the **median price per m²** for each district
-    2. Multiply by the apartment's **area**
-    
-    That's it! No training, no algorithms.
+    We use **one assumption**: apartments in the same district have similar price per m².
     """)
     
-    st.latex(r"\text{Price} = \text{Median Price per m}^2 \text{ (district)} \times \text{Area}")
+    # Formula visualization
+    st.markdown("""
+    <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                border-radius: 15px; margin: 20px 0; border: 2px solid #4CAF50;">
+        <div style="font-size: 14px; color: #888; margin-bottom: 10px;">THE FORMULA</div>
+        <div style="font-size: 22px; color: #4CAF50; font-family: monospace;">
+            Predicted Price = Median(Price/m²)<sub>district</sub> × Area
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     with st.expander("🤔 Why does this work?"):
         st.markdown("""
@@ -46,33 +184,198 @@ def display_method() -> None:
         """)
 
 
-def display_data_preview(df: pd.DataFrame) -> None:
-    """Show data overview."""
-    st.header("📊 Data Overview")
+def display_step1_load(df: pd.DataFrame) -> None:
+    """Step 1: Data Loading."""
+    st.header("📥 Step 1: Load Data")
+    
+    st.markdown("""
+    <div style="padding: 10px 15px; background: rgba(76,175,80,0.15); border-radius: 8px; 
+                border-left: 4px solid #4CAF50; margin-bottom: 15px;">
+        <b>What we're doing:</b> Reading the raw apartment transaction data
+    </div>
+    """, unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
-    col1.metric("Total Rows", f"{len(df):,}")
-    col2.metric("Districts", f"{df['district'].nunique()}")
-    col3.metric("Year Range", f"{df['year'].min()}-{df['year'].max()}")
+    col1.metric("📄 Total Rows", f"{len(df):,}")
+    col2.metric("📍 Districts", f"{df['district'].nunique()}")
+    col3.metric("📅 Year Range", f"{df['year'].min()}-{df['year'].max()}")
     
-    with st.expander("View sample data"):
+    with st.expander("👀 View raw data sample"):
         st.dataframe(df.head(10), use_container_width=True)
+    
+    st.code("""
+# Python code to load data
+import pandas as pd
+df = pd.read_parquet("data/sample.parquet")
+print(f"Loaded {len(df):,} rows")
+    """, language="python")
 
 
-def display_district_stats(df: pd.DataFrame) -> None:
-    """Show median price per m² by district."""
-    st.header("📍 Price by District")
+def display_step2_explore(df: pd.DataFrame) -> None:
+    """Step 2: Data Exploration."""
+    st.header("👀 Step 2: Explore Data")
+    
+    st.markdown("""
+    <div style="padding: 10px 15px; background: rgba(33,150,243,0.15); border-radius: 8px; 
+                border-left: 4px solid #2196F3; margin-bottom: 15px;">
+        <b>What we're doing:</b> Understanding our data structure and quality
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("**📋 Column Info**")
+        info_df = pd.DataFrame({
+            'Column': df.columns,
+            'Type': df.dtypes.astype(str),
+            'Non-Null': df.count().values
+        })
+        st.dataframe(info_df, use_container_width=True, hide_index=True)
+    
+    with col2:
+        st.markdown("**📊 Basic Stats**")
+        st.dataframe(df[['area_m2', 'price_10k_krw']].describe().round(1), 
+                     use_container_width=True)
+    
+    st.code("""
+# Check data structure
+df.info()
+df.describe()
+df.isnull().sum()  # Check missing values
+    """, language="python")
+
+
+def display_step3_eda(df: pd.DataFrame) -> None:
+    """Step 3: Exploratory Data Analysis."""
+    st.header("📊 Step 3: EDA (Exploratory Data Analysis)")
+    
+    st.markdown("""
+    <div style="padding: 10px 15px; background: rgba(156,39,176,0.15); border-radius: 8px; 
+                border-left: 4px solid #9C27B0; margin-bottom: 15px;">
+        <b>What we're doing:</b> Visualizing data to find patterns and insights
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("**Price Distribution**")
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.hist(df['price_10k_krw'], bins=50, color='#9C27B0', alpha=0.7, edgecolor='white')
+        ax.set_xlabel('Price (10K KRW)')
+        ax.set_ylabel('Count')
+        ax.set_title('Price Distribution')
+        ax.grid(True, alpha=0.3)
+        st.pyplot(fig)
+        plt.close()
+    
+    with col2:
+        st.markdown("**Area vs Price**")
+        sample = df.sample(n=min(2000, len(df)), random_state=42)
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.scatter(sample['area_m2'], sample['price_10k_krw'], 
+                   alpha=0.3, s=10, c='#2196F3')
+        ax.set_xlabel('Area (m²)')
+        ax.set_ylabel('Price (10K KRW)')
+        ax.set_title('Area vs Price (sample)')
+        ax.grid(True, alpha=0.3)
+        st.pyplot(fig)
+        plt.close()
+    
+    st.markdown("**💡 Key Insight from EDA:**")
+    st.info("Larger area → Higher price. But same area can have VERY different prices! Why? **LOCATION!**")
+
+
+def display_step4_group(df: pd.DataFrame) -> None:
+    """Step 4: Group by District."""
+    st.header("📍 Step 4: Group by District")
+    
+    st.markdown("""
+    <div style="padding: 10px 15px; background: rgba(255,152,0,0.15); border-radius: 8px; 
+                border-left: 4px solid #FF9800; margin-bottom: 15px;">
+        <b>What we're doing:</b> Grouping data by location (district) to capture price differences
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Show district counts
+    district_counts = df.groupby('district').size().sort_values(ascending=False)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown("**Transactions per District**")
+        st.bar_chart(district_counts.head(10))
+    
+    with col2:
+        st.markdown("**Top 5 Districts**")
+        for district, count in district_counts.head(5).items():
+            st.markdown(f"• **{district}**: {count:,} 건")
+    
+    st.code("""
+# Group by district
+grouped = df.groupby('district')
+for district, group_df in grouped:
+    print(f"{district}: {len(group_df)} transactions")
+    """, language="python")
+
+
+def display_step5_median(df: pd.DataFrame) -> None:
+    """Step 5: Calculate Median Price per m²."""
+    st.header("📈 Step 5: Calculate Median $/m²")
+    
+    st.markdown("""
+    <div style="padding: 10px 15px; background: rgba(244,67,54,0.15); border-radius: 8px; 
+                border-left: 4px solid #F44336; margin-bottom: 15px;">
+        <b>What we're doing:</b> Computing the "typical" price per m² for each district
+    </div>
+    """, unsafe_allow_html=True)
     
     # Calculate price per m²
     df_calc = df.copy()
     df_calc['price_per_m2'] = df_calc['price_10k_krw'] / df_calc['area_m2']
     
     # Get median by district
-    district_stats = df_calc.groupby('district')['price_per_m2'].median().sort_values(ascending=False)
+    district_median = df_calc.groupby('district')['price_per_m2'].median().sort_values(ascending=False)
     
-    st.bar_chart(district_stats)
+    col1, col2 = st.columns([2, 1])
     
-    st.caption("Median price per m² (10K KRW) by district")
+    with col1:
+        st.markdown("**Median Price per m² by District**")
+        st.bar_chart(district_median)
+    
+    with col2:
+        st.markdown("**Top 5 Most Expensive**")
+        for district, median in district_median.head(5).items():
+            st.markdown(f"• **{district}**: {median:,.0f}")
+        
+        st.markdown("---")
+        st.markdown("**Bottom 3**")
+        for district, median in district_median.tail(3).items():
+            st.markdown(f"• **{district}**: {median:,.0f}")
+    
+    # Why median?
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(244,67,54,0.1); border-radius: 10px; margin-top: 15px;">
+        <b>🤔 Why MEDIAN instead of MEAN?</b><br><br>
+        <table style="width: 100%;">
+            <tr>
+                <td style="padding: 8px;"><b>Mean (평균)</b></td>
+                <td style="padding: 8px;">Sensitive to outliers. One 100억 apartment skews everything!</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><b>Median (중앙값)</b></td>
+                <td style="padding: 8px;">Robust. The "middle" value - outliers don't affect it much.</td>
+            </tr>
+        </table>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.code("""
+# Calculate price per m² and get median
+df['price_per_m2'] = df['price_10k_krw'] / df['area_m2']
+median_by_district = df.groupby('district')['price_per_m2'].median()
+    """, language="python")
 
 
 def predict_heuristic(df: pd.DataFrame, district: str, area: float) -> float:
@@ -93,62 +396,118 @@ def predict_heuristic(df: pd.DataFrame, district: str, area: float) -> float:
     return median_price_per_m2 * area
 
 
-def display_demo(df: pd.DataFrame) -> None:
-    """Interactive prediction demo."""
-    st.header("🔮 Try It Yourself")
+def display_step6_predict(df: pd.DataFrame) -> None:
+    """Step 6: Interactive prediction demo."""
+    st.header("🔮 Step 6: Predict!")
     
+    st.markdown("""
+    <div style="padding: 10px 15px; background: rgba(76,175,80,0.15); border-radius: 8px; 
+                border-left: 4px solid #4CAF50; margin-bottom: 15px;">
+        <b>What we're doing:</b> Using our heuristic formula to predict apartment prices!
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Input
     col1, col2 = st.columns(2)
     
     with col1:
         districts = sorted(df['district'].unique())
-        selected_district = st.selectbox("Select District", districts)
+        selected_district = st.selectbox("🏘️ Select District", districts)
     
     with col2:
-        selected_area = st.slider("Exclusive Area (m²)", 
+        selected_area = st.slider("📐 Exclusive Area (m²)", 
                                    min_value=10, max_value=200, value=84)
     
     # Predict
     predicted_price = predict_heuristic(df, selected_district, selected_area)
     
-    st.markdown("---")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("District", selected_district)
-    
-    with col2:
-        st.metric("Area", f"{selected_area} m²")
-    
-    with col3:
-        st.metric("Predicted Price", f"{predicted_price:,.0f} (10K KRW)")
-    
-    # Show calculation
+    # Get median for display
     df_calc = df.copy()
     df_calc['price_per_m2'] = df_calc['price_10k_krw'] / df_calc['area_m2']
     median_ppm2 = df_calc[df_calc['district'] == selected_district]['price_per_m2'].median()
     
-    st.info(f"""
-    **Calculation**:
-    - Median price/m² in {selected_district}: **{median_ppm2:,.0f}**
-    - Area: **{selected_area}** m²
-    - Result: {median_ppm2:,.0f} × {selected_area} = **{predicted_price:,.0f}** (10K KRW)
-    - ≈ **{predicted_price/100:.1f} billion KRW**
-    """)
+    # Result display
+    st.markdown(f"""
+    <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, rgba(76,175,80,0.2) 0%, rgba(76,175,80,0.1) 100%);
+                border-radius: 15px; margin: 20px 0; border: 3px solid #4CAF50;">
+        <div style="font-size: 14px; color: #888; margin-bottom: 5px;">PREDICTED PRICE</div>
+        <div style="font-size: 36px; font-weight: bold; color: #4CAF50;">
+            {predicted_price:,.0f} <span style="font-size: 18px;">만원</span>
+        </div>
+        <div style="font-size: 16px; color: #888; margin-top: 5px;">
+            ≈ {predicted_price/100:.1f} 억원
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Show calculation
+    with st.expander("📝 See calculation details"):
+        st.markdown(f"""
+        **Formula**: `Price = Median($/m²) × Area`
+        
+        **Calculation**:
+        1. District: **{selected_district}**
+        2. Median price/m² in {selected_district}: **{median_ppm2:,.0f}** 만원/m²
+        3. Your area: **{selected_area}** m²
+        4. Result: {median_ppm2:,.0f} × {selected_area} = **{predicted_price:,.0f}** 만원
+        """)
+        
+        st.code(f"""
+# Your prediction in Python
+median_price_per_m2 = {median_ppm2:,.0f}  # for {selected_district}
+area = {selected_area}
+predicted_price = median_price_per_m2 * area
+print(f"Predicted: {{predicted_price:,}} 만원")  # {predicted_price:,.0f} 만원
+        """, language="python")
 
 
 def display_limitations() -> None:
-    """Show method limitations."""
-    st.header("⚠️ Limitations")
+    """Show method limitations and next steps."""
+    st.header("⚠️ Limitations & Next Steps")
     
-    st.warning("""
-    **This method ignores:**
-    - Floor number (higher floors often cost more)
-    - Building age (newer = more expensive)
-    - Specific apartment complex
-    - Market trends over time
+    col1, col2 = st.columns(2)
     
-    **Next Level**: Use machine learning to improve predictions!
+    with col1:
+        st.markdown("""
+        <div style="padding: 20px; background: rgba(244,67,54,0.1); border-radius: 10px; border: 2px solid #F44336;">
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">❌ What we ignore:</div>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>Floor number (higher = more $)</li>
+                <li>Building age (newer = more $)</li>
+                <li>Specific apartment complex</li>
+                <li>Market trends over time</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="padding: 20px; background: rgba(76,175,80,0.1); border-radius: 10px; border: 2px solid #4CAF50;">
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">✅ Next Level (ML!):</div>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>Use Linear Regression</li>
+                <li>LEARN from data</li>
+                <li>Multiple features</li>
+                <li>Evaluate with metrics</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    ---
+    
+    ### 🎓 Summary
+    
+    You've completed Level 1! You learned:
+    
+    1. **Load** raw data
+    2. **Explore** data structure
+    3. **EDA** to find patterns
+    4. **Group** by location
+    5. **Calculate** median price/m²
+    6. **Predict** using simple formula
+    
+    **Ready for Level 2?** → Use machine learning to improve predictions!
     """)
 
 
@@ -159,13 +518,21 @@ def main() -> None:
         
         display_header()
         st.markdown("---")
+        display_pipeline()
+        st.markdown("---")
         display_method()
         st.markdown("---")
-        display_data_preview(df)
+        display_step1_load(df)
         st.markdown("---")
-        display_district_stats(df)
+        display_step2_explore(df)
         st.markdown("---")
-        display_demo(df)
+        display_step3_eda(df)
+        st.markdown("---")
+        display_step4_group(df)
+        st.markdown("---")
+        display_step5_median(df)
+        st.markdown("---")
+        display_step6_predict(df)
         st.markdown("---")
         display_limitations()
         
