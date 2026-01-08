@@ -247,11 +247,11 @@ def home_page():
         </div>
         <div style="font-size: 30px; color: #666;">→</div>
         <div style="text-align: center; padding: 20px; background: rgba(255, 152, 0, 0.15); 
-                    border-radius: 15px; border: 3px dashed #FF9800; min-width: 120px; opacity: 0.7;">
-            <div style="font-size: 28px;">🔥</div>
-            <div style="font-weight: bold; margin: 5px 0;">Level 4+</div>
-            <div style="font-size: 12px; color: #FF9800;">Coming Soon</div>
-            <div style="font-size: 10px; color: gray;">Advanced</div>
+                    border-radius: 15px; border: 3px solid #FF9800; min-width: 120px;">
+            <div style="font-size: 28px;">🏆</div>
+            <div style="font-weight: bold; margin: 5px 0;">Level 10</div>
+            <div style="font-size: 12px; color: #FF9800;">AutoML</div>
+            <div style="font-size: 10px; color: gray;">Finale!</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -259,14 +259,20 @@ def home_page():
     st.markdown("""
     ---
     
-    ## 🎓 Summary Table
+    ## 🎓 Full Roadmap
     
-    | Level | Complexity | Features | ML? |
-    |-------|------------|----------|-----|
-    | 1 | ⭐ | District + Area | ❌ |
-    | 2 | ⭐⭐ | Area only | ✅ |
-    | 3 | ⭐⭐⭐ | Area + District + Floor | ✅ |
-    | 4+ | ⭐⭐⭐⭐ | Many + Engineering | ✅✅ |
+    | Level | Topic | Key Concept |
+    |-------|-------|-------------|
+    | 1 | Heuristic | Simple rule: median $/m² |
+    | 2 | Linear Regression | y = wx + b |
+    | 3 | Multi-Features | One-Hot Encoding |
+    | 4 | 3D Regression | Building Year, Plotly |
+    | 5 | High-Dimensional | 10+ features |
+    | 6 | PCA | Dimensionality reduction |
+    | 7 | Data Cleaning | Nulls, outliers |
+    | 8 | Feature Engineering | Scaling, transforms |
+    | 9 | Regularization | Ridge, Lasso |
+    | 10 | AutoML | Model comparison |
     
     ---
     
@@ -297,10 +303,21 @@ def main() -> None:
         "🏠 Home": [
             st.Page(home_page, title="Welcome", icon="🏠"),
         ],
-        "📊 Levels": [
+        "📊 Beginner": [
             st.Page("pages/1_Level_1_Heuristic.py", title="Level 1: Heuristic", icon="🎯"),
             st.Page("pages/2_Level_2_Linear_Regression.py", title="Level 2: Linear Regression", icon="📐"),
-            st.Page("pages/3_Level_3_Multi_Features.py", title="Level 3: Multi-Features", icon="🚀"),
+            st.Page("pages/3_Level_3_Multi_Features.py", title="Level 3: Multi-Features", icon="🏘️"),
+        ],
+        "📈 Intermediate": [
+            st.Page("pages/4_Level_4_3D_Regression.py", title="Level 4: 3D Regression", icon="🎯"),
+            st.Page("pages/5_Level_5_High_Dimensional.py", title="Level 5: High-Dimensional", icon="🌌"),
+            st.Page("pages/6_Level_6_PCA.py", title="Level 6: PCA", icon="📉"),
+        ],
+        "🚀 Advanced": [
+            st.Page("pages/7_Level_7_Data_Cleaning.py", title="Level 7: Data Cleaning", icon="🧹"),
+            st.Page("pages/8_Level_8_Feature_Engineering.py", title="Level 8: Feature Engineering", icon="⚗️"),
+            st.Page("pages/9_Level_9_Regularization.py", title="Level 9: Regularization", icon="🛡️"),
+            st.Page("pages/10_Level_10_AutoML.py", title="Level 10: AutoML", icon="🏆"),
         ],
     }
     
