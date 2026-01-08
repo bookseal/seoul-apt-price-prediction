@@ -16,6 +16,7 @@ from sklearn.model_selection import train_test_split
 from src.io import load_sample_dataset
 from src.utils import calculate_rmse
 from src.config import RANDOM_STATE
+from src.navigation import display_next_level_teaser
 
 
 def display_header() -> None:
@@ -549,6 +550,9 @@ def main() -> None:
         display_cleaning_code()
         st.markdown("---")
         display_limitations()
+        
+        # Next level teaser
+        display_next_level_teaser(7)
         
     except Exception as e:
         st.error(f"Error: {e}")

@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from src.io import load_sample_dataset
 from src.model import load_trained_model, get_model_info, calculate_metrics
 from src.config import RANDOM_STATE
+from src.navigation import display_next_level_teaser
 
 
 def display_header() -> None:
@@ -677,6 +678,9 @@ def main() -> None:
         display_demo(df)
         st.markdown("---")
         display_comparison()
+        
+        # Next level teaser
+        display_next_level_teaser(2)
         
     except Exception as e:
         st.error(f"Error: {e}")

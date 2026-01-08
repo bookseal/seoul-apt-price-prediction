@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from src.io import load_sample_dataset
+from src.navigation import display_next_level_teaser
 
 # Korean to English district name mapping
 DISTRICT_NAME_MAP = {
@@ -718,6 +719,9 @@ def main() -> None:
         display_questions()
         st.markdown("---")
         display_limitations()
+        
+        # Next level teaser
+        display_next_level_teaser(1)
         
     except Exception as e:
         st.error(f"Error: {e}")
