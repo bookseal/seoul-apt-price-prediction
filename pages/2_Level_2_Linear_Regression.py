@@ -210,7 +210,7 @@ def display_demo(df: pd.DataFrame) -> None:
     
     = {info['coefficient'] * selected_area:,.2f} + {info['intercept']:,.2f}
     
-    = **{predicted_price:,.0f}** (10K KRW) ≈ **{predicted_price/100:.1f} billion KRW**
+    = **{predicted_price:,.0f}** (10K KRW) ≈ **{predicted_price/10000:.1f} 억원**
     """)
 
 

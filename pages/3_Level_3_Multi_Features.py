@@ -209,7 +209,7 @@ def display_demo(df: pd.DataFrame, model, le, feature_cols: list) -> None:
             st.metric("Predicted", f"{predicted_price:,.0f}")
     
     st.success(f"""
-    **Predicted Price**: {predicted_price:,.0f} (10K KRW) ≈ **{predicted_price/100:.1f} billion KRW**
+    **Predicted Price**: {predicted_price:,.0f} (10K KRW) ≈ **{predicted_price/10000:.1f} 억원**
     """)
 
 

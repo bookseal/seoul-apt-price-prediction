@@ -548,7 +548,7 @@ def display_step6_predict(df: pd.DataFrame) -> None:
             {predicted_price:,.0f} <span style="font-size: 18px;">만원</span>
         </div>
         <div style="font-size: 16px; color: #888; margin-top: 5px;">
-            ≈ {predicted_price/100:.1f} 억원
+            ≈ {predicted_price/10000:.1f} 억원
         </div>
     </div>
     """, unsafe_allow_html=True)
