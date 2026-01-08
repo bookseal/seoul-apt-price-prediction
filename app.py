@@ -22,62 +22,135 @@ def home_page():
     ---
     
     ## 🎯 Key Concept: Each Level is End-to-End
-    
-    Every level is a **complete pipeline**:
-    
-    **Data → Method → Prediction**
-    
-    The difference is **complexity** - start simple, then improve!
-    
-    ---
-    
-    ## 📊 Level Overview
     """)
     
-    # Level cards
-    col1, col2, col3 = st.columns(3)
+    # Main concept diagram
+    st.markdown("""
+    ```mermaid
+    flowchart LR
+        subgraph Pipeline["Every Level = Complete Pipeline"]
+            A[📊 Data] --> B[🧮 Method] --> C[🔮 Prediction]
+        end
+        
+        style Pipeline fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    ```
+    """)
     
+    st.info("**The difference between levels is COMPLEXITY, not steps!**")
+    
+    st.markdown("---")
+    
+    # Level Overview
+    st.markdown("## 📊 Level Overview")
+    
+    # Level 1
+    st.markdown("### 🎯 Level 1: Heuristic (No ML)")
+    
+    st.markdown("""
+    ```mermaid
+    flowchart LR
+        subgraph L1["Level 1: Heuristic"]
+            D1[("🏠 Data<br/>100K apartments")] --> M1["📍 Group by<br/>District"]
+            M1 --> C1["📊 Calculate<br/>Median $/m²"]
+            C1 --> P1["🔮 Price =<br/>Median × Area"]
+        end
+        
+        style L1 fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    ```
+    """)
+    
+    col1, col2 = st.columns([2, 1])
     with col1:
         st.markdown("""
-        <div style="padding: 20px; background: rgba(76, 175, 80, 0.1); 
-                    border-radius: 10px; border-left: 4px solid #4CAF50; height: 200px;">
-        <h3>🎯 Level 1</h3>
-        <p><b>Heuristic</b></p>
-        <p style="font-size: 14px;">
-        District Median × Area<br/>
-        No ML needed<br/>
-        Simplest baseline
-        </p>
-        </div>
-        """, unsafe_allow_html=True)
-    
+        **Method**: District Median × Area
+        
+        - No machine learning needed
+        - Uses location as the key factor
+        - Simplest possible baseline
+        """)
     with col2:
-        st.markdown("""
-        <div style="padding: 20px; background: rgba(33, 150, 243, 0.1); 
-                    border-radius: 10px; border-left: 4px solid #2196F3; height: 200px;">
-        <h3>📐 Level 2</h3>
-        <p><b>Linear Regression</b></p>
-        <p style="font-size: 14px;">
-        Area only<br/>
-        First ML model<br/>
-        Single feature
-        </p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.success("✅ Start here if new to ML!")
     
-    with col3:
+    st.markdown("---")
+    
+    # Level 2
+    st.markdown("### 📐 Level 2: Linear Regression (Single Feature)")
+    
+    st.markdown("""
+    ```mermaid
+    flowchart LR
+        subgraph L2["Level 2: Linear Regression"]
+            D2[("🏠 Data<br/>Area, Price")] --> T2["🎓 Train<br/>Find w, b"]
+            T2 --> F2["📐 Formula<br/>y = wx + b"]
+            F2 --> P2["🔮 Price =<br/>w×Area + b"]
+        end
+        
+        style L2 fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+    ```
+    """)
+    
+    col1, col2 = st.columns([2, 1])
+    with col1:
         st.markdown("""
-        <div style="padding: 20px; background: rgba(156, 39, 176, 0.1); 
-                    border-radius: 10px; border-left: 4px solid #9C27B0; height: 200px;">
-        <h3>🚀 Level 3</h3>
-        <p><b>Multi-Feature LR</b></p>
-        <p style="font-size: 14px;">
-        Area + District + Floor<br/>
-        Multiple features<br/>
-        Better accuracy
-        </p>
-        </div>
-        """, unsafe_allow_html=True)
+        **Method**: Linear Regression with Area only
+        
+        - First machine learning model
+        - Learns from data automatically
+        - Single feature: exclusive area
+        """)
+    with col2:
+        st.info("📐 First ML model!")
+    
+    st.markdown("---")
+    
+    # Level 3
+    st.markdown("### 🚀 Level 3: Multi-Feature Model")
+    
+    st.markdown("""
+    ```mermaid
+    flowchart LR
+        subgraph L3["Level 3: Multiple Features"]
+            D3[("🏠 Data<br/>Area, District,<br/>Floor")] --> E3["⚙️ Encode<br/>District→Number"]
+            E3 --> T3["🎓 Train<br/>Find w₁,w₂,w₃,b"]
+            T3 --> P3["🔮 Price =<br/>w₁×Area +<br/>w₂×District +<br/>w₃×Floor + b"]
+        end
+        
+        style L3 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    ```
+    """)
+    
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.markdown("""
+        **Method**: Linear Regression with Multiple Features
+        
+        - Area + District + Floor
+        - Model learns importance of each
+        - Better predictions!
+        """)
+    with col2:
+        st.warning("🚀 More features = Better accuracy!")
+    
+    st.markdown("---")
+    
+    # Progression diagram
+    st.markdown("## 📈 Learning Progression")
+    
+    st.markdown("""
+    ```mermaid
+    flowchart TB
+        subgraph Journey["Your ML Journey"]
+            L1["🎯 Level 1<br/>Heuristic<br/>No ML"] --> L2["📐 Level 2<br/>Linear Regression<br/>1 Feature"]
+            L2 --> L3["🚀 Level 3<br/>Multi-Feature<br/>3 Features"]
+            L3 --> L4["🔥 Level 4+<br/>Coming Soon<br/>Advanced ML"]
+        end
+        
+        style L1 fill:#c8e6c9,stroke:#4caf50
+        style L2 fill:#bbdefb,stroke:#2196f3
+        style L3 fill:#e1bee7,stroke:#9c27b0
+        style L4 fill:#ffe0b2,stroke:#ff9800
+    ```
+    """)
     
     st.markdown("""
     ---
@@ -86,12 +159,12 @@ def home_page():
     
     **"Start Simple, Scale Smart"**
     
-    1. **Level 1**: No ML - just statistics
-    2. **Level 2**: Simplest ML possible
-    3. **Level 3**: Add features to improve
-    4. **Level 4+**: Advanced techniques (coming soon)
-    
-    Each level builds on the previous one. Don't skip ahead!
+    | Level | Complexity | Features | ML? |
+    |-------|------------|----------|-----|
+    | 1 | ⭐ | District + Area | ❌ |
+    | 2 | ⭐⭐ | Area only | ✅ |
+    | 3 | ⭐⭐⭐ | Area + District + Floor | ✅ |
+    | 4+ | ⭐⭐⭐⭐ | Many + Engineering | ✅✅ |
     
     ---
     
