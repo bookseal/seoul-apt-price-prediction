@@ -379,6 +379,11 @@ def display_best_model_analysis(results: list, X_test, y_test) -> None:
     ax.grid(True, alpha=0.3)
     st.pyplot(fig, use_container_width=True)
     plt.close()
+    
+    # Compare with other levels
+    st.markdown("---")
+    from src.comparison import display_rmse_comparison
+    display_rmse_comparison(10, best['RMSE'])
 
 
 def display_demo(results: list, scaler, feature_cols: list, df: pd.DataFrame) -> None:

@@ -16,6 +16,7 @@ from src.io import load_sample_dataset
 from src.utils import calculate_rmse
 from src.config import RANDOM_STATE
 from src.navigation import display_next_level_teaser
+from src.comparison import display_rmse_comparison
 
 
 def display_header() -> None:
@@ -472,6 +473,10 @@ def display_comparison(results: dict) -> None:
     """)
     
     st.dataframe(results_df, use_container_width=True)
+    
+    # Compare with other levels
+    st.markdown("---")
+    display_rmse_comparison(9, best['RMSE'])
 
 
 def display_limitations() -> None:

@@ -19,6 +19,7 @@ from src.io import load_sample_dataset
 from src.utils import calculate_rmse
 from src.config import RANDOM_STATE
 from src.navigation import display_next_level_teaser
+from src.comparison import display_rmse_comparison
 
 
 def display_header() -> None:
@@ -380,6 +381,10 @@ def display_evaluation(rmse_train: float, rmse_test: float, y_test, y_pred) -> N
         </span>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Compare with other levels
+    st.markdown("---")
+    display_rmse_comparison(4, rmse_test)
 
 
 def display_demo(df: pd.DataFrame, model, encoder) -> None:

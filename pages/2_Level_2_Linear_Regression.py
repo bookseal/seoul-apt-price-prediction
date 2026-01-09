@@ -13,6 +13,7 @@ from src.io import load_sample_dataset
 from src.model import load_trained_model, get_model_info, calculate_metrics
 from src.config import RANDOM_STATE
 from src.navigation import display_next_level_teaser
+from src.comparison import display_rmse_comparison
 
 
 def display_header() -> None:
@@ -587,6 +588,10 @@ def display_evaluation(df: pd.DataFrame) -> None:
     Why? Because expensive apartments often have other factors: good location, 
     high floor, new building... things we're NOT using in Level 2!
     """)
+    
+    # Compare with other levels
+    st.markdown("---")
+    display_rmse_comparison(2, metrics['rmse'])
 
 
 def display_demo(df: pd.DataFrame) -> None:

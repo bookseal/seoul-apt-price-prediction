@@ -16,6 +16,7 @@ from src.io import load_sample_dataset
 from src.utils import calculate_rmse
 from src.config import RANDOM_STATE
 from src.navigation import display_next_level_teaser
+from src.comparison import display_rmse_comparison
 
 
 def display_header() -> None:
@@ -485,6 +486,10 @@ def display_evaluation(rmse_train: float, rmse_test: float, y_test, y_pred) -> N
     ax.grid(True, alpha=0.3)
     st.pyplot(fig, use_container_width=True)
     plt.close()
+    
+    # Compare with other levels
+    st.markdown("---")
+    display_rmse_comparison(3, rmse_test)
 
 
 def display_demo(df: pd.DataFrame, model, encoder) -> None:
