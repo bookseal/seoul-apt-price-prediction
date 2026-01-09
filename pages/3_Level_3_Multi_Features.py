@@ -29,19 +29,19 @@ def display_header() -> None:
     Now the model can learn: Gangnam apartments cost more!
     """)
     
-    with st.expander("💡 What is One-Hot Encoding?"):
+    with st.expander("💡 Why One-Hot Encoding? (Important!)"):
         st.markdown("""
-        **Problem**: Computers can't understand "Gangnam" or "Nowon" - they need numbers!
+        **Why not just use numbers like 1, 2, 3?**
         
-        **Solution**: One-Hot Encoding converts categories into binary columns:
+        If we say `Gangnam=1`, `Seocho=2`, `Nowon=3`:
+        *   The model thinks **Nowon (3)** is "3 times greater" than **Gangnam (1)**.
+        *   It creates a **false ranking** (Order) that doesn't exist.
         
-        | District | Gangnam | Seocho | Nowon | ... |
-        |----------|---------|--------|-------|-----|
-        | Gangnam  | 1       | 0      | 0     | ... |
-        | Seocho   | 0       | 1      | 0     | ... |
-        | Nowon    | 0       | 0      | 1     | ... |
-        
-        Each district becomes its own column with 0 or 1!
+        **Solution: One-Hot Encoding**
+        *   Treats every district as a separate, independent "switch".
+        *   Gangnam? Yes/No (1/0)
+        *   Seocho? Yes/No (1/0)
+        *   **No false math, just pure categorical data!**
         """)
 
 
@@ -99,8 +99,9 @@ def display_pipeline_overview() -> None:
                 border-left: 4px solid #9C27B0; margin: 10px 0;">
         <b>🔄 Step 2: One-Hot Encode</b> ⭐ <i>NEW in Level 3!</i><br>
         <span style="font-size: 13px;">
-        <b>Convert "Gangnam" to [1,0,0,...], "Seocho" to [0,1,0,...]</b><br>
-        This lets the model understand categorical data!
+        <b>Transform Text to Independent Switches</b><br>
+        Create a separate column for each district.<br>
+        Prevents the model from learning false patterns (e.g. A > B).
         </span>
     </div>
     """, unsafe_allow_html=True)
@@ -204,9 +205,28 @@ def display_onehot_explanation(df: pd.DataFrame) -> None:
     st.header("🔄 Understanding One-Hot Encoding")
     
     st.markdown("""
-    **The Problem**: Machine learning models need numbers, not words!
+    **The Problem with Simple Numbers (Label Encoding)**
     
-    Let's see how One-Hot Encoding works:
+    If we assign numbers arbitrarily:
+    *   **Gangnam = 1**
+    *   **Seocho = 2**
+    *   **Nowon = 3**
+    
+    The Linear Regression formula `y = wx + b` would do this math:
+    > `Price = w * (District Number) + b`
+    
+    It would calculate `Price` for **Nowon (3)** as **3 times** the effect of **Gangnam (1)**.
+    **This is logically wrong!** Districts are categories, not magnitudes.
+    
+    ---
+    
+    **The Solution: One-Hot Encoding**
+    
+    We create a **separate binary column** for each district. Each column asks a Yes/No question:
+    *   "Is this Gangnam?" (1 or 0)
+    *   "Is this Seocho?" (1 or 0)
+    
+    This treats all districts fairly and independently.
     """)
     
     # Show example with real data
