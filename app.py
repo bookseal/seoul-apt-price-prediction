@@ -277,10 +277,27 @@ def home_page():
     ---
     
     ## 🚀 Quick Start
+    """)
     
-    👈 **Select a Level from the sidebar to begin!**
+    # Start button for Level 1
+    st.markdown("""
+    <div style="text-align: center; padding: 30px; margin: 20px 0;">
+    """, unsafe_allow_html=True)
     
-    Start with **Level 1** if you're new to ML.
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("🎯 Start Level 1: Heuristic", use_container_width=True, type="primary"):
+            st.switch_page("pages/1_Level_1_Heuristic.py")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        if st.button("📐 Go to Level 2: Linear Regression", use_container_width=True):
+            st.switch_page("pages/2_Level_2_Linear_Regression.py")
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    st.markdown("""
+    👈 Or select any Level from the sidebar!
     
     ---
     
