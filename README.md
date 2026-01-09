@@ -1,65 +1,8 @@
 # 📚 Seoul Apartment Price Prediction - ML Roadmap
 
-A step-by-step guide to learn machine learning through apartment price prediction.
-Built for beginners who want to become AI developers.
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://bookseal-seoul-apt-price-prediction.streamlit.app)
 
-## 🔗 Live Demo
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://bookseal-seoul-apt-price-prediction.streamlit.app)
-
-## 🎯 Project Philosophy
-
-**"Start Simple, Scale Smart"**
-
-This project guides you from complete beginner to ML practitioner through incremental learning.
-
-## 📖 Learning Roadmap
-
-### Level 1: Understanding Data
-| Chapter | Topic | What You'll Learn |
-|---------|-------|-------------------|
-| 1.1 | Explore Data | Dataset structure, basic statistics |
-| 1.2 | EDA | Distributions, visualizations, patterns |
-| 1.3 | Sampling | Stratified sampling, Parquet format |
-
-### Level 2: Building Your First Model
-| Chapter | Topic | What You'll Learn |
-|---------|-------|-------------------|
-| 2.1 | Feature Selection | Correlation analysis, choosing features |
-| 2.2 | Linear Regression | Model fundamentals, prediction formula |
-| 2.3 | Model Evaluation | RMSE, residual analysis |
-| 2.4 | Prediction Demo | Using trained models, limitations |
-
-### Coming Soon
-- **Level 3**: Multiple features, tree-based models, cross-validation
-- **Level 4**: Ensemble methods, hyperparameter tuning, MLOps
-
-## 📦 Repository Structure
-
-```
-seoul-apt-price-prediction/
-├── app.py                      # Learning roadmap hub
-├── pages/
-│   ├── 1_1_Explore_Data.py    # Level 1 chapters
-│   ├── 1_2_EDA.py
-│   ├── 1_3_Sampling.py
-│   ├── 2_1_Feature_Selection.py  # Level 2 chapters
-│   ├── 2_2_Linear_Regression.py
-│   ├── 2_3_Model_Evaluation.py
-│   └── 2_4_Prediction_Demo.py
-├── src/
-│   ├── config.py              # Configuration settings
-│   ├── io.py                  # Data loading utilities
-│   ├── plots.py               # Visualization functions
-│   ├── model.py               # Model utilities
-│   ├── data_loader.py         # CSV data loaders
-│   └── utils.py               # Helper functions
-├── data/
-│   ├── raw/                   # Original CSV files
-│   └── sample.parquet         # 100K stratified sample
-├── models/                    # Trained model files
-├── train.py                   # Model training script
-└── requirements.txt           # Dependencies
-```
+A step-by-step guide to learning machine learning through apartment price prediction in Seoul. This project takes you from basic heuristics to advanced AutoML in 10 progressive levels.
 
 ## 🚀 Quick Start
 
@@ -72,26 +15,40 @@ pip install -r requirements.txt
 ```bash
 streamlit run app.py
 ```
+Open your browser to the URL shown in the terminal.
 
-### 3. Train Your Own Model
-```bash
-python train.py
-```
+## 🗺️ Learning Levels
 
-## 📊 Dataset
+This project is divided into 10 levels, each introducing new concepts:
 
-Seoul apartment real transaction price data:
-- **Original**: 1.1M+ rows
-- **Sample**: 100K rows (stratified by district × year)
-- **Format**: Parquet for fast I/O
+| Level | Topic | Description |
+|-------|-------|-------------|
+| **1** | **Heuristic** | Simple prediction using median price per district (No ML). |
+| **2** | **Linear Regression** | First ML model using a single feature (Area). |
+| **3** | **Multi-Features** | Improving the model with multiple features and encoding. |
+| **4** | **3D Regression** | Visualizing data in 3D and adding 'Year' as a feature. |
+| **5** | **High-Dimensional** | Handling 10+ features and understanding complexity. |
+| **6** | **PCA** | Reducing dimensionality to understand data structure. |
+| **7** | **Data Cleaning** | Handling missing values and outliers for better quality. |
+| **8** | **Feature Engineering** | creating new features to boost model performance. |
+| **9** | **Regularization** | Using Ridge/Lasso to prevent overfitting. |
+| **10** | **AutoML** | The finale: Automatic model selection and tuning. |
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Streamlit
-- **ML**: scikit-learn
-- **Data**: Pandas, PyArrow
+- **App Framework**: Streamlit
+- **Machine Learning**: scikit-learn
+- **Data Processing**: Pandas, NumPy
 - **Visualization**: Plotly, Matplotlib
 
-## 🙌 Credits
+## 📂 Project Structure
 
-Built as an educational ML project.
+- `app.py`: Main entry point for the Streamlit app.
+- `pages/`: Code for each of the 10 learning levels.
+- `src/`: Utility functions for data loading, processing, and visualization.
+- `data/`: Dataset storage (parquet format).
+- `models/`: Directory for saving trained models.
+
+## 🤝 Contributing
+
+This is an educational project. Feel free to explore, experiment, and submit PRs for improvements!

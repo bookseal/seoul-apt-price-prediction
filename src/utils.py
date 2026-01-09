@@ -5,6 +5,7 @@ Utility Functions Module
 Common functions for RMSE calculation, visualization settings, logging, etc.
 """
 import numpy as np
+import joblib
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from typing import Union, List
@@ -85,3 +86,17 @@ def ensure_dir(path: Path) -> None:
         path: Directory path to create
     """
     path.mkdir(parents=True, exist_ok=True)
+
+
+def save_object(obj: object, path: Path) -> None:
+    """
+    Save object to disk using joblib.
+    
+    Args:
+        obj: Object to save
+        path: Path to save file
+    """
+    ensure_dir(path.parent)
+    joblib.dump(obj, path)
+    print(f"[Object Saved] {path}")
+

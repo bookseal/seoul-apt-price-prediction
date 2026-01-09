@@ -1,28 +1,34 @@
 # -*- coding: utf-8 -*-
 """
-모델 유틸리티 모듈
+Model Utility Module
 
-학습된 모델의 로드, 예측, 평가를 위한 함수들을 제공합니다.
+Provides functions for loading, predicting, evaluating, and training models.
+Refactored to support reproducible experiments via CLI.
 """
 import joblib
 import numpy as np
+import pandas as pd
 import streamlit as st
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict, Any, List
+
+from sklearn.base import BaseEstimator
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 from src.config import MODEL_PATH
 
 
 @st.cache_resource
-def load_trained_model(model_path: Optional[Path] = None):
+def load_trained_model(model_path: Optional[Path] = None) -> Optional[BaseEstimator]:
     """
-    학습된 모델을 로드합니다.
+    Load a trained model from disk.
     
     Args:
-        model_path: 모델 파일 경로. None이면 기본 경로 사용.
+        model_path: Path to model file. Defaults to MODEL_PATH.
         
     Returns:
-        학습된 모델 객체 또는 None (파일이 없는 경우)
+        Trained model object or None if file not found.
     """
     path = model_path or MODEL_PATH
     if path.exists():
@@ -30,35 +36,42 @@ def load_trained_model(model_path: Optional[Path] = None):
     return None
 
 
-def predict_price(model, area: float) -> float:
+def predict_price(model: BaseEstimator, features: List[float]) -> float:
     """
-    전용면적을 입력받아 가격을 예측합니다.
+    Predict price for a given set of features.
     
     Args:
-        model: 학습된 모델 객체
-        area: 전용면적 (㎡)
+        model: Trained model object
+        features: List of feature values (e.g., [area])
         
     Returns:
-        예측 가격 (만원)
+        Predicted price (10K KRW)
     """
-    prediction = model.predict([[area]])[0]
+    # Reshape for single sample prediction
+    feature_array = np.array(features).reshape(1, -1)
+    prediction = model.predict(feature_array)[0]
     return prediction
 
 
-def calculate_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
+def calculate_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     """
-    예측 성능 지표를 계산합니다.
+    Calculate regression performance metrics.
     
     Args:
-        y_true: 실제 값 배열
-        y_pred: 예측 값 배열
+        y_true: Ground truth values
+        y_pred: Predicted values
         
     Returns:
-        RMSE, MAE, MAPE를 포함한 딕셔너리
+        Dictionary containing RMSE, MAE, and MAPE
     """
-    rmse = np.sqrt(np.mean((y_true - y_pred) ** 2))
-    mae = np.mean(np.abs(y_true - y_pred))
-    mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+    mae = mean_absolute_error(y_true, y_pred)
+    
+    # Avoid division by zero for MAPE
+    with np.errstate(divide='ignore', invalid='ignore'):
+        mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+        if np.isinf(mape) or np.isnan(mape):
+            mape = 0.0
     
     return {
         "rmse": rmse,
@@ -67,18 +80,37 @@ def calculate_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
     }
 
 
-def get_model_info(model) -> dict:
+def get_model_info(model: BaseEstimator) -> Dict[str, Any]:
     """
-    모델의 기본 정보를 추출합니다.
+    Extract basic model information.
     
     Args:
-        model: 학습된 모델 객체 (Linear Regression)
+        model: Trained model object
         
     Returns:
-        모델 정보 딕셔너리 (계수, 절편 등)
+        Dictionary with model type and parameters (if applicable)
     """
-    return {
-        "model_type": type(model).__name__,
-        "coefficient": model.coef_[0] if hasattr(model, 'coef_') else None,
-        "intercept": model.intercept_ if hasattr(model, 'intercept_') else None
-    }
+    info = {"model_type": type(model).__name__}
+    
+    if hasattr(model, 'coef_'):
+        info["coefficient"] = model.coef_[0]
+    if hasattr(model, 'intercept_'):
+        info["intercept"] = model.intercept_
+            
+    return info
+
+
+def train_linear_model(X_train: np.ndarray, y_train: np.ndarray) -> LinearRegression:
+    """
+    Train a simple Linear Regression model.
+    
+    Args:
+        X_train: Training features
+        y_train: Training targets
+        
+    Returns:
+        Trained LinearRegression model
+    """
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    return model
