@@ -462,17 +462,49 @@ b = model.intercept_     # Learned bias
         st.info(f"💡 Try w={optimal_w:.0f} and b={optimal_b:.0f} to match the optimal line!")
 
 
-def display_model_info() -> None:
-    """Show trained model parameters."""
-    st.header("🤖 Trained Model")
+def display_model_info(df: pd.DataFrame) -> None:
+    """Show trained model parameters and training details."""
+    st.header("🤖 Step 4: Trained Model")
     
     model = load_trained_model()
     
     if model is None:
         st.warning("⚠️ No trained model found. Run `python train.py` first.")
+        st.code("cd seoul-apt-price-prediction\npython train.py", language='bash')
         return
     
     info = get_model_info(model)
+    
+    # Training summary box
+    st.markdown("""
+    <div style="padding: 20px; background: linear-gradient(135deg, rgba(76,175,80,0.1), rgba(33,150,243,0.1)); 
+                border-radius: 15px; border: 2px solid #4CAF50; margin: 15px 0;">
+        <h4 style="margin: 0 0 15px 0;">✅ Training Complete!</h4>
+        <span style="font-size: 14px; color: gray;">
+        Model has been trained and saved to <code>models/linear_area_model.pkl</code>
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Training data info
+    st.markdown("### 📊 Training Data Summary")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Total Samples", "1,118,822")
+    with col2:
+        st.metric("Training Set", "895,057")
+        st.caption("80% of data")
+    with col3:
+        st.metric("Validation Set", "223,765")
+        st.caption("20% of data")
+    with col4:
+        st.metric("Feature Used", "Area (m²)")
+    
+    st.markdown("---")
+    
+    # Model parameters
+    st.markdown("### 📐 Learned Parameters")
     
     col1, col2 = st.columns(2)
     
@@ -482,15 +514,104 @@ def display_model_info() -> None:
     
     with col2:
         st.metric("Bias (b)", f"{info['intercept']:,.2f}")
-        st.caption("Base price")
+        st.caption("Base price (intercept)")
     
-    st.info(f"""
-    **Model Equation**:
+    # The formula
+    st.markdown(f"""
+    <div style="padding: 25px; background: rgba(33,150,243,0.1); border-radius: 10px; 
+                border: 2px solid #2196F3; margin: 15px 0; text-align: center;">
+        <h3 style="margin: 0;">📝 Final Formula</h3>
+        <p style="font-size: 22px; margin: 15px 0;">
+            <b>Price</b> = <span style="color:#4CAF50">{info['coefficient']:,.2f}</span> × Area + <span style="color:#9C27B0">{info['intercept']:,.2f}</span>
+        </p>
+        <p style="font-size: 14px; color: gray; margin: 0;">
+            +1 m² → +{info['coefficient']:,.0f} (10K KRW) → +{info['coefficient']/100:.1f} 백만원
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    Price = **{info['coefficient']:,.2f}** × Area + **{info['intercept']:,.2f}**
+    # Visualize the trained model
+    st.markdown("### 📈 Trained Model Visualization")
     
-    **Interpretation**: Each additional m² increases price by ~{info['coefficient']:,.0f} (10K KRW)
-    """)
+    sample = df.sample(n=min(2000, len(df)), random_state=RANDOM_STATE)
+    x = sample['area_m2'].values
+    y = sample['price_10k_krw'].values
+    y_pred = model.predict(x.reshape(-1, 1))
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.scatter(x, y, alpha=0.3, s=15, c='steelblue', label='Actual data')
+    
+    # Sort for line plotting
+    sort_idx = np.argsort(x)
+    ax.plot(x[sort_idx], y_pred[sort_idx], 'r-', linewidth=3, 
+            label=f'Trained model: y = {info["coefficient"]:.1f}x + {info["intercept"]:.0f}')
+    
+    ax.set_xlabel('Area (m²)', fontsize=12)
+    ax.set_ylabel('Price (10K KRW)', fontsize=12)
+    ax.set_title('Trained Linear Regression Model', fontsize=14)
+    ax.legend(fontsize=11)
+    ax.grid(True, alpha=0.3)
+    st.pyplot(fig, use_container_width=True)
+    plt.close()
+    
+    # Example calculations
+    st.markdown("### 🔢 Example Calculations")
+    
+    examples = [
+        (30, "Small studio"),
+        (60, "1-2 bedroom"),
+        (84, "3 bedroom (typical)"),
+        (120, "Large family"),
+        (150, "Luxury/Penthouse")
+    ]
+    
+    example_data = []
+    for area, desc in examples:
+        pred = model.predict([[area]])[0]
+        example_data.append({
+            "Type": desc,
+            "Area (m²)": area,
+            "Predicted Price": f"{pred:,.0f}",
+            "In 억원": f"{pred/10000:.1f}억"
+        })
+    
+    st.dataframe(pd.DataFrame(example_data), use_container_width=True, hide_index=True)
+    
+    # How to load and use the model
+    with st.expander("💻 How to Load and Use This Model"):
+        st.markdown("**Load the saved model in your Python code:**")
+        st.code("""
+import joblib
+
+# Load the trained model
+model = joblib.load('models/linear_area_model.pkl')
+
+# Make a prediction
+area = 84  # m²
+predicted_price = model.predict([[area]])[0]
+print(f"Predicted price: {predicted_price:,.0f} (10K KRW)")
+
+# Get model parameters
+w = model.coef_[0]       # Weight
+b = model.intercept_     # Bias
+print(f"Formula: Price = {w:.2f} × Area + {b:.2f}")
+""", language='python')
+    
+    # Training reproduction
+    with st.expander("🔄 How to Reproduce Training"):
+        st.markdown("**Run the training script to retrain the model:**")
+        st.code("""
+cd seoul-apt-price-prediction
+python train.py
+""", language='bash')
+        st.markdown("""
+        **What happens:**
+        1. Loads 1.1M apartment transaction records
+        2. Splits into 80% train / 20% validation
+        3. Trains LinearRegression model
+        4. Saves to `models/linear_area_model.pkl`
+        5. Creates scatter plot in `output/figures/`
+        """)
 
 
 def display_evaluation(df: pd.DataFrame) -> None:
@@ -676,7 +797,7 @@ def main() -> None:
         st.markdown("---")
         display_training_process(df)
         st.markdown("---")
-        display_model_info()
+        display_model_info(df)
         st.markdown("---")
         display_evaluation(df)
         st.markdown("---")
