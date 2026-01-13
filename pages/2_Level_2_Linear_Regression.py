@@ -403,51 +403,71 @@ def display_training_process(df: pd.DataFrame) -> None:
         st.session_state['gd_epoch'] = 0
     if 'gd_history' not in st.session_state:
         st.session_state['gd_history'] = []
-    if 'gd_lr' not in st.session_state:
-        st.session_state['gd_lr'] = 0.00005  # Initial learning rate
-        
     # 3. Controls
-    col1, col2, col3, col4 = st.columns([1, 1, 1, 2])
+    st.markdown("##### 🕹️ Simulator Controls")
     
-    with col1:
-        if st.button("Step (1x)"):
-            # Update step
-            y_pred = st.session_state['gd_w'] * X + st.session_state['gd_b']
-            error = y_pred - y
-            w_grad = (2/len(X)) * np.sum(error * X)
-            b_grad = (2/len(X)) * np.sum(error)
+    col_lr, col_btn = st.columns([1, 2])
+    
+    with col_lr:
+        step_speed = st.radio(
+            "Step Size (Learning Rate)",
+            ["🐢 Little Steps (Careful)", "🐇 Big Steps (Fast)"],
+            index=0
+        )
+        
+        # Set Learning Rate based on selection
+        if step_speed == "🐢 Little Steps (Careful)":
+            st.session_state['gd_lr'] = 0.00001
+        else:
+            st.session_state['gd_lr'] = 0.00005
             
-            st.session_state['gd_w'] -= st.session_state['gd_lr'] * w_grad
-            st.session_state['gd_b'] -= st.session_state['gd_lr'] * b_grad * 100 # Boost bias LR for visibility
-            st.session_state['gd_epoch'] += 1
-            st.session_state['gd_history'].append((st.session_state['gd_w'], st.session_state['gd_b']))
-            
-    with col2:
-        if st.button("Fast (10x)"):
-            for _ in range(10):
+    with col_btn:
+        st.write("") # Spacing
+        st.write("") 
+        
+        c1, c2, c3 = st.columns(3)
+        
+        with c1:
+            if st.button("Step (1x)"):
+                # Update step
                 y_pred = st.session_state['gd_w'] * X + st.session_state['gd_b']
                 error = y_pred - y
                 w_grad = (2/len(X)) * np.sum(error * X)
                 b_grad = (2/len(X)) * np.sum(error)
                 
-                # Simple LR decay could be added here
                 st.session_state['gd_w'] -= st.session_state['gd_lr'] * w_grad
-                st.session_state['gd_b'] -= st.session_state['gd_lr'] * b_grad * 100
-            
-            st.session_state['gd_epoch'] += 10
-            st.session_state['gd_history'].append((st.session_state['gd_w'], st.session_state['gd_b']))
+                st.session_state['gd_b'] -= st.session_state['gd_lr'] * b_grad * 100 
+                st.session_state['gd_epoch'] += 1
+                st.session_state['gd_history'].append((st.session_state['gd_w'], st.session_state['gd_b']))
+                
+        with c2:
+            if st.button("Fast (10x)"):
+                for _ in range(10):
+                    y_pred = st.session_state['gd_w'] * X + st.session_state['gd_b']
+                    error = y_pred - y
+                    w_grad = (2/len(X)) * np.sum(error * X)
+                    b_grad = (2/len(X)) * np.sum(error)
+                    
+                    st.session_state['gd_w'] -= st.session_state['gd_lr'] * w_grad
+                    st.session_state['gd_b'] -= st.session_state['gd_lr'] * b_grad * 100
+                
+                st.session_state['gd_epoch'] += 10
+                st.session_state['gd_history'].append((st.session_state['gd_w'], st.session_state['gd_b']))
 
-    with col3:
-        if st.button("Reset"):
-            st.session_state['gd_w'] = 0.0 # random.uniform(0, 500)
-            st.session_state['gd_b'] = 0.0 # random.uniform(-10000, 10000)
-            st.session_state['gd_epoch'] = 0
-            st.session_state['gd_history'] = []
-            
-    with col4:
+        with c3:
+            if st.button("Reset"):
+                st.session_state['gd_w'] = 0.0 
+                st.session_state['gd_b'] = 0.0 
+                st.session_state['gd_epoch'] = 0
+                st.session_state['gd_history'] = []
+    
+    # Show stats
+    col1, col2 = st.columns(2)
+    with col1:
         st.markdown(f"**Epoch: {st.session_state['gd_epoch']}**")
+    with col2:
         cur_mse = np.mean((st.session_state['gd_w'] * X + st.session_state['gd_b'] - y) ** 2)
-        st.caption(f"RMSE: {np.sqrt(cur_mse):,.0f}")
+        st.metric("Current RMSE", f"{np.sqrt(cur_mse):,.0f}")
 
     # 4. Visualization
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
