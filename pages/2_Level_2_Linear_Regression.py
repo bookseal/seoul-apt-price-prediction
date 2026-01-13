@@ -272,33 +272,37 @@ def display_method() -> None:
     # Visualization
     st.graphviz_chart("""
     digraph G {
-        rankdir=LR;
-        node [shape=box, style="filled,rounded", fontname="Sans", margin=0.2];
-        edge [fontname="Sans"];
+        rankdir=TB;
+        node [fontname="Sans", shape=box, style="filled,rounded", fillcolor="white", margin=0.2];
+        edge [fontname="Sans", color="#666666"];
         bgcolor="transparent";
+        splines=ortho;
         
-        subgraph cluster_0 {
-            label = "Linear = Line";
-            style=dashed;
-            color="#2196F3";
-            node [fillcolor="#E3F2FD"];
-            L1 [label="Straight Line\n(y = wx + b)"];
-            L2 [label="Simple\nProportional"];
-        }
+        # Title Node
+        LR [label="Linear Regression", shape=doubleoctagon, fillcolor="#FFF3E0", fontsize=16, fontcolor="#E65100"];
         
-        subgraph cluster_1 {
-            label = "Regression = Number";
-            style=dashed;
-            color="#4CAF50";
-            node [fillcolor="#E8F5E9"];
-            R1 [label="Predicting\nQuantity"];
-            R2 [label="Output:\n12.5, 99.9..."];
-        }
+        # Split
+        {rank=same; Linear; Regression}
         
-        LR [label="Linear\nRegression", shape=note, fillcolor="#FFF3E0", fontsize=15];
+        Linear [label="Linear (선형)", fillcolor="#E3F2FD", color="#2196F3", penwidth=2];
+        Regression [label="Regression (회귀)", fillcolor="#E8F5E9", color="#4CAF50", penwidth=2];
         
-        LR -> L1;
-        LR -> R1;
+        LR -> Linear [penwidth=2, color="#2196F3"];
+        LR -> Regression [penwidth=2, color="#4CAF50"];
+        
+        # Details Linear
+        L_desc [label="Straight Line\nRelationship", style=dashed];
+        L_math [label="y = wx + b", shape=ellipse];
+        
+        Linear -> L_desc;
+        L_desc -> L_math;
+        
+        # Details Regression
+        R_desc [label="Predicting a\nNumber", style=dashed];
+        R_ex [label="Output: 12.5, 99.9", shape=ellipse];
+        
+        Regression -> R_desc;
+        R_desc -> R_ex;
     }
     """)
     
