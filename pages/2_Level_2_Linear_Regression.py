@@ -358,108 +358,148 @@ def display_data_insight(df: pd.DataFrame) -> None:
         """)
 
 
+def get_loss_surface(X, y, param_range):
+    """Calculate loss surface for visualization."""
+    w_range = np.linspace(param_range['w_min'], param_range['w_max'], 20)
+    b_range = np.linspace(param_range['b_min'], param_range['b_max'], 20)
+    W, B = np.meshgrid(w_range, b_range)
+    Z = np.zeros_like(W)
+    
+    for i in range(W.shape[0]):
+        for j in range(W.shape[1]):
+            pred = W[i, j] * X + B[i, j]
+            Z[i, j] = np.mean((pred - y) ** 2)
+            
+    return W, B, Z
+
 def display_training_process(df: pd.DataFrame) -> None:
-    """Show how training works with code examples."""
-    st.header("🎓 Step 3: Training (The ML Part!)")
+    """Interactive Gradient Descent Simulator."""
+    st.header("🎓 Step 3: Training (Interactive Simulator)")
     
     st.markdown("""
-    **This is where the magic happens!** The computer looks at all data 
-    and finds the best w and b values.
+    **Experiencing Gradient Descent**
+    
+    Let's train the model ourselves! We will use **Gradient Descent** to find the best `w` and `b`.
+    
+    *   **Goal**: Reach the center of the "Error Mountain" (Dark blue area).
+    *   **Method**: Take steps downhill.
     """)
     
-    # Show the baseline code
-    st.markdown("### 📝 The Training Code")
+    # 1. Setup Simulation Data (Normalize for easier visualization/training)
+    # We use a small sample for individual point visualization
+    sample = df.sample(n=50, random_state=42)
+    X = sample['area_m2'].values
+    y = sample['price_10k_krw'].values
     
-    st.code("""
-# Step 1: Prepare data
-X = df[['area_m2']]      # Input: Area (2D array for sklearn)
-y = df['price_10k_krw']  # Output: Price
-
-# Step 2: Create the model
-from sklearn.linear_model import LinearRegression
-model = LinearRegression()
-
-# Step 3: TRAIN! (This is where learning happens)
-model.fit(X, y)
-
-# Step 4: Get learned values
-w = model.coef_[0]       # Learned weight
-b = model.intercept_     # Learned bias
-""", language='python')
+    # Pre-calculate optimal for reference
+    optimal_w, optimal_b = np.polyfit(X, y, 1)
     
-    # What happens inside fit()?
-    with st.expander("🔍 What happens inside `model.fit(X, y)`?"):
-        st.markdown("""
-        **Goal**: Find w and b that minimize prediction errors.
+    # 2. Setup Session State
+    if 'gd_w' not in st.session_state:
+        st.session_state['gd_w'] = 0.0
+    if 'gd_b' not in st.session_state:
+        st.session_state['gd_b'] = 0.0
+    if 'gd_epoch' not in st.session_state:
+        st.session_state['gd_epoch'] = 0
+    if 'gd_history' not in st.session_state:
+        st.session_state['gd_history'] = []
+    if 'gd_lr' not in st.session_state:
+        st.session_state['gd_lr'] = 0.00005  # Initial learning rate
         
-        The computer tries MANY different w and b values and picks the best!
-        """)
-        
-        st.latex(r"\text{Error} = \sum_{i=1}^{n} (\text{Actual}_i - \text{Predicted}_i)^2")
-        
-        st.markdown("""
-        **Process (simplified)**:
-        1. Start with random w and b
-        2. Calculate total error for all data points
-        3. Adjust w and b to reduce error
-        4. Repeat until error is minimized
-        
-        **Result**: The line that best fits ALL data points!
-        """)
+    # 3. Controls
+    col1, col2, col3, col4 = st.columns([1, 1, 1, 2])
     
-    # Interactive demo: show different w, b values
-    st.markdown("### 🎮 Try Different w and b Values")
-    st.markdown("See how the line changes when you adjust w and b manually:")
-    
-    sample = df.sample(n=min(500, len(df)), random_state=42)
-    
-    col1, col2 = st.columns(2)
     with col1:
-        user_w = st.slider("Weight (w)", min_value=0, max_value=2000, value=900, step=50)
+        if st.button("Step (1x)"):
+            # Update step
+            y_pred = st.session_state['gd_w'] * X + st.session_state['gd_b']
+            error = y_pred - y
+            w_grad = (2/len(X)) * np.sum(error * X)
+            b_grad = (2/len(X)) * np.sum(error)
+            
+            st.session_state['gd_w'] -= st.session_state['gd_lr'] * w_grad
+            st.session_state['gd_b'] -= st.session_state['gd_lr'] * b_grad * 100 # Boost bias LR for visibility
+            st.session_state['gd_epoch'] += 1
+            st.session_state['gd_history'].append((st.session_state['gd_w'], st.session_state['gd_b']))
+            
     with col2:
-        user_b = st.slider("Bias (b)", min_value=-50000, max_value=50000, value=0, step=5000)
+        if st.button("Fast (10x)"):
+            for _ in range(10):
+                y_pred = st.session_state['gd_w'] * X + st.session_state['gd_b']
+                error = y_pred - y
+                w_grad = (2/len(X)) * np.sum(error * X)
+                b_grad = (2/len(X)) * np.sum(error)
+                
+                # Simple LR decay could be added here
+                st.session_state['gd_w'] -= st.session_state['gd_lr'] * w_grad
+                st.session_state['gd_b'] -= st.session_state['gd_lr'] * b_grad * 100
+            
+            st.session_state['gd_epoch'] += 10
+            st.session_state['gd_history'].append((st.session_state['gd_w'], st.session_state['gd_b']))
+
+    with col3:
+        if st.button("Reset"):
+            st.session_state['gd_w'] = 0.0 # random.uniform(0, 500)
+            st.session_state['gd_b'] = 0.0 # random.uniform(-10000, 10000)
+            st.session_state['gd_epoch'] = 0
+            st.session_state['gd_history'] = []
+            
+    with col4:
+        st.markdown(f"**Epoch: {st.session_state['gd_epoch']}**")
+        cur_mse = np.mean((st.session_state['gd_w'] * X + st.session_state['gd_b'] - y) ** 2)
+        st.caption(f"RMSE: {np.sqrt(cur_mse):,.0f}")
+
+    # 4. Visualization
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
     
-    # Calculate errors
-    x_vals = sample['area_m2'].values
-    y_actual = sample['price_10k_krw'].values
-    y_user = user_w * x_vals + user_b
+    # Plot 1: Loss Surface
+    # Define range relative to optimal to ensure it's centered enough
+    w_min, w_max = -500, 2500
+    b_min, b_max = -100000, 100000
     
-    # Optimal values (from training)
-    optimal_w, optimal_b = np.polyfit(x_vals, y_actual, 1)
-    y_optimal = optimal_w * x_vals + optimal_b
+    W, B, Z = get_loss_surface(X, y, {'w_min': w_min, 'w_max': w_max, 'b_min': b_min, 'b_max': b_max})
     
-    user_rmse = np.sqrt(np.mean((y_actual - y_user) ** 2))
-    optimal_rmse = np.sqrt(np.mean((y_actual - y_optimal) ** 2))
+    cp = ax1.contourf(W, B, np.sqrt(Z), levels=20, cmap='viridis_r')
+    fig.colorbar(cp, ax=ax1, label='RMSE')
     
-    # Plot comparison
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.scatter(x_vals, y_actual, alpha=0.3, s=10, c='steelblue', label='Data')
-    ax.plot([x_vals.min(), x_vals.max()], 
-            [user_w * x_vals.min() + user_b, user_w * x_vals.max() + user_b],
-            'r-', linewidth=2, label=f'Your line (RMSE: {user_rmse:,.0f})')
-    ax.plot([x_vals.min(), x_vals.max()], 
-            [optimal_w * x_vals.min() + optimal_b, optimal_w * x_vals.max() + optimal_b],
-            'g--', linewidth=2, label=f'Optimal line (RMSE: {optimal_rmse:,.0f})')
-    ax.set_xlabel('Area (m²)')
-    ax.set_ylabel('Price (10K KRW)')
-    ax.set_title('Your Line vs Optimal Line')
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    st.pyplot(fig, use_container_width=True)
-    plt.close()
+    # Plot path
+    if st.session_state['gd_history']:
+        path = np.array(st.session_state['gd_history'])
+        ax1.plot(path[:, 0], path[:, 1], 'w-', alpha=0.5)
+        
+    # Current point
+    ax1.plot(st.session_state['gd_w'], st.session_state['gd_b'], 'ro', markersize=10, markeredgecolor='white', label='Current')
+    ax1.plot(optimal_w, optimal_b, 'b*', markersize=15, label='Optimal')
     
-    # Show comparison
-    col1, col2 = st.columns(2)
-    with col1:
-        delta = user_rmse - optimal_rmse
-        st.metric("Your RMSE", f"{user_rmse:,.0f}", delta=f"+{delta:,.0f}" if delta > 0 else f"{delta:,.0f}")
-    with col2:
-        st.metric("Optimal RMSE", f"{optimal_rmse:,.0f}", delta="Best possible!")
+    ax1.set_title(f"Error Mountain (Loss Surface)\nCurrent: w={st.session_state['gd_w']:.0f}, b={st.session_state['gd_b']:.0f}")
+    ax1.set_xlabel('Weight (w)')
+    ax1.set_ylabel('Bias (b)')
+    ax1.legend()
     
-    if user_rmse <= optimal_rmse * 1.05:
-        st.success("🎉 Great! Your line is very close to optimal!")
-    else:
-        st.info(f"💡 Try w={optimal_w:.0f} and b={optimal_b:.0f} to match the optimal line!")
+    # Plot 2: Regression Line
+    ax2.scatter(X, y, alpha=0.3, c='steelblue', s=15)
+    
+    # Current line
+    line_x = np.array([X.min(), X.max()])
+    line_y = st.session_state['gd_w'] * line_x + st.session_state['gd_b']
+    ax2.plot(line_x, line_y, 'r-', linewidth=3, label='Your Model')
+    
+    # Optimal line (ghost)
+    opt_y = optimal_w * line_x + optimal_b
+    ax2.plot(line_x, opt_y, 'k--', alpha=0.3, label='Best Possible')
+    
+    ax2.set_title("Resulting Model Line")
+    ax2.set_xlabel("Area")
+    ax2.set_ylabel("Price")
+    ax2.legend()
+    
+    st.pyplot(fig)
+    
+    if st.session_state['gd_epoch'] > 0:
+        if abs(st.session_state['gd_w'] - optimal_w) < 100 and abs(st.session_state['gd_b'] - optimal_b) < 10000:
+             st.success("🎉 Converged! You found the best parameters!")
+        else:
+             st.info("Keep clicking 'Fast (10x)' to see the red dot slide down to the blue star!")
 
 
 def display_model_info(df: pd.DataFrame) -> None:
