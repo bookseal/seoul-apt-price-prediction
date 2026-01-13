@@ -798,25 +798,95 @@ def display_demo(df: pd.DataFrame) -> None:
 
 def display_comparison() -> None:
     """Compare with Level 1."""
-    st.header("⚖️ Level 1 vs Level 2")
+    st.header("⚖️ Level 1 vs Level 2: The Shocking Truth")
     
     st.markdown("""
-    | Aspect | Level 1 (Heuristic) | Level 2 (Linear Regression) |
-    |--------|---------------------|----------------------------|
-    | Method | District median × Area | w × Area + b |
-    | Uses District? | ✅ Yes | ❌ No |
-    | Uses Area? | ✅ Yes | ✅ Yes |
-    | ML? | ❌ No | ✅ Yes |
-    | Interpretable? | ✅ Very | ✅ Yes |
+    You might notice something strange...
+    **Level 1 (Simple Math) often has BETTER accuracy than Level 2 (Machine Learning)!**
+    
+    How is this possible? Isn't AI supposed to be smarter?
     """)
     
-    st.warning("""
-    **Limitation**: Level 2 ignores district!
+    st.markdown("### 🏆 The Battle: Data vs Algorithm")
     
-    A 100m² apartment in Gangnam costs much more than in other areas,
-    but our model predicts the same price.
+    col1, col2 = st.columns(2)
     
-    **Next Level**: Add more features (district, floor, year)!
+    with col1:
+        st.markdown("""
+        <div style="padding: 15px; background: rgba(76,175,80,0.1); border-radius: 10px; border-left: 4px solid #4CAF50;">
+            <h4>🧠 Level 1: Heuristic</h4>
+            <b>"I use a LOOKUP TABLE!"</b><br><br>
+            Level 1 knows <b>Location (District)</b>.<br>
+            It knows Gangnam is expensive and Dobong is cheap.<br>
+            <br>
+            <b>Algorithm</b>: Very Simple (Multiply)<br>
+            <b>Data</b>: <b style="color:green">Rich (Uses Location)</b>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    with col2:
+        st.markdown("""
+        <div style="padding: 15px; background: rgba(244,67,54,0.1); border-radius: 10px; border-left: 4px solid #F44336;">
+            <h4>🤖 Level 2: Linear Regression</h4>
+            <b>"I draw a STRAIGHT LINE!"</b><br><br>
+            Level 2 <b>IGNORES District</b> (for now).<br>
+            It treats 100m² in Gangnam exactly the same as 100m² in Dobong.<br>
+            <br>
+            <b>Algorithm</b>: Smart (Optimization)<br>
+            <b>Data</b>: <b style="color:red">Poor (Ignores Location)</b>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown("### 🎨 Visualizing Why Level 2 Fails")
+    
+    st.graphviz_chart("""
+    digraph L1_vs_L2 {
+        rankdir=TD;
+        node [fontname="Arial", shape=box, style=filled, fillcolor="white"];
+        
+        subgraph cluster_L1 {
+            label = "Level 1: Heuristic";
+            style = dashed;
+            color = "#4CAF50";
+            
+            A1 [label="Input: District + Area"];
+            B1 [label="Split by District"];
+            C1 [label="Get District Price/m²", fillcolor="#E8F5E9"];
+            D1 [label="Price = Area × District_Value", fillcolor="#C8E6C9"];
+            Winner [label="Better Prediction? 🏆", style=filled, fillcolor="#4CAF50", fontcolor="white"];
+            
+            A1 -> B1;
+            B1 -> C1;
+            C1 -> D1;
+            D1 -> Winner [label="Uses Location Info"];
+        }
+        
+        subgraph cluster_L2 {
+            label = "Level 2: Simple Linear Regression";
+            style = dashed;
+            color = "#F44336";
+            
+            A2 [label="Input: District + Area"];
+            B2 [label="Ignore District!"];
+            C2 [label="Only use Area", fillcolor="#FFEBEE"];
+            D2 [label="Price = w × Area + b", fillcolor="#FFCDD2"];
+            Loser [label="Worse Prediction? 📉", style=filled, fillcolor="#F44336", fontcolor="white"];
+            
+            A2 -> B2;
+            B2 -> C2;
+            C2 -> D2;
+            D2 -> Loser [label="Ignores Location"];
+        }
+    }
+    """)
+    
+    st.info("""
+    **💡 The Lesson: Better Data > Better Algorithm**
+    
+    Even a smart AI cannot predict well if you hide important information (Location) from it!
+    
+    **This is why we need Level 3!**
+    Level 3 will combine **Machine Learning** (Algorithm) with **District Info** (Data) to finally beat Level 1.
     """)
 
 
