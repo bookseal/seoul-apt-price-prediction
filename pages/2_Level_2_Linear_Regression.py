@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from src.io import load_sample_dataset
 from src.model import load_trained_model, get_model_info, calculate_metrics
 from src.config import RANDOM_STATE
-from src.navigation import display_next_level_teaser
+from src.navigation import display_next_level_teaser, display_code_link
 from src.comparison import display_rmse_comparison
 
 
@@ -1022,6 +1022,9 @@ def main() -> None:
         
         # Next level teaser
         display_next_level_teaser(2)
+        
+        # Code Link
+        display_code_link("Level_2_Linear_Regression.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

@@ -154,3 +154,28 @@ def display_journey_complete() -> None:
             label="🏠 Back to Home",
             use_container_width=True
         )
+
+
+def display_code_link(notebook_filename: str) -> None:
+    """
+    Display a section linking to the Jupyter Notebook (Colab).
+    
+    Args:
+        notebook_filename: The filename of the notebook (e.g., 'Level_1_Heuristic.ipynb')
+    """
+    st.markdown("---")
+    
+    github_url = f"https://colab.research.google.com/github/bookseal/seoul-apt-price-prediction/blob/main/notebooks/{notebook_filename}"
+    
+    st.markdown(f"""
+    <div style="padding: 20px; background-color: #f0f2f6; border-radius: 10px; border: 1px solid #e0e0e0; margin-top: 30px;">
+        <h4 style="margin-top: 0; color: #333;">💻 Want to see the real code working?</h4>
+        <p style="font-size: 14px; color: #555; margin-bottom: 15px;">
+            Check out the <b>Jupyter Notebook</b> for this level! <br>
+            You can run the full Python code (Pandas, Scikit-Learn) directly in your browser.
+        </p>
+        <a href="{github_url}" target="_blank">
+            <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab">
+        </a>
+    </div>
+    """, unsafe_allow_html=True)

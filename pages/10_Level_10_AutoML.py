@@ -25,6 +25,7 @@ import time
 from src.io import load_sample_dataset
 from src.utils import calculate_rmse
 from src.config import RANDOM_STATE
+from src.navigation import display_code_link
 
 
 def display_header() -> None:
@@ -505,6 +506,9 @@ def main() -> None:
         display_demo(results, scaler, feature_cols, df)
         st.markdown("---")
         display_journey_summary()
+        
+        # Code Link
+        display_code_link("Level_10_AutoML.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

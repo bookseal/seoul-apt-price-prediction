@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from src.io import load_sample_dataset
 from src.utils import calculate_rmse
 from src.config import RANDOM_STATE
-from src.navigation import display_next_level_teaser
+from src.navigation import display_next_level_teaser, display_code_link
 from src.comparison import display_rmse_comparison
 
 
@@ -708,6 +708,9 @@ def main() -> None:
         
         # Next level teaser
         display_next_level_teaser(3)
+        
+        # Code Link
+        display_code_link("Level_3_Multi_Features.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

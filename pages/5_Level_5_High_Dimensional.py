@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split
 from src.io import load_sample_dataset
 from src.utils import calculate_rmse
 from src.config import RANDOM_STATE
-from src.navigation import display_next_level_teaser
+from src.navigation import display_next_level_teaser, display_code_link
 from src.comparison import display_rmse_comparison
 
 # Korean to English district name mapping
@@ -686,6 +686,9 @@ def main() -> None:
         
         # Next level teaser
         display_next_level_teaser(5)
+        
+        # Code Link
+        display_code_link("Level_5_High_Dimensional.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

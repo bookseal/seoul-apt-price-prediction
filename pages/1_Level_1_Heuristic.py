@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from src.io import load_sample_dataset
-from src.navigation import display_next_level_teaser
+from src.navigation import display_next_level_teaser, display_code_link
 
 # Korean to English district name mapping
 DISTRICT_NAME_MAP = {
@@ -31,11 +31,6 @@ def convert_district_name(name: str) -> str:
 
 
 def display_header() -> None:
-    # Colab Badge
-    st.markdown("""
-    [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bookseal/seoul-apt-price-prediction/blob/main/notebooks/Level_1_Heuristic.ipynb)
-    """)
-
     # Display Level 1 introduction
     st.title("🎯 Level 1: Heuristic Prediction")
     
@@ -740,6 +735,9 @@ def main() -> None:
         
         # Next level teaser
         display_next_level_teaser(1)
+        
+        # Code Link
+        display_code_link("Level_1_Heuristic.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")
