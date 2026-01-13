@@ -12,6 +12,3 @@ data/interim/
 data/*.csv
 data/*.tar
 data/*.tar.gz
-
-# Allow sample data for tutorial
-!data/sample_apt_price_data.csv
