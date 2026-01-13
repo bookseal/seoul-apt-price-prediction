@@ -556,11 +556,14 @@ def main() -> None:
         st.markdown("---")
         display_limitations()
         
+        # Code Link
+        
+        display_code_link("Level_4_3D_Regression.ipynb")
+        
+        
+        
         # Next level teaser
         display_next_level_teaser(4)
-        
-        # Code Link
-        display_code_link("Level_4_3D_Regression.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

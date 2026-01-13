@@ -1020,11 +1020,14 @@ def main() -> None:
         st.markdown("---")
         display_comparison()
         
+        # Code Link
+        
+        display_code_link("Level_2_Linear_Regression.ipynb")
+        
+        
+        
         # Next level teaser
         display_next_level_teaser(2)
-        
-        # Code Link
-        display_code_link("Level_2_Linear_Regression.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

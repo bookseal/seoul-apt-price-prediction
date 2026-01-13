@@ -684,11 +684,14 @@ def main() -> None:
         st.markdown("---")
         display_limitations()
         
+        # Code Link
+        
+        display_code_link("Level_5_High_Dimensional.ipynb")
+        
+        
+        
         # Next level teaser
         display_next_level_teaser(5)
-        
-        # Code Link
-        display_code_link("Level_5_High_Dimensional.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

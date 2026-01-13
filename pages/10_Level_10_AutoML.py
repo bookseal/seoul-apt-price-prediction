@@ -435,7 +435,7 @@ def display_demo(results: list, scaler, feature_cols: list, df: pd.DataFrame) ->
     """)
 
 
-def display_journey_summary() -> None:
+def # Code Link display_code_link("Level_10_AutoML.ipynb")  display_journey_summary() -> None:
     """Summarize the ML journey."""
     st.header("🎓 Your ML Journey - Complete!")
     
@@ -506,9 +506,6 @@ def main() -> None:
         display_demo(results, scaler, feature_cols, df)
         st.markdown("---")
         display_journey_summary()
-        
-        # Code Link
-        display_code_link("Level_10_AutoML.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

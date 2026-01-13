@@ -733,11 +733,14 @@ def main() -> None:
         st.markdown("---")
         display_limitations()
         
+        # Code Link
+        
+        display_code_link("Level_1_Heuristic.ipynb")
+        
+        
+        
         # Next level teaser
         display_next_level_teaser(1)
-        
-        # Code Link
-        display_code_link("Level_1_Heuristic.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

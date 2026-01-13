@@ -530,11 +530,14 @@ def main() -> None:
         st.markdown("---")
         display_limitations()
         
+        # Code Link
+        
+        display_code_link("Level_6_PCA.ipynb")
+        
+        
+        
         # Next level teaser
         display_next_level_teaser(6)
-        
-        # Code Link
-        display_code_link("Level_6_PCA.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

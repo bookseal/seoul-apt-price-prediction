@@ -706,11 +706,14 @@ def main() -> None:
         st.markdown("---")
         display_limitations()
         
+        # Code Link
+        
+        display_code_link("Level_3_Multi_Features.ipynb")
+        
+        
+        
         # Next level teaser
         display_next_level_teaser(3)
-        
-        # Code Link
-        display_code_link("Level_3_Multi_Features.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")

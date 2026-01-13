@@ -556,11 +556,14 @@ def main() -> None:
         st.markdown("---")
         display_limitations()
         
+        # Code Link
+        
+        display_code_link("Level_9_Regularization.ipynb")
+        
+        
+        
         # Next level teaser
         display_next_level_teaser(9)
-        
-        # Code Link
-        display_code_link("Level_9_Regularization.ipynb")
         
     except Exception as e:
         st.error(f"Error: {e}")
