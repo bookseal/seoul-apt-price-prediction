@@ -31,8 +31,26 @@ def convert_district_name(name: str) -> str:
 
 
 def display_header() -> None:
-    """Display Level 1 introduction."""
+    # Colab Badge
+    st.markdown("""
+    [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bookseal/seoul-apt-price-prediction/blob/main/notebooks/Level_1_Heuristic.ipynb)
+    """)
+
+    # Display Level 1 introduction
     st.title("🎯 Level 1: Heuristic Prediction")
+    
+    # Table of Contents
+    # Table of Contents
+    st.markdown("""
+    **📋 Table of Contents**
+    
+    1. [📥 Load Data](#step-1-load-data)
+    2. [👀 Explore Data](#step-2-explore-data)
+    3. [📊 EDA (Exploratory Data Analysis)](#step-3-eda-exploratory-data-analysis)
+    4. [📍 Group by District](#step-4-group-by-district)
+    5. [📈 Calculate Median](#step-5-calculate-median-m)
+    6. [🔮 Predict Price](#step-6-predict)
+    """)
     
     # Explain what "Heuristic" means
     with st.expander("💡 What does 'Heuristic' mean?", expanded=True):

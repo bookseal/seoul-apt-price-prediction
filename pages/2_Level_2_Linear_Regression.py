@@ -6,6 +6,7 @@ First ML model using only exclusive area to predict price.
 Formula: Price = weight × Area + bias
 """
 import streamlit as st
+import random
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,6 +20,19 @@ from src.comparison import display_rmse_comparison
 def display_header() -> None:
     """Display Level 2 introduction."""
     st.title("📐 Level 2: Linear Regression")
+    
+    # Table of Contents
+    # Table of Contents
+    st.markdown("""
+    **📋 Table of Contents**
+    
+    1. [🧮 The Method](#the-method)
+    2. [📊 Check Correlation](#data-area-vs-price)
+    3. [🎓 Interactive Simulator](#step-3-training-interactive-simulator)
+    4. [🤖 Trained Model Info](#step-4-trained-model)
+    5. [📏 Performance Evaluation](#model-performance)
+    6. [🔮 Prediction Demo](#try-it-yourself)
+    """)
     
     st.success("""
     **Goal**: Predict apartment price using machine learning.
@@ -231,11 +245,64 @@ def display_method() -> None:
     """Explain Linear Regression."""
     st.header("🧮 The Method")
     
-    st.markdown("""
-    ### Linear Regression
+    st.markdown("### 1. What's in a Name?")
     
-    Find the **best straight line** that fits the data.
+    st.markdown("""
+    Why is it called **"Linear Regression"**? Let's break it down:
     """)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.info("""
+        **📏 Linear (선형)**
+        
+        The relationship is a **Straight Line**.
+        *   If Area goes up, Price goes up (proportionally).
+        *   Formula: $y = ax + b$
+        """)
+    with col2:
+        st.info("""
+        **🎯 Regression (회귀)**
+        
+        We are predicting a **Number** (Continuous Quantity).
+        *   "How much?" (Price, Temperature, Height)
+        *   *vs Classification ("Cat or Dog?")*
+        """)
+
+    # Visualization
+    st.graphviz_chart("""
+    digraph G {
+        rankdir=LR;
+        node [shape=box, style="filled,rounded", fontname="Sans", margin=0.2];
+        edge [fontname="Sans"];
+        bgcolor="transparent";
+        
+        subgraph cluster_0 {
+            label = "Linear = Line";
+            style=dashed;
+            color="#2196F3";
+            node [fillcolor="#E3F2FD"];
+            L1 [label="Straight Line\n(y = wx + b)"];
+            L2 [label="Simple\nProportional"];
+        }
+        
+        subgraph cluster_1 {
+            label = "Regression = Number";
+            style=dashed;
+            color="#4CAF50";
+            node [fillcolor="#E8F5E9"];
+            R1 [label="Predicting\nQuantity"];
+            R2 [label="Output:\n12.5, 99.9..."];
+        }
+        
+        LR [label="Linear\nRegression", shape=note, fillcolor="#FFF3E0", fontsize=15];
+        
+        LR -> L1;
+        LR -> R1;
+    }
+    """)
+    
+    st.markdown("### 2. The Formula")
     
     st.latex(r"\text{Price} = w \times \text{Area} + b")
     
@@ -243,24 +310,21 @@ def display_method() -> None:
     
     with col1:
         st.markdown("""
-        **w (weight)**: How much price increases per m²
-        
-        **b (bias)**: Base price when area = 0
+        **w (weight)**: Slope
+        *   How much price increases per 1 m²
         """)
     
     with col2:
         st.markdown("""
-        **Training**: Find w and b that minimize prediction errors
-        
-        **RMSE**: Measures average prediction error
+        **b (bias)**: Intercept
+        *   Base price when area = 0
         """)
     
     with st.expander("🤔 Why Linear Regression?"):
         st.markdown("""
-        - Simple and interpretable
-        - Fast to train
-        - Good baseline for comparison
-        - Easy to explain: "Each m² adds X won to price"
+        - **Simple**: Easy to understand and explain.
+        - **Fast**: Computers can calculate it instantly.
+        - **Baseline**: Always start simple! If a line works, you don't need complex AI.
         """)
 
 
@@ -380,7 +444,27 @@ def display_training_process(df: pd.DataFrame) -> None:
     **Experiencing Gradient Descent**
     
     Let's train the model ourselves! We will use **Gradient Descent** to find the best `w` and `b`.
+    """)
     
+    with st.expander("🏔️ What is Gradient Descent? (The Mountain Hiker Analogy)", expanded=True):
+        st.markdown("""
+        Imagine you are on a **mountain at night** (blindfolded). You want to reach the **village at the bottom** (Lowest Error).
+        
+        1.  **Feel the slope**: You tap the ground with your foot to see which way connects "down".
+        2.  **Take a step**: You take a step in the downhill direction.
+        3.  **Repeat**: You keep doing this until the ground is flat (you reached the bottom!).
+        
+        **In Math:**
+        """)
+        st.latex(r"w_{new} = w_{old} - \text{Step Size} \times \text{Slope}")
+        st.markdown("""
+        *   **Step Size (Learning Rate)**: How big your step is.
+            *   Too big? You might jump over the village! 🐇
+            *   Too small? It takes forever. 🐢
+        *   **Slope (Gradient)**: Which way is down?
+        """)
+    
+    st.markdown("""
     *   **Goal**: Reach the center of the "Error Mountain" (Dark blue area).
     *   **Method**: Take steps downhill.
     """)
@@ -396,13 +480,14 @@ def display_training_process(df: pd.DataFrame) -> None:
     
     # 2. Setup Session State
     if 'gd_w' not in st.session_state:
-        st.session_state['gd_w'] = 0.0
+        st.session_state['gd_w'] = random.uniform(0, 2000)
     if 'gd_b' not in st.session_state:
-        st.session_state['gd_b'] = 0.0
+        st.session_state['gd_b'] = random.uniform(-50000, 50000)
     if 'gd_epoch' not in st.session_state:
         st.session_state['gd_epoch'] = 0
     if 'gd_history' not in st.session_state:
         st.session_state['gd_history'] = []
+
     # 3. Controls
     st.markdown("##### 🕹️ Simulator Controls")
     
@@ -456,8 +541,8 @@ def display_training_process(df: pd.DataFrame) -> None:
 
         with c3:
             if st.button("Reset"):
-                st.session_state['gd_w'] = 0.0 
-                st.session_state['gd_b'] = 0.0 
+                st.session_state['gd_w'] = random.uniform(0, 2000)
+                st.session_state['gd_b'] = random.uniform(-50000, 50000)
                 st.session_state['gd_epoch'] = 0
                 st.session_state['gd_history'] = []
     

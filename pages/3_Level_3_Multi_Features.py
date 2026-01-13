@@ -23,6 +23,18 @@ def display_header() -> None:
     """Display Level 3 introduction."""
     st.title("🏘️ Level 3: Multi-Feature Linear Regression")
     
+    # Table of Contents
+    # Table of Contents
+    st.markdown("""
+    **📋 Table of Contents**
+    
+    1. [🔄 One-Hot Concept](#understanding-one-hot-encoding)
+    2. [🚂 Training Process](#step-3-training)
+    3. [🧠 Analyze Weights](#what-did-the-model-learn)
+    4. [📏 Model Performance](#model-performance)
+    5. [🔮 Prediction Demo](#try-it-yourself)
+    """)
+    
     st.success("""
     **Goal**: Add District to our model using **One-Hot Encoding**.
     
