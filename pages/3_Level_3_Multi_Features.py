@@ -326,6 +326,21 @@ w_districts = model.coef_[1:]              # Weights for each district
 b = model.intercept_                        # Bias
 """, language='python')
     
+    with st.expander("🧩 What is np.hstack? (Beginner Tip)"):
+        st.markdown("""
+        **hstack = Horizontal Stack (Paste Side-by-Side)**
+        
+        We have two separate pieces of information:
+        1. **Area** (a vertical column)
+        2. **District Info** (many vertical columns from One-Hot Encoding)
+        
+        The model needs **ONE big spreadsheet** to learn from.
+        `np.hstack` takes these separate columns and glues them together **horizontally** to make one wide table.
+        
+        *   **Before**: `[Area]`    and    `[Is_Gangnam, Is_Seocho...]`
+        *   **After**: `[Area, Is_Gangnam, Is_Seocho...]` (All in one row!)
+        """)
+    
     st.info("""
     **What the model learns:**
     
