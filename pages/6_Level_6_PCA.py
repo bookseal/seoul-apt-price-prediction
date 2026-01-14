@@ -9,6 +9,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.express as px
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -383,37 +384,64 @@ def display_comparison(results: dict) -> None:
     display_rmse_comparison(6, results['with_pca']['test'])
 
 
-def display_pca_visualization(results: dict) -> None:
-    """Visualize data in PC space."""
+def display_pca_visualization(results: dict, df: pd.DataFrame) -> None:
+    """Visualize data in PC space using Plotly."""
     st.header("🎨 Data in PC Space")
     
     st.markdown("""
     **Now we can visualize high-dimensional data in 2D!**
+    Hover over the points to see the *original* data hidden inside the Principal Components.
     """)
     
     if results['n_components'] >= 2:
         X_pca = results['X_test_pca']
         y = results['y_test']
         
-        fig, ax = plt.subplots(figsize=(10, 6))
-        scatter = ax.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', 
-                            alpha=0.5, s=20)
-        plt.colorbar(scatter, label='Price')
-        ax.set_xlabel('PC1')
-        ax.set_ylabel('PC2')
-        ax.set_title('Data Points in First 2 Principal Components')
-        ax.grid(True, alpha=0.3)
-        st.pyplot(fig, use_container_width=True)
-        plt.close()
+        # We need to map back to original data indices to get hover info
+        # But train_test_split shuffles data.
+        # For simplicity in visualization, let's just re-run PCA on a sample subset 
+        # where we keep the index alignment
+        
+        sample = df.sample(min(1000, len(df)), random_state=RANDOM_STATE)
+        
+        # Preprocessing (same as before)
+        numeric_features = ['area_m2', 'year', 'floor', 'building_age', 'total_units', 'parking_ratio']
+        encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+        X_district = encoder.fit_transform(sample[['district']])
+        X_numeric = sample[numeric_features].values
+        X = np.hstack([X_numeric, X_district])
+        
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+        
+        pca = PCA(n_components=2)
+        X_pca_2d = pca.fit_transform(X_scaled)
+        
+        # Create plotting dataframe
+        plot_df = sample.copy()
+        plot_df['PC1'] = X_pca_2d[:, 0]
+        plot_df['PC2'] = X_pca_2d[:, 1]
+        plot_df['Price'] = plot_df['price_10k_krw']
+        
+        fig = px.scatter(
+            plot_df, 
+            x='PC1', 
+            y='PC2', 
+            color='Price',
+            hover_data=['area_m2', 'year', 'district'],
+            title='Interactive PCA Projection (PC1 vs PC2)',
+            labels={'area_m2': 'Area', 'year': 'Year', 'district': 'District'},
+            color_continuous_scale='Viridis'
+        )
+        
+        fig.update_layout(height=600)
+        st.plotly_chart(fig, use_container_width=True)
         
         st.info("""
-        **💡 What are we seeing?**
-        - Each point is an apartment
-        - X = PC1 (most important direction)
-        - Y = PC2 (second most important)
-        - Color = Price
-        
-        Even though we had 30+ features, we can see patterns in just 2D!
+        **💡 Explore the Pattern:**
+        - **Right side (High PC1)**: usually larger Area (check hover!) - PC1 often captures Size.
+        - **Top/Bottom (PC2)**: might capture Age or Location.
+        - **Color (Price)**: Notice how expensive apartments (Yellow) cluster together?
         """)
 
 
@@ -524,7 +552,7 @@ def main() -> None:
         st.markdown("---")
         display_comparison(results)
         st.markdown("---")
-        display_pca_visualization(results)
+        display_pca_visualization(results, df)
         st.markdown("---")
         display_pca_code()
         st.markdown("---")

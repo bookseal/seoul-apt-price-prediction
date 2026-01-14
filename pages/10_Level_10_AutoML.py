@@ -9,6 +9,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import (
@@ -18,9 +20,8 @@ from sklearn.ensemble import (
 )
 from sklearn.svm import SVR
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 import time
 from src.io import load_sample_dataset
 from src.utils import calculate_rmse
@@ -206,7 +207,14 @@ def run_model_comparison(df: pd.DataFrame):
     models = get_models()
     results = []
     
-    for name, model in models.items():
+    # Progress bar
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+    
+    total_models = len(models)
+    
+    for i, (name, model) in enumerate(models.items()):
+        status_text.text(f"Training {name}...")
         start_time = time.time()
         
         # Train
@@ -229,6 +237,11 @@ def run_model_comparison(df: pd.DataFrame):
             'Time (s)': elapsed,
             'model': model
         })
+        
+        progress_bar.progress((i + 1) / total_models)
+    
+    status_text.empty()
+    progress_bar.empty()
     
     # Sort by test RMSE
     results = sorted(results, key=lambda x: x['Test RMSE'])
@@ -237,96 +250,69 @@ def run_model_comparison(df: pd.DataFrame):
 
 
 def display_leaderboard(results: list) -> None:
-    """Display model leaderboard."""
+    """Display model leaderboard (Plotly)."""
     st.header("🏆 Model Leaderboard")
     
     st.markdown("""
     **Results from training all models on apartment price data!**
-    
     Sorted by Test RMSE (lower is better).
     """)
     
-    # Create dataframe without model objects
-    leaderboard = pd.DataFrame([{
-        'Rank': i+1,
-        'Model': r['Model'],
-        'Train RMSE': f"{r['Train RMSE']:,.0f}",
-        'Test RMSE': f"{r['Test RMSE']:,.0f}",
-        'Time (s)': f"{r['Time (s)']:.3f}"
-    } for i, r in enumerate(results)])
+    # DataFrame
+    lb_df = pd.DataFrame(results)
+    lb_df = lb_df.sort_values('Test RMSE')
     
-    # Style the dataframe
-    st.dataframe(leaderboard, use_container_width=True)
+    # Table
+    st.dataframe(
+        lb_df[['Model', 'Train RMSE', 'Test RMSE', 'Time (s)']].style.format({
+            'Train RMSE': '{:,.0f}',
+            'Test RMSE': '{:,.0f}',
+            'Time (s)': '{:.3f}'
+        }),
+        use_container_width=True
+    )
     
     # Highlight winner
     best = results[0]
-    st.success(f"""
-    🥇 **Winner: {best['Model']}** with Test RMSE = {best['Test RMSE']:,.0f}
-    """)
+    st.success(f"🥇 **Winner: {best['Model']}** with Test RMSE = {best['Test RMSE']:,.0f}")
     
-    # Bar chart
-    fig, ax = plt.subplots(figsize=(10, 6))
+    # Plotly Bar Chart
+    fig = px.bar(lb_df, x='Test RMSE', y='Model', 
+                 orientation='h', 
+                 text='Test RMSE',
+                 color='Test RMSE', 
+                 color_continuous_scale='RdYlGn_r',
+                 title='Model Performance (Test RMSE)')
     
-    model_names = [r['Model'] for r in results]
-    test_rmses = [r['Test RMSE'] for r in results]
-    
-    colors = ['gold' if i == 0 else 'silver' if i == 1 else '#CD7F32' if i == 2 else 'steelblue' 
-              for i in range(len(results))]
-    
-    bars = ax.barh(model_names[::-1], test_rmses[::-1], color=colors[::-1])
-    ax.set_xlabel('Test RMSE (lower is better)')
-    ax.set_title('Model Performance Comparison')
-    
-    # Add values
-    for bar, val in zip(bars, test_rmses[::-1]):
-        ax.text(val + 500, bar.get_y() + bar.get_height()/2, 
-                f'{val:,.0f}', va='center')
-    
-    st.pyplot(fig, use_container_width=True)
-    plt.close()
+    fig.update_traces(texttemplate='%{text:,.0f}', textposition='inside')
+    fig.update_layout(yaxis={'categoryorder':'total descending'}, height=500)
+    st.plotly_chart(fig, use_container_width=True)
 
 
 def display_overfitting_analysis(results: list) -> None:
-    """Analyze overfitting across models."""
+    """Analyze overfitting across models (Plotly Grouped Bar)."""
     st.header("📊 Overfitting Analysis")
     
     st.markdown("""
     **Train vs Test RMSE**: Large gap = Overfitting!
     """)
     
-    model_names = [r['Model'] for r in results]
-    train_rmses = [r['Train RMSE'] for r in results]
-    test_rmses = [r['Test RMSE'] for r in results]
+    df = pd.DataFrame(results)
+    models = df['Model'].tolist()
     
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig = go.Figure()
+    fig.add_trace(go.Bar(name='Train RMSE', x=models, y=df['Train RMSE'], marker_color='#2ca02c'))
+    fig.add_trace(go.Bar(name='Test RMSE', x=models, y=df['Test RMSE'], marker_color='#d62728'))
     
-    x = np.arange(len(model_names))
-    width = 0.35
+    fig.update_layout(barmode='group', title='Train vs Test RMSE (Gap Analysis)', height=500)
+    st.plotly_chart(fig, use_container_width=True)
     
-    bars1 = ax.bar(x - width/2, train_rmses, width, label='Train RMSE', color='steelblue')
-    bars2 = ax.bar(x + width/2, test_rmses, width, label='Test RMSE', color='orange')
+    # Calculate Gaps
+    df['Gap'] = df['Test RMSE'] - df['Train RMSE']
+    df['Gap status'] = df['Gap'].apply(lambda x: '✅ Good' if x < 2000 else '⚠️ Slight' if x < 5000 else '❌ High')
     
-    ax.set_ylabel('RMSE')
-    ax.set_title('Train vs Test RMSE by Model')
-    ax.set_xticks(x)
-    ax.set_xticklabels(model_names, rotation=45, ha='right')
-    ax.legend()
-    ax.grid(True, alpha=0.3, axis='y')
-    
-    plt.tight_layout()
-    st.pyplot(fig, use_container_width=True)
-    plt.close()
-    
-    # Calculate overfitting gap
-    st.markdown("### Overfitting Gap (Test - Train)")
-    
-    gaps = [(r['Model'], r['Test RMSE'] - r['Train RMSE']) for r in results]
-    gaps = sorted(gaps, key=lambda x: x[1])
-    
-    gap_df = pd.DataFrame(gaps, columns=['Model', 'Gap'])
-    gap_df['Status'] = gap_df['Gap'].apply(lambda x: '✅ Good' if x < 2000 else '⚠️ Slight' if x < 5000 else '❌ Overfitting')
-    
-    st.dataframe(gap_df, use_container_width=True)
+    st.markdown("### Overfitting Gap Details")
+    st.dataframe(df[['Model', 'Gap', 'Gap status']].sort_values('Gap'), use_container_width=True)
 
 
 def display_best_model_analysis(results: list, X_test, y_test) -> None:
@@ -352,13 +338,11 @@ def display_best_model_analysis(results: list, X_test, y_test) -> None:
             'Importance': importances
         }).sort_values('Importance', ascending=False)
         
-        fig, ax = plt.subplots(figsize=(8, 4))
-        colors = plt.cm.Greens(np.linspace(0.3, 0.9, len(imp_df)))
-        ax.barh(imp_df['Feature'], imp_df['Importance'], color=colors[::-1])
-        ax.set_xlabel('Importance')
-        ax.set_title(f'{best["Model"]} - Feature Importance')
-        st.pyplot(fig, use_container_width=True)
-        plt.close()
+        fig = px.bar(imp_df, x='Importance', y='Feature', orientation='h',
+                     title=f'{best["Model"]} - Feature Importance',
+                     color='Importance', color_continuous_scale='Greens')
+        fig.update_layout(yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(fig, use_container_width=True)
         
         st.markdown(f"""
         **Most important feature**: {imp_df.iloc[0]['Feature']} ({imp_df.iloc[0]['Importance']:.3f})
@@ -369,17 +353,20 @@ def display_best_model_analysis(results: list, X_test, y_test) -> None:
     
     y_pred = model.predict(X_test)
     
-    fig, ax = plt.subplots(figsize=(8, 6))
-    ax.scatter(y_test, y_pred, alpha=0.3, s=15, c='steelblue')
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=y_test, y=y_pred, mode='markers', 
+                             marker=dict(size=5, opacity=0.5, color='steelblue'), name='Predictions'))
     max_val = max(y_test.max(), y_pred.max())
-    ax.plot([0, max_val], [0, max_val], 'r--', linewidth=2, label='Perfect')
-    ax.set_xlabel('Actual Price (10K KRW)')
-    ax.set_ylabel('Predicted Price (10K KRW)')
-    ax.set_title(f'{best["Model"]}: Actual vs Predicted')
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    st.pyplot(fig, use_container_width=True)
-    plt.close()
+    fig.add_trace(go.Scatter(x=[0, max_val], y=[0, max_val], mode='lines', 
+                             line=dict(color='red', dash='dash'), name='Perfect'))
+                             
+    fig.update_layout(
+        title=f'{best["Model"]}: Actual vs Predicted',
+        xaxis_title='Actual Price (10K KRW)',
+        yaxis_title='Predicted Price (10K KRW)',
+        height=500
+    )
+    st.plotly_chart(fig, use_container_width=True)
     
     # Compare with other levels
     st.markdown("---")
@@ -435,7 +422,7 @@ def display_demo(results: list, scaler, feature_cols: list, df: pd.DataFrame) ->
     """)
 
 
-def # Code Link display_code_link("Level_10_AutoML.ipynb")  display_journey_summary() -> None:
+def display_journey_summary() -> None:
     """Summarize the ML journey."""
     st.header("🎓 Your ML Journey - Complete!")
     
@@ -504,6 +491,8 @@ def main() -> None:
         display_best_model_analysis(results, X_test, y_test)
         st.markdown("---")
         display_demo(results, scaler, feature_cols, df)
+        st.markdown("---")
+        display_code_link("Level_10_AutoML.ipynb")
         st.markdown("---")
         display_journey_summary()
         

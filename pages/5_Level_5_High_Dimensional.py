@@ -529,70 +529,90 @@ def display_visualization_problem() -> None:
     """)
 
 
-def display_curse_of_dimensionality() -> None:
-    """Explain the curse of dimensionality."""
-    st.header("👻 The Curse of Dimensionality")
+def display_curse_of_dimensionality(df: pd.DataFrame) -> None:
+    """Demonstrate the curse of dimensionality with interactive noise injection."""
+    st.header("👻 The Curse of Dimensionality Simulator")
     
     st.markdown("""
-    **More dimensions = More problems!**
+    **What happens if we add garbage data (Noise)?**
+    
+    A smarter model should ignore it, right? 
+    In High Dimensions, simple Linear Regression gets **confused** and tries to find patterns in the noise!
     """)
     
-    st.markdown("""
-    <div style="padding: 15px; background: rgba(156,39,176,0.1); border-radius: 10px; 
-                border-left: 4px solid #9C27B0; margin: 10px 0;">
-        <b>Problem 1: Data Becomes Sparse</b><br>
-        <span style="font-size: 13px;">
-        In high dimensions, data points are far apart.<br>
-        Imagine 100 points in a 1D line vs 100 points in a 10D space!
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("### 🧪 Experiment: Injecting Random Noise")
     
-    st.markdown("""
-    <div style="padding: 15px; background: rgba(156,39,176,0.1); border-radius: 10px; 
-                border-left: 4px solid #9C27B0; margin: 10px 0;">
-        <b>Problem 2: Overfitting Risk</b><br>
-        <span style="font-size: 13px;">
-        More features = More parameters to learn<br>
-        Model can memorize training data instead of learning patterns!
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    # User interaction
+    n_noise = st.slider("Number of Random Noise Features to Add", 0, 100, 0, step=10)
     
-    st.markdown("""
-    <div style="padding: 15px; background: rgba(156,39,176,0.1); border-radius: 10px; 
-                border-left: 4px solid #9C27B0; margin: 10px 0;">
-        <b>Problem 3: Noise Accumulation</b><br>
-        <span style="font-size: 13px;">
-        Some features might be irrelevant or noisy.<br>
-        Adding them can hurt performance!
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    # Prepare base data (using just Area to keep it simple at first)
+    X_base = df[['area_m2']].values
+    y = df['price_10k_krw'].values
     
-    # Visual demonstration
-    st.markdown("### 📈 Demo: How Dimensions Affect Distance")
+    # Add noise
+    np.random.seed(42)
+    if n_noise > 0:
+        noise = np.random.rand(len(df), n_noise)
+        X = np.hstack([X_base, noise])
+    else:
+        X = X_base
+
+    # Split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    n_points = 100
-    dims = [1, 2, 5, 10, 50, 100]
-    avg_distances = []
+    # Train
+    model = LinearRegression()
+    model.fit(X_train, y_train)
     
-    for d in dims:
-        np.random.seed(42)
-        points = np.random.rand(n_points, d)
-        # Average distance between all pairs
-        from scipy.spatial.distance import pdist
-        distances = pdist(points)
-        avg_distances.append(np.mean(distances))
+    # Evaluate
+    train_rmse = calculate_rmse(y_train, model.predict(X_train))
+    test_rmse = calculate_rmse(y_test, model.predict(X_test))
     
+    # Display metrics
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Noise Features", n_noise)
+    c2.metric("Train RMSE (Lower is better)", f"{train_rmse:,.0f}", delta=f"{-train_rmse/1000:.1f}k", delta_color="inverse")
+    c3.metric("Test RMSE (REAL accuracy)", f"{test_rmse:,.0f}", delta=f"{test_rmse/1000:.1f}k", delta_color="inverse")
+    
+    st.info("""
+    **Observe:** As you add more noise...
+    1. **Train RMSE** goes DOWN (Model memorizes the noise! "I explained everything!")
+    2. **Test RMSE** goes UP (Model fails on new data! "I learned false patterns!")
+    """)
+    
+    # Visualization of the Gap
+    # We pre-calculate range for the chart
+    results = []
+    noise_range = [0, 10, 30, 50, 80, 100, 150, 200]
+    
+    for n in noise_range:
+        noise_f = np.random.rand(len(df), n) if n > 0 else np.zeros((len(df), 0))
+        X_curr = np.hstack([X_base, noise_f]) if n > 0 else X_base
+        Xt, Xv, yt, yv = train_test_split(X_curr, y, test_size=0.2, random_state=42)
+        m = LinearRegression()
+        m.fit(Xt, yt)
+        results.append({
+            'Noise': n,
+            'Train RMSE': calculate_rmse(yt, m.predict(Xt)),
+            'Test RMSE': calculate_rmse(yv, m.predict(Xv))
+        })
+        
+    res_df = pd.DataFrame(results)
+    
+    # Highlight current selection
     fig, ax = plt.subplots(figsize=(8, 4))
-    ax.plot(dims, avg_distances, 'o-', linewidth=2, markersize=8)
-    ax.set_xlabel('Number of Dimensions')
-    ax.set_ylabel('Average Distance Between Points')
-    ax.set_title('As Dimensions Increase, Points Get Further Apart')
+    ax.plot(res_df['Noise'], res_df['Train RMSE'], 'o-', label='Train Error (Memorization)', color='#2196F3')
+    ax.plot(res_df['Noise'], res_df['Test RMSE'], 'o-', label='Test Error (Real Performance)', color='#F44336')
+    
+    # Add current point
+    ax.axvline(x=n_noise, color='black', linestyle='--', alpha=0.5)
+    
+    ax.set_xlabel('Number of Noise Features')
+    ax.set_ylabel('RMSE (Error)')
+    ax.set_title('Overfitting: The Gap Widens!')
+    ax.legend()
     ax.grid(True, alpha=0.3)
     st.pyplot(fig, use_container_width=True)
-    plt.close()
 
 
 def display_limitations() -> None:
@@ -680,7 +700,7 @@ def main() -> None:
         st.markdown("---")
         display_visualization_problem()
         st.markdown("---")
-        display_curse_of_dimensionality()
+        display_curse_of_dimensionality(df)
         st.markdown("---")
         display_limitations()
         

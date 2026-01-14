@@ -313,94 +313,68 @@ df['area_squared'] = df['area'] ** 2
 
 
 def display_polynomial_features(df: pd.DataFrame) -> None:
-    """Show polynomial features."""
-    st.header("📈 Polynomial Features")
+    """Show interactive polynomial features demo."""
+    st.header("📈 Polynomial Features (Curve Fitting)")
     
     st.markdown("""
-    **Problem**: Linear models assume linear relationships!
+    **Linear Regression finds a straight line.**
+    But what if the data is curved?
     
-    **Solution**: Create polynomial features to capture non-linear patterns.
+    **Polynomial Features** add powers of X ($x^2, x^3...$) to let the model bend!
     """)
     
-    st.markdown("""
-    ### How it works
+    # User interaction
+    degree = st.slider("Polynomial Degree (Complexity)", 1, 15, 2)
     
-    Original: `[x1, x2]`
-    
-    Degree 2: `[x1, x2, x1², x2², x1*x2]`
-    
-    This allows linear models to learn curves!
-    """)
-    
-    # Simple demo
-    st.markdown("### Demo: Linear vs Polynomial")
-    
-    # Create synthetic non-linear data
+    # Create non-linear data
     np.random.seed(42)
-    X_demo = np.linspace(0, 10, 100).reshape(-1, 1)
-    y_demo = 2 + 3*X_demo.ravel() - 0.5*X_demo.ravel()**2 + np.random.randn(100)*2
+    X = np.sort(np.random.rand(40, 1) * 10, axis=0) # 0 to 10
+    y = np.cos(X).ravel() + np.random.randn(40) * 0.1 + (X.ravel()/5) # Wavy pattern
     
-    # Fit linear
-    model_linear = LinearRegression()
-    model_linear.fit(X_demo, y_demo)
-    y_pred_linear = model_linear.predict(X_demo)
+    # Train/Test Split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
     
-    # Fit polynomial
-    poly = PolynomialFeatures(degree=2, include_bias=False)
-    X_poly = poly.fit_transform(X_demo)
-    model_poly = LinearRegression()
-    model_poly.fit(X_poly, y_demo)
-    y_pred_poly = model_poly.predict(X_poly)
+    # Transform
+    poly = PolynomialFeatures(degree=degree, include_bias=False)
+    X_poly_train = poly.fit_transform(X_train)
+    X_poly_test = poly.transform(X_test)
     
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+    # Fit
+    model = LinearRegression()
+    model.fit(X_poly_train, y_train)
     
-    axes[0].scatter(X_demo, y_demo, alpha=0.5, s=20, label='Data')
-    axes[0].plot(X_demo, y_pred_linear, 'r-', linewidth=2, label='Linear fit')
-    axes[0].set_title('Linear Regression')
-    axes[0].set_xlabel('X')
-    axes[0].set_ylabel('Y')
-    axes[0].legend()
+    # Predict for smooth curve
+    X_plot = np.linspace(0, 10, 100).reshape(-1, 1)
+    X_plot_poly = poly.transform(X_plot)
+    y_plot = model.predict(X_plot_poly)
     
-    axes[1].scatter(X_demo, y_demo, alpha=0.5, s=20, label='Data')
-    axes[1].plot(X_demo, y_pred_poly, 'g-', linewidth=2, label='Polynomial fit')
-    axes[1].set_title('Polynomial Regression (degree=2)')
-    axes[1].set_xlabel('X')
-    axes[1].set_ylabel('Y')
-    axes[1].legend()
+    # Metrics
+    rmse_train = np.sqrt(np.mean((y_train - model.predict(X_poly_train))**2))
+    rmse_test = np.sqrt(np.mean((y_test - model.predict(X_poly_test))**2))
     
-    plt.tight_layout()
+    # Plot
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.scatter(X_train, y_train, color='blue', alpha=0.6, label='Train Data')
+    ax.scatter(X_test, y_test, color='red', alpha=0.6, label='Test Data')
+    ax.plot(X_plot, y_plot, color='green', linewidth=2, label=f'Degree {degree} Fit')
+    ax.set_ylim(-2, 4)
+    ax.set_title(f"Degree {degree} | Train RMSE: {rmse_train:.2f} | Test RMSE: {rmse_test:.2f}")
+    ax.legend()
     st.pyplot(fig, use_container_width=True)
-    plt.close()
     
-    # RMSE comparison
-    rmse_linear = np.sqrt(np.mean((y_demo - y_pred_linear)**2))
-    rmse_poly = np.sqrt(np.mean((y_demo - y_pred_poly)**2))
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.metric("Linear RMSE", f"{rmse_linear:.2f}")
-    
-    with col2:
-        improvement = (rmse_linear - rmse_poly) / rmse_linear * 100
-        st.metric("Polynomial RMSE", f"{rmse_poly:.2f}", delta=f"-{improvement:.1f}%")
-    
-    st.code("""
-from sklearn.preprocessing import PolynomialFeatures
-
-# Create polynomial features
-poly = PolynomialFeatures(degree=2, include_bias=False)
+    if degree == 1:
+        st.info("Degree 1 = Straight Line (Underfitting)")
+    elif degree < 5:
+        st.success("Degree 2-4 = Good Fit (Captures the curve)")
+    else:
+        st.warning("High Degree = Wobbly Line (Overfitting to noise!)")
+        
+    st.code(f"""
+# Create polynomial features of degree {degree}
+poly = PolynomialFeatures(degree={degree}, include_bias=False)
 X_poly = poly.fit_transform(X)
-
-# Now X_poly includes: x1, x2, x1², x2², x1*x2
-model.fit(X_poly, y)
+# Now X has {X_poly_train.shape[1]} columns!
 """, language='python')
-    
-    st.warning("""
-    ⚠️ **Caution**: Higher degree = More features = Risk of overfitting!
-    
-    This is why we need **Regularization** (Level 9)!
-    """)
 
 
 @st.cache_resource

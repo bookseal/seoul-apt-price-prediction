@@ -9,6 +9,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.express as px
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.model_selection import train_test_split, cross_val_score
@@ -246,156 +247,96 @@ def prepare_data(df: pd.DataFrame):
 
 
 def display_alpha_slider(df: pd.DataFrame) -> None:
-    """Interactive alpha slider to see coefficient changes."""
+    """Interactive alpha slider to see coefficient changes (Plotly)."""
     st.header("🎮 Interactive Alpha Slider")
     
     st.markdown("""
     **Adjust α (alpha) to see how regularization affects coefficients!**
+    Hover over bars to see the exact penalty effect.
     """)
     
     df = prepare_data(df)
-    
     feature_cols = ['area_m2', 'year', 'floor', 'building_age', 
                     'area_sq', 'floor_sq', 'age_sq', 'area_floor', 'area_age']
     
     X = df[feature_cols].values
     y = df['price_10k_krw'].values
-    
-    # Scale features
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     
     # Alpha slider
-    alpha = st.slider(
-        "Alpha (regularization strength)", 
-        min_value=0.01, 
-        max_value=1000.0, 
-        value=1.0,
-        step=0.01,
-        format="%.2f"
-    )
-    
-    model_type = st.radio(
-        "Regularization Type",
-        ["Ridge (L2)", "Lasso (L1)", "ElasticNet"],
-        horizontal=True
-    )
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        alpha = st.slider("Alpha Strength", 0.01, 100.0, 1.0, 0.1)
+        model_type = st.radio("Model", ["Ridge (L2)", "Lasso (L1)"], horizontal=True)
     
     # Fit model
     if model_type == "Ridge (L2)":
         model = Ridge(alpha=alpha)
-    elif model_type == "Lasso (L1)":
-        model = Lasso(alpha=alpha, max_iter=10000)
     else:
-        model = ElasticNet(alpha=alpha, l1_ratio=0.5, max_iter=10000)
+        model = Lasso(alpha=alpha, max_iter=10000)
     
     model.fit(X_scaled, y)
     
-    # Show coefficients
+    # Plot coefficients
     coef_df = pd.DataFrame({
         'Feature': feature_cols,
         'Coefficient': model.coef_
     }).sort_values('Coefficient', key=abs, ascending=False)
     
-    fig, ax = plt.subplots(figsize=(10, 5))
-    colors = ['#4CAF50' if c != 0 else '#9E9E9E' for c in coef_df['Coefficient']]
-    bars = ax.barh(coef_df['Feature'], coef_df['Coefficient'], color=colors)
-    ax.set_xlabel('Coefficient Value')
-    ax.set_title(f'{model_type} Coefficients (α={alpha})')
-    ax.axvline(x=0, color='black', linewidth=0.5)
-    st.pyplot(fig, use_container_width=True)
-    plt.close()
-    
-    # Stats
-    non_zero = np.sum(np.abs(model.coef_) > 1e-10)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("Non-zero Coefficients", f"{non_zero}/{len(feature_cols)}")
-    
     with col2:
-        st.metric("Max |Coefficient|", f"{np.max(np.abs(model.coef_)):,.1f}")
-    
-    with col3:
-        st.metric("Sum |Coefficients|", f"{np.sum(np.abs(model.coef_)):,.1f}")
-    
-    st.info("""
-    **💡 Observe:**
-    - **Higher α**: Smaller coefficients, more zeros (for Lasso)
-    - **Lower α**: Larger coefficients, closer to normal regression
-    - **Lasso**: Can make coefficients exactly 0 (feature selection!)
-    """)
+        fig = px.bar(coef_df, x='Coefficient', y='Feature', orientation='h',
+                     title=f"{model_type} Coefficients (α={alpha})",
+                     color='Coefficient', color_continuous_scale='RdBu')
+        fig.update_layout(height=400)
+        st.plotly_chart(fig, use_container_width=True)
+
+    # Stats
+    zero_count = np.sum(np.abs(model.coef_) < 1e-5)
+    st.info(f"**Stats**: {zero_count} features have been penalized to ZERO (Removed).")
 
 
 def display_coefficient_path(df: pd.DataFrame) -> None:
-    """Show coefficient path as alpha changes."""
+    """Show coefficient path as alpha changes (Plotly)."""
     st.header("📈 Coefficient Path")
     
     st.markdown("""
-    **How do coefficients change as α increases?**
+    **Watch features 'die' as Penalty increases.**
+    This is how Lasso selects the best features automatically!
     """)
     
     df = prepare_data(df)
-    
     feature_cols = ['area_m2', 'year', 'floor', 'building_age', 'area_sq']
-    
     X = df[feature_cols].values
     y = df['price_10k_krw'].values
-    
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     
-    alphas = np.logspace(-2, 4, 50)
-    
-    # Ridge path
-    ridge_coefs = []
-    for alpha in alphas:
-        model = Ridge(alpha=alpha)
-        model.fit(X_scaled, y)
-        ridge_coefs.append(model.coef_)
-    
-    ridge_coefs = np.array(ridge_coefs)
-    
-    # Lasso path
+    alphas = np.logspace(-2, 3, 50)
     lasso_coefs = []
-    for alpha in alphas:
-        model = Lasso(alpha=alpha, max_iter=10000)
-        model.fit(X_scaled, y)
-        lasso_coefs.append(model.coef_)
     
-    lasso_coefs = np.array(lasso_coefs)
+    for a in alphas:
+        m = Lasso(alpha=a, max_iter=10000)
+        m.fit(X_scaled, y)
+        lasso_coefs.append(m.coef_)
+        
+    path_df = pd.DataFrame(lasso_coefs, columns=feature_cols)
+    path_df['Alpha'] = alphas
     
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    # Melt for plotly
+    melted = path_df.melt('Alpha', var_name='Feature', value_name='Coefficient')
     
-    # Ridge
-    for i, feat in enumerate(feature_cols):
-        axes[0].plot(alphas, ridge_coefs[:, i], label=feat, linewidth=2)
-    axes[0].set_xscale('log')
-    axes[0].set_xlabel('Alpha (log scale)')
-    axes[0].set_ylabel('Coefficient')
-    axes[0].set_title('Ridge (L2): Coefficients shrink smoothly')
-    axes[0].legend(loc='upper right')
-    axes[0].grid(True, alpha=0.3)
+    fig = px.line(melted, x='Alpha', y='Coefficient', color='Feature', log_x=True,
+                  title='Lasso Path: Which features survive?',
+                  labels={'Alpha': 'Penalty Strength (Log Scale)'})
     
-    # Lasso
-    for i, feat in enumerate(feature_cols):
-        axes[1].plot(alphas, lasso_coefs[:, i], label=feat, linewidth=2)
-    axes[1].set_xscale('log')
-    axes[1].set_xlabel('Alpha (log scale)')
-    axes[1].set_ylabel('Coefficient')
-    axes[1].set_title('Lasso (L1): Coefficients become exactly 0')
-    axes[1].legend(loc='upper right')
-    axes[1].grid(True, alpha=0.3)
+    st.plotly_chart(fig, use_container_width=True)
     
-    plt.tight_layout()
-    st.pyplot(fig, use_container_width=True)
-    plt.close()
-    
-    st.markdown("""
-    **Key Observation:**
-    - **Ridge**: All coefficients shrink toward 0, but never reach exactly 0
-    - **Lasso**: Some coefficients become exactly 0 → Automatic feature selection!
+    st.info("""
+    **How to read this:**
+    1. **Left (Small Alpha)**: All features have non-zero values.
+    2. **Middle**: As we move right, lines hit 0. These features are "dropped".
+    3. **Right (Large Alpha)**: Only the strongest features line survives longest!
     """)
 
 

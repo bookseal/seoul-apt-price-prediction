@@ -544,7 +544,7 @@ def display_demo(df: pd.DataFrame, model, encoder) -> None:
     st.header("🔮 Try It Yourself")
     
     st.markdown("""
-    Select a district and area to get a price prediction!
+    See how **Location (District)** changes the price for the same apartment size!
     """)
     
     # Get districts with English names
@@ -560,68 +560,76 @@ def display_demo(df: pd.DataFrame, model, encoder) -> None:
     }
     
     district_options = {district_name_map.get(d, d): d for d in districts}
+    inv_district_options = {v: k for k, v in district_options.items()} # Korean -> English
     
-    col1, col2 = st.columns(2)
+    tab1, tab2 = st.tabs(["👆 Single Prediction", "⚔️ District Battle"])
     
-    with col1:
-        selected_en = st.selectbox("District", list(district_options.keys()))
-        selected_district = district_options[selected_en]
+    with tab1:
+        st.subheader("Estimate Price")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            selected_en = st.selectbox("Select District", list(district_options.keys()))
+            selected_district = district_options[selected_en]
+        
+        with col2:
+            selected_area = st.slider("Apartment Area (m²)", 10, 200, 84, key="area_single")
+        
+        # Predict
+        X_d = encoder.transform([[selected_district]])
+        X_input = np.hstack([[selected_area], X_d[0]]).reshape(1, -1)
+        price = model.predict(X_input)[0]
+        
+        st.success(f"""
+        ### 💰 Predicted Price: {price:,.0f} (10K KRW)
+        ≈ **{price/10000:.2f} 억원**
+        """)
     
-    with col2:
-        selected_area = st.slider("Area (m²)", min_value=10, max_value=200, value=84)
-    
-    # Prepare input
-    X_district = encoder.transform([[selected_district]])
-    X_input = np.hstack([[selected_area], X_district[0]]).reshape(1, -1)
-    
-    # Predict
-    predicted_price = model.predict(X_input)[0]
-    
-    st.markdown("---")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("District", selected_en)
-    
-    with col2:
-        st.metric("Area", f"{selected_area} m²")
-    
-    with col3:
-        st.metric("Predicted Price", f"{predicted_price:,.0f}")
-    
-    st.success(f"""
-    **Predicted Price**: {predicted_price:,.0f} (10K KRW) ≈ **{predicted_price/10000:.2f} 억원**
-    """)
-    
-    # Compare two districts
-    st.markdown("### 🏘️ Compare Districts")
-    
-    st.markdown(f"""
-    Same {selected_area}m² apartment in different districts:
-    """)
-    
-    comparison_districts = ['강남구', '서초구', '송파구', '노원구', '도봉구']
-    available_districts = [d for d in comparison_districts if d in districts]
-    
-    prices = {}
-    for district in available_districts:
-        X_d = encoder.transform([[district]])
-        X_comp = np.hstack([[selected_area], X_d[0]]).reshape(1, -1)
-        prices[district_name_map.get(district, district)] = model.predict(X_comp)[0]
-    
-    comparison_df = pd.DataFrame({
-        'District': list(prices.keys()),
-        'Predicted Price': [f"{p:,.0f}" for p in prices.values()],
-        '억원': [f"{p/10000:.2f}" for p in prices.values()]
-    })
-    
-    st.dataframe(comparison_df, use_container_width=True)
-    
-    st.info("""
-    **💡 Notice**: Now different districts get different prices!
-    This is the power of adding the District feature.
-    """)
+    with tab2:
+        st.subheader("Compare Two Districts")
+        st.markdown("How much more expensive is District A vs District B?")
+        
+        c1, c2, c3 = st.columns([1, 0.2, 1])
+        
+        with c1:
+            dist_a_en = st.selectbox("District A (Blue)", list(district_options.keys()), index=0)
+            dist_a = district_options[dist_a_en]
+            
+        with c3:
+            dist_b_en = st.selectbox("District B (Red)", list(district_options.keys()), index=21) # Default Nowon
+            dist_b = district_options[dist_b_en]
+            
+        area_battle = st.slider("Area for both (m²)", 10, 200, 84, key="area_battle")
+        
+        # Predict A
+        Xa_d = encoder.transform([[dist_a]])
+        Xa_in = np.hstack([[area_battle], Xa_d[0]]).reshape(1, -1)
+        price_a = model.predict(Xa_in)[0]
+        
+        # Predict B
+        Xb_d = encoder.transform([[dist_b]])
+        Xb_in = np.hstack([[area_battle], Xb_d[0]]).reshape(1, -1)
+        price_b = model.predict(Xb_in)[0]
+        
+        # Visualize
+        fig, ax = plt.subplots(figsize=(6, 4))
+        bars = ax.bar([dist_a_en, dist_b_en], [price_a, price_b], color=['#2196F3', '#F44336'])
+        
+        # Add labels
+        ax.bar_label(bars, fmt='{:,.0f}', padding=3)
+        ax.set_ylabel("Price (10k KRW)")
+        ax.set_title(f"Price Gap: {abs(price_a - price_b):,.0f} (10k KRW)")
+        ax.set_ylim(0, max(price_a, price_b) * 1.2)
+        
+        st.pyplot(fig, use_container_width=True)
+        
+        diff = price_a - price_b
+        if diff > 0:
+            st.info(f"**{dist_a_en}** is **{diff/10000:.2f} 억원** more expensive than {dist_b_en}!")
+        elif diff < 0:
+            st.info(f"**{dist_b_en}** is **{abs(diff)/10000:.2f} 억원** more expensive than {dist_a_en}!")
+        else:
+            st.info("Same price!")
 
 
 def display_limitations() -> None:

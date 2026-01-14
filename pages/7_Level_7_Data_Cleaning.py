@@ -9,6 +9,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.express as px
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
@@ -94,10 +95,10 @@ def create_messy_data(df: pd.DataFrame) -> pd.DataFrame:
     
     # Create outliers (1% extreme values)
     outlier_mask = np.random.random(n) < 0.01
-    df.loc[outlier_mask, 'price_10k_krw'] = df['price_10k_krw'] * np.random.uniform(5, 10, sum(outlier_mask))
+    df.loc[outlier_mask, 'price_10k_krw'] = df.loc[outlier_mask, 'price_10k_krw'] * np.random.uniform(5, 10, sum(outlier_mask))
     
     outlier_mask2 = np.random.random(n) < 0.01
-    df.loc[outlier_mask2, 'area_m2'] = df['area_m2'] * np.random.uniform(5, 10, sum(outlier_mask2))
+    df.loc[outlier_mask2, 'area_m2'] = df.loc[outlier_mask2, 'area_m2'] * np.random.uniform(5, 10, sum(outlier_mask2))
     
     return df
 
@@ -214,11 +215,12 @@ def display_null_handling_options() -> str:
 
 
 def display_outlier_detection(df: pd.DataFrame) -> None:
-    """Show outlier detection methods."""
+    """Show outlier detection detections using interactive Plotly box plots."""
     st.header("🔍 Step 2b: Detecting Outliers")
     
     st.markdown("""
     **Outliers are extreme values that don't fit the pattern.**
+    Hover over the box plot to see Quartiles and Fences!
     """)
     
     # Select column for analysis
@@ -230,15 +232,12 @@ def display_outlier_detection(df: pd.DataFrame) -> None:
         with [col1, col2][i]:
             st.markdown(f"### {col}")
             
-            # Box plot
-            fig, ax = plt.subplots(figsize=(6, 4))
-            bp = ax.boxplot(df[col].dropna(), vert=True)
-            ax.set_ylabel(col)
-            ax.set_title(f'Box Plot: {col}')
-            st.pyplot(fig)
-            plt.close()
+            # Interactive Box Plot
+            fig = px.box(df, y=col, title=f"Box Plot: {col}", points="outliers")
+            fig.update_layout(height=400)
+            st.plotly_chart(fig, use_container_width=True)
             
-            # IQR method
+            # IQR method stats for explanation
             Q1 = df[col].quantile(0.25)
             Q3 = df[col].quantile(0.75)
             IQR = Q3 - Q1
@@ -247,13 +246,11 @@ def display_outlier_detection(df: pd.DataFrame) -> None:
             
             outliers = df[(df[col] < lower) | (df[col] > upper)]
             
-            st.markdown(f"""
-            **IQR Method:**
-            - Q1: {Q1:,.0f}
-            - Q3: {Q3:,.0f}
-            - Lower bound: {lower:,.0f}
-            - Upper bound: {upper:,.0f}
-            - **Outliers: {len(outliers)} ({len(outliers)/len(df)*100:.1f}%)**
+            st.info(f"""
+            **Stats:**
+            - **IQR Range**: {Q1:,.0f} ~ {Q3:,.0f}
+            - **Outlier Thresholds**: < {lower:,.0f} or > {upper:,.0f}
+            - **Outliers Found**: {len(outliers)}
             """)
     
     st.markdown("""
@@ -261,10 +258,9 @@ def display_outlier_detection(df: pd.DataFrame) -> None:
                 border-left: 4px solid #FF9800; margin: 15px 0;">
         <b>📊 IQR Method Explained</b><br>
         <span style="font-size: 13px;">
-        • Q1 = 25th percentile (lower quartile)<br>
-        • Q3 = 75th percentile (upper quartile)<br>
-        • IQR = Q3 - Q1 (interquartile range)<br>
-        • Outlier if: value < Q1 - 1.5×IQR or value > Q3 + 1.5×IQR
+        • The "Box" holds the middle 50% of data.<br>
+        • The "Whiskers" extend to 1.5x the box size.<br>
+        • Anything outside the whiskers is likely an <b>Outlier</b> (dot).
         </span>
     </div>
     """, unsafe_allow_html=True)
@@ -304,6 +300,56 @@ def display_outlier_handling_options() -> str:
     )
     
     return strategy
+
+
+def display_outlier_game(df: pd.DataFrame) -> None:
+    """Interactive demo of outlier impact."""
+    st.header("🎮 Interactive: The Effect of Outliers")
+    
+    st.markdown("""
+    **Outliers are like magnets**: They pull the regression line depending on how strong they are.
+    
+    👇 **Check the box** to remove outliers and see the line snap back to normal!
+    """)
+    
+    col1, col2 = st.columns([1, 3])
+    
+    with col1:
+        st.write("") 
+        st.write("")
+        remove = st.checkbox("🚫 Remove Outliers", value=False)
+        
+    # Prepare data (Simulate a simple case with 1 outlier)
+    np.random.seed(42)
+    n = 50
+    X = np.linspace(10, 100, n)
+    y = 5 * X + 100 + np.random.normal(0, 50, n)
+    
+    # Add one massive outlier
+    X_out = np.append(X, [90])
+    y_out = np.append(y, [1500]) # Huge price
+    types = ['Normal'] * n + ['Outlier']
+    
+    demo_df = pd.DataFrame({'Area': X_out, 'Price': y_out, 'Type': types})
+    
+    if remove:
+        plot_df = demo_df[demo_df['Type'] == 'Normal']
+        line_color = 'green'
+        title = "✅ Outliers Removed (Line fits well)"
+    else:
+        plot_df = demo_df
+        line_color = 'red'
+        title = "⚠️ With Outliers (Line is pulled up!)"
+        
+    # Plot using Plotly
+    fig = px.scatter(plot_df, x='Area', y='Price', color='Type', 
+                     color_discrete_map={'Normal': 'steelblue', 'Outlier': 'red'},
+                     trendline="ols", trendline_color_override=line_color,
+                     title=title)
+    
+    fig.update_layout(height=400)
+    st.plotly_chart(fig, use_container_width=True)
+    st.markdown("---")
 
 
 def clean_data(df: pd.DataFrame, null_strategy: str, outlier_strategy: str) -> pd.DataFrame:
@@ -539,6 +585,8 @@ def main() -> None:
         display_outlier_detection(df_messy)
         st.markdown("---")
         outlier_strategy = display_outlier_handling_options()
+        st.markdown("---")
+        display_outlier_game(df_messy) # Add interactive game
         st.markdown("---")
         
         # Clean data

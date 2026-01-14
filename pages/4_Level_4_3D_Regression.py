@@ -187,7 +187,7 @@ def display_building_year_analysis(df: pd.DataFrame) -> None:
 
 
 def display_3d_visualization(df: pd.DataFrame) -> None:
-    """Show 3D scatter plot with Plotly."""
+    """Show 3D scatter plot with Plotly and Regression Plane."""
     st.header("🎨 3D Visualization")
     
     st.markdown("""
@@ -201,9 +201,9 @@ def display_3d_visualization(df: pd.DataFrame) -> None:
     """)
     
     # Sample for performance
-    sample = df.sample(n=min(2000, len(df)), random_state=RANDOM_STATE)
+    sample = df.sample(n=min(500, len(df)), random_state=RANDOM_STATE)
     
-    # Create 3D scatter
+    # 1. Create Scatter Plot
     fig = px.scatter_3d(
         sample,
         x='area_m2',
@@ -212,31 +212,55 @@ def display_3d_visualization(df: pd.DataFrame) -> None:
         color='district',
         opacity=0.6,
         title='3D View: Area × Year × Price',
-        labels={
-            'area_m2': 'Area (m²)',
-            'year': 'Building Year',
-            'price_10k_krw': 'Price (10K KRW)'
-        }
+        labels={'area_m2': 'Area', 'year': 'Year', 'price_10k_krw': 'Price'}
     )
     
+    # 2. Add Regression Plane (Global Trend)
+    # We train a simple model just on Area/Year to show the "average" plane
+    X_simple = sample[['area_m2', 'year']].values
+    y_simple = sample['price_10k_krw'].values
+    model_simple = LinearRegression()
+    model_simple.fit(X_simple, y_simple)
+    
+    # Create meshgrid
+    x_range = np.linspace(sample['area_m2'].min(), sample['area_m2'].max(), 20)
+    y_range = np.linspace(sample['year'].min(), sample['year'].max(), 20)
+    xx, yy = np.meshgrid(x_range, y_range)
+    
+    # Predict Z for meshgrid
+    #Flatten to predict
+    X_mesh = np.c_[xx.ravel(), yy.ravel()]
+    Z_pred = model_simple.predict(X_mesh)
+    zz = Z_pred.reshape(xx.shape)
+    
+    # Add surface to figure
+    fig.add_trace(go.Surface(
+        x=xx, y=yy, z=zz,
+        colorscale='Viridis',
+        opacity=0.5,
+        showscale=False,
+        name='Regression Plane'
+    ))
+
     fig.update_layout(
         scene=dict(
             xaxis_title='Area (m²)',
             yaxis_title='Building Year',
             zaxis_title='Price (10K KRW)'
         ),
-        height=600
+        height=600,
+        margin=dict(l=0, r=0, b=0, t=40)
     )
     
     st.plotly_chart(fig, use_container_width=True)
     
     st.info("""
-    **💡 What do you see?**
-    - Points rise as Area increases (right)
-    - Points rise as Year increases (newer)
-    - Colors show different districts (some higher than others)
+    **💡 The "Sheet" of Best Fit**
     
-    This is our data in 3D! The model will learn to predict Z (price) from X and Y.
+    The semi-transparent surface is the **Regression Plane**.
+    - It's flat (Linear).
+    - It tilts up towards "Larger Area" and "Newer Year".
+    - Linear Regression attempts to place this sheet closest to all the dots!
     """)
 
 
