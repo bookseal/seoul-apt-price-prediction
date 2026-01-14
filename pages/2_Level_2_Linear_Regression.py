@@ -610,6 +610,83 @@ def display_training_process(df: pd.DataFrame) -> None:
         else:
              st.info("Keep clicking 'Fast (10x)' to see the red dot slide down to the blue star!")
 
+    # --- NEW: Educational Deep Dive ---
+    st.markdown("---")
+    st.subheader("📘 The Math & Logic behind Step 3")
+    
+    st.markdown("""
+    You just performed **Stochastic Gradient Descent (SGD)** manually! 
+    But what is actually happening inside the computer?
+    """)
+    
+    tab1, tab2, tab3 = st.tabs(["1. The Formula", "2. The Code", "3. The Flow"])
+    
+    with tab1:
+        st.markdown("### 1. The Update Rule")
+        st.markdown("How do we know **how much** to change `w` and `b`?")
+        
+        st.latex(r"w_{new} = w_{old} - \text{learning\_rate} \times \text{gradient}")
+        st.latex(r"b_{new} = b_{old} - \text{learning\_rate} \times \text{gradient}")
+        
+        st.markdown("""
+        **In Math Notation:**
+        """)
+        st.latex(r"w \leftarrow w - \eta \cdot \frac{\partial L}{\partial w}")
+        st.latex(r"b \leftarrow b - \eta \cdot \frac{\partial L}{\partial b}")
+        
+        st.markdown(r"""
+        *   $w, b$: Weights (Slope, Intercept)
+        *   $\eta$ (Eta): **Learning Rate** (Step Size)
+        *   $\frac{\partial L}{\partial w}$: **Gradient** (Slope of the Error)
+        """)
+        
+    with tab2:
+        st.markdown("### 2. Python Implementation")
+        st.markdown("This is essentially the code running every time you click **'Step'**:")
+        
+        st.code("""
+# 1. Calculate Prediction
+y_pred = w * X + b
+
+# 2. Calculate Error
+error = y_pred - y
+
+# 3. Calculate Gradient (Slope of error)
+w_grad = (2/N) * sum(error * X)
+b_grad = (2/N) * sum(error)
+
+# 4. Update Parameters (Take a step downhill)
+w = w - learning_rate * w_grad
+b = b - learning_rate * b_grad
+""", language='python')
+
+    with tab3:
+        st.markdown("### 3. Execution Flow")
+        st.markdown("The computer does this loop thousands of times:")
+        
+        st.graphviz_chart("""
+        digraph SGD {
+            rankdir=LR;
+            node [fontname="Arial", shape=box, style=rounded, margin=0.2];
+            
+            Start [label="Start\n(Random w, b)", shape=ellipse, style=filled, fillcolor="#E3F2FD"];
+            Predict [label="Predict Price\n(y = wx + b)"];
+            Error [label="Measure Error\n(MSE)"];
+            Gradient [label="Calculate Gradient\n(Slope)"];
+            Update [label="Update w, b\n(w = w - lr*grad)", style=filled, fillcolor="#FFF3E0"];
+            Check [label="Low Error?", shape=diamond];
+            Stop [label="Stop\n(Converged)", shape=doublecircle, style=filled, fillcolor="#E8F5E9"];
+            
+            Start -> Predict;
+            Predict -> Error;
+            Error -> Gradient;
+            Gradient -> Update;
+            Update -> Check;
+            Check -> Predict [label="No (Repeat)"];
+            Check -> Stop [label="Yes"];
+        }
+        """)
+
 
 def display_model_info(df: pd.DataFrame) -> None:
     """Show trained model parameters and training details."""
