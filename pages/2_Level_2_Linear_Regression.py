@@ -666,26 +666,46 @@ b = b - learning_rate * b_grad
         
         st.graphviz_chart("""
         digraph SGD {
-            rankdir=LR;
-            node [fontname="Arial", shape=box, style=rounded, margin=0.2];
+            rankdir=TB;
+            newrank=true;
+            splines=ortho;
             
-            Start [label="Start\n(Random w, b)", shape=ellipse, style=filled, fillcolor="#E3F2FD"];
-            Predict [label="Predict Price\n(y = wx + b)"];
-            Error [label="Measure Error\n(MSE)"];
-            Gradient [label="Calculate Gradient\n(Slope)"];
-            Update [label="Update w, b\n(w = w - lr*grad)", style=filled, fillcolor="#FFF3E0"];
-            Check [label="Low Error?", shape=diamond];
-            Stop [label="Stop\n(Converged)", shape=doublecircle, style=filled, fillcolor="#E8F5E9"];
+            node [fontname="Arial", fontsize=12, shape=box, style="filled,rounded", 
+                  fillcolor="white", color="#DDDDDD", penwidth=1.5, margin=0.2];
+            edge [fontname="Arial", fontsize=10, color="#666666", penwidth=1.2];
             
-            Start -> Predict;
-            Predict -> Error;
-            Error -> Gradient;
-            Gradient -> Update;
-            Update -> Check;
-            Check -> Predict [label="No (Repeat)"];
-            Check -> Stop [label="Yes"];
+            # Start Node
+            Start [label="Start\n(Random w, b)", shape=pill, fillcolor="#E3F2FD", color="#2196F3", penwidth=2];
+            
+            # Main Loop Nodes
+            Predict [label="1. Predict\ny = wx + b"];
+            Error [label="2. Measure Error\n(Loss)"];
+            Gradient [label="3. Compute Gradient\n(Slope)"];
+            Update [label="4. Update w, b\n(- learning_rate × slope)", fillcolor="#FFF3E0", color="#FF9800", penwidth=2];
+            
+            # Decision Node
+            Check [label="Error Low?", shape=diamond, height=0.8, fillcolor="#FFF8E1", color="#FFC107"];
+            
+            # Stop Node
+            Stop [label="Done! 🎉\n(Converged)", shape=doublecircle, fillcolor="#E8F5E9", color="#4CAF50", penwidth=2];
+            
+            # Connections
+            Start -> Predict [weight=2];
+            Predict -> Error [weight=2];
+            Error -> Gradient [weight=2];
+            Gradient -> Update [weight=2];
+            Update -> Check [weight=2];
+            
+            # The Loop Back (Red)
+            Check -> Predict [label="No (Repeat)", color="#F44336", fontcolor="#F44336", constraint=false];
+            
+            # The Exit (Green)
+            Check -> Stop [label="Yes", color="#4CAF50", fontcolor="#4CAF50", weight=2];
+            
+            # Invisible edge to align Start and Stop properly
+            Start -> Stop [style=invis];
         }
-        """)
+        """, use_container_width=True)
 
 
 def display_model_info(df: pd.DataFrame) -> None:
