@@ -449,6 +449,20 @@ def display_training_process(df: pd.DataFrame) -> None:
     
     Let's train the model ourselves! We will use **Gradient Descent** to find the best `w` and `b`.
     """)
+
+    with st.expander("⚖️ Wait! Why do we need 'Scaling'?", expanded=True):
+        st.markdown("""
+        In the code (and in real life), you must **Scale** your data first. 
+        
+        *   **Area**: ~ 50 to 200 ($m^2$)
+        *   **Price**: ~ 50,000 to 200,000 (10k KRW)
+        
+        These numbers are too different! 😱
+        If we don't scale them, the computer gets confused. It's like trying to compare **Ants** and **Elephants**.
+        
+        **The Fix:** We use `StandardScaler`.
+        It squashes both Area and Price to be around **-1 to +1**. This makes learning much smoother.
+        """)
     
     with st.expander("🏔️ What is Gradient Descent? (The Mountain Hiker Analogy)", expanded=True):
         st.markdown("""
