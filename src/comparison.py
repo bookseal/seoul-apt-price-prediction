@@ -11,10 +11,10 @@ import numpy as np
 # These are reference values - actual may vary slightly based on data sampling
 LEVEL_RMSE = {
     1: {"name": "Heuristic", "rmse": 38000, "icon": "🎯"},
-    2: {"name": "Linear (Area)", "rmse": 42000, "icon": "📐"},
+    2: {"name": "Linear (Area)", "rmse": 38311, "icon": "📐"},
     3: {"name": "Multi-Feature", "rmse": 35000, "icon": "🏘️"},
     4: {"name": "3D (+Year)", "rmse": 34000, "icon": "🎯"},
-    5: {"name": "High-Dim", "rmse": 33000, "icon": "🌌"},
+    5: {"name": "High-Dim", "rmse": 32666, "icon": "🌌"},
     6: {"name": "PCA", "rmse": 34000, "icon": "📉"},
     7: {"name": "Cleaned", "rmse": 32000, "icon": "🧹"},
     8: {"name": "Engineered", "rmse": 31000, "icon": "⚗️"},

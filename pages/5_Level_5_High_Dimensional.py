@@ -132,14 +132,13 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
         df['floor'] = np.random.randint(1, 30, n)
     
     # Create additional features
-    df['building_age'] = 2024 - df['year']
-    df['price_per_m2'] = df['price_10k_krw'] / df['area_m2']
+    if 'built_year' in df.columns:
+        df['building_age'] = 2024 - df['built_year']
+    else:
+        # Fallback if built_year missing (shouldn't happen with sample.parquet)
+        df['building_age'] = 2024 - df['year']
     
-    # Synthetic features for demonstration
-    df['total_units'] = np.random.randint(100, 2000, n)
-    df['parking_ratio'] = np.random.uniform(0.5, 2.0, n)
-    df['floor_ratio'] = df['floor'] / 30  # Normalized floor
-    
+    # Notebook uses: Area, Floor, Building Age
     return df
 
 
@@ -157,16 +156,12 @@ def display_feature_selection(df: pd.DataFrame) -> list:
     # Show all available features prominently
     available_features = {
         'area_m2': ('📐', 'Area (m²)', 'Apartment size - the most basic feature'),
-        'year': ('📅', 'Building Year', 'When was it built? Newer = expensive'),
         'floor': ('🏢', 'Floor Number', 'Which floor? Penthouses cost more!'),
-        'building_age': ('⏰', 'Building Age', 'Years since construction (2024 - year)'),
-        'total_units': ('🏘️', 'Total Units', 'How big is the complex? (100-2000 units)'),
-        'parking_ratio': ('🚗', 'Parking Ratio', 'Cars per household (0.5-2.0)'),
-        'floor_ratio': ('📊', 'Floor Ratio', 'Relative position (floor / max_floor)')
+        'building_age': ('⏰', 'Building Age', 'Years since construction (2024 - year)')
     }
     
     # Display feature cards
-    st.markdown("### 📋 Available Features (7 numeric + 25 districts)")
+    st.markdown("### 📋 Available Features (3 numeric + 25 districts)")
     
     cols = st.columns(4)
     for i, (key, (emoji, name, desc)) in enumerate(available_features.items()):
@@ -186,9 +181,9 @@ def display_feature_selection(df: pd.DataFrame) -> list:
     default_features = list(available_features.keys())  # All features!
     
     selected = st.multiselect(
-        "🔧 Select features to include (try selecting ALL!)",
+        "🔧 Select features to include",
         options=list(available_features.keys()),
-        default=default_features,
+        default=['area_m2', 'floor', 'building_age'],
         format_func=lambda x: f"{available_features[x][0]} {x}"
     )
     
@@ -212,6 +207,49 @@ def display_feature_selection(df: pd.DataFrame) -> list:
         st.warning("🌌 **This is HIGH-DIMENSIONAL data!** Can't visualize this in a single plot!")
     
     return selected, include_district
+
+
+def display_code_logic_explanation(selected_features: list) -> None:
+    """Explain how we handle multiple features in code."""
+    st.header("💻 Code Reality Check: Handling Multiple Features")
+    
+    st.markdown("""
+    Before we visualize the relationships, let's look at how we actually write this in Python.
+    It's surprisingly simple!
+    """)
+    
+    st.markdown("### 1. Selecting Multiple Features")
+    st.markdown("Instead of just selecting `'area_m2'`, we pass a **list** of column names.")
+    
+    # Format simple list for display
+    display_list = str(selected_features[:3]).replace("]", ", ...]") if len(selected_features) > 3 else str(selected_features)
+    
+    code_snippet = f"""
+# 1. Define the list of features we want
+features = {display_list}
+
+# 2. Select these columns from our DataFrame
+# This creates a new table with ONLY these columns
+subset_df = df[features]
+"""
+    st.code(code_snippet, language='python')
+    
+    st.markdown("### 2. Calculating Correlation")
+    st.markdown("To get the heatmap numbers, we simply ask pandas to calculate the correlation matrix.")
+    
+    st.code("""
+# Calculate correlation between all these columns
+# corr() calculates the relationship (-1 to 1) for EVERY pair
+corr_matrix = subset_df.corr()
+
+# This gives us a square table of numbers:
+#          Area    Year   Price
+# Area     1.00    0.35    0.65
+# Year     0.35    1.00    0.20
+# Price    0.65    0.20    1.00
+""", language='python')
+
+    st.info("The **Heatmap** below is simply a colorful way to visualize this table of numbers!")
 
 
 def display_correlation_heatmap(df: pd.DataFrame, features: list) -> None:
@@ -324,6 +362,59 @@ def display_correlation_heatmap(df: pd.DataFrame, features: list) -> None:
             st.markdown(f"- `{feat}`: {corr:.3f}")
 
 
+def display_training_code_explanation(include_district: bool) -> None:
+    """Explain the training code involving One-Hot Encoding."""
+    st.header("💻 Code Reality Check: Preprocessing & Training")
+    
+    st.markdown("""
+    Now that we've analyzed the features, how do we feed them into the model?
+    Particularly **District**, which is text data!
+    """)
+    
+    if include_district:
+        st.markdown("### 1. Handling Text Data (One-Hot Encoding)")
+        st.markdown("""
+        The notebook uses `pd.get_dummies()` to convert **'Gangnam'**, **'Mapo'** into numbers.
+        
+        **Why?**
+        - Computers only understand numbers.
+        - We can't just say `Gangnam = 1, Mapo = 2` because that implies Mapo is "twice" Gangnam (math error!).
+        - Instead, we create a **Switch (0 or 1)** for every district.
+        """)
+        
+        st.code("""
+# One-Hot Encoding in the Notebook
+# This creates 25 new columns like 'dist_Gangnam', 'dist_Mapo'
+ct = pd.get_dummies(df['district'], prefix='dist')
+
+# Combine numeric features with these new district columns
+# hstack = Horizontal Stack (putting columns side-by-side)
+X = np.hstack([df[numeric_features].values, ct.values])
+""", language='python')
+    else:
+        st.markdown("### 1. Selecting Numeric Features")
+        st.code("""
+# Simply select numeric columns
+X = df[numeric_features].values
+""", language='python')
+
+    st.markdown("### 2. Training the Model")
+    st.markdown("The training process is standard sklearn workflow:")
+    
+    st.code("""
+# 1. Split into Train/Test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# 2. Create and Train Model
+model = LinearRegression()
+model.fit(X_train, y_train)  # The math happens here!
+
+# 3. Predict & Evaluate
+y_pred = model.predict(X_test)
+rmse = mean_squared_error(y_test, y_pred, squared=False)
+""", language='python')
+
+
 @st.cache_resource
 def train_model(df: pd.DataFrame, features: list, include_district: bool):
     """Train high-dimensional model."""
@@ -342,13 +433,9 @@ def train_model(df: pd.DataFrame, features: list, include_district: bool):
     
     y = df['price_10k_krw'].values
     
-    # Scale features
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    
-    # Split
+    # Split (Match Notebook's random_state=42)
     X_train, X_test, y_train, y_test = train_test_split(
-        X_scaled, y, test_size=0.2, random_state=RANDOM_STATE
+        X, y, test_size=0.2, random_state=42
     )
     
     # Train
@@ -362,7 +449,7 @@ def train_model(df: pd.DataFrame, features: list, include_district: bool):
     rmse_train = calculate_rmse(y_train, y_pred_train)
     rmse_test = calculate_rmse(y_test, y_pred_test)
     
-    return model, scaler, encoder, feature_names, rmse_train, rmse_test, (y_test, y_pred_test)
+    return model, None, encoder, feature_names, rmse_train, rmse_test, (y_test, y_pred_test)
 
 
 def display_feature_importance(model, feature_names: list, n_numeric: int) -> None:
@@ -479,6 +566,35 @@ def display_evaluation(rmse_train: float, rmse_test: float, n_features: int) -> 
         </span>
     </div>
     """, unsafe_allow_html=True)
+    
+    if n_features > 20: 
+        st.markdown("### 🏆 Comparison with Notebook")
+        
+        # Determine performance relative to notebook
+        notebook_rmse = 32666
+        diff = notebook_rmse - rmse_test
+        
+        if diff > 1000:
+            status = "🎉 **Better than Notebook!**"
+        elif diff < -1000:
+            status = "⚠️ **Worse than Notebook**"
+        else:
+            status = "✅ **Matches Notebook**"
+            
+        msg = f"""
+        We aim to match or beat the result from the Jupyter Notebook (~32,666).
+        
+        | Model | RMSE (Test Error) | Status |
+        |-------|-------------------|--------|
+        | **Notebook Level 5** | ~32,666 | Benchmark Target |
+        | **Your Model** | **{rmse_test:,.0f}** | {status} |
+        """
+        st.markdown(msg)
+        
+        if abs(diff) <= 1000:
+            st.info("Perfect! You have successfully reproduced the notebook's results.")
+        elif diff > 1000:
+            st.success("Great job! You found a combination of features that beats the baseline.")
     
     # Compare with previous levels
     st.markdown("---")
@@ -685,7 +801,14 @@ def main() -> None:
             return
         
         st.markdown("---")
+        
+        display_code_logic_explanation(selected_features)
+        
+        st.markdown("---")
         display_correlation_heatmap(df, selected_features)
+        st.markdown("---")
+        
+        display_training_code_explanation(include_district)
         st.markdown("---")
         
         # Train model
