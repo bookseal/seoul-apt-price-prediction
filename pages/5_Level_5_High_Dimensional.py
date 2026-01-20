@@ -121,15 +121,8 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     """Prepare multi-dimensional feature set."""
     df = df.copy()
     
-    # Add synthetic features if not present
-    np.random.seed(RANDOM_STATE)
-    n = len(df)
-    
-    if 'year' not in df.columns:
-        df['year'] = np.random.randint(1985, 2024, n)
-    
-    if 'floor' not in df.columns:
-        df['floor'] = np.random.randint(1, 30, n)
+    # Note: 'year' and 'floor' are now in the real dataset!
+    # We no longer need to generate them randomly.
     
     # Create additional features
     if 'built_year' in df.columns:
@@ -157,7 +150,9 @@ def display_feature_selection(df: pd.DataFrame) -> list:
     available_features = {
         'area_m2': ('📐', 'Area (m²)', 'Apartment size - the most basic feature'),
         'floor': ('🏢', 'Floor Number', 'Which floor? Penthouses cost more!'),
-        'building_age': ('⏰', 'Building Age', 'Years since construction (2024 - year)')
+        'building_age': ('⏰', 'Building Age', 'Years since construction (2024 - year)'),
+        'total_units': ('🏘️', 'Total Units', 'How many apartments in the complex?'),
+        'parking_spaces': ('🚗', 'Parking Spaces', 'Total parking spots available')
     }
     
     # Display feature cards
@@ -183,7 +178,7 @@ def display_feature_selection(df: pd.DataFrame) -> list:
     selected = st.multiselect(
         "🔧 Select features to include",
         options=list(available_features.keys()),
-        default=['area_m2', 'floor', 'building_age'],
+        default=['area_m2', 'floor', 'building_age', 'total_units', 'parking_spaces'],
         format_func=lambda x: f"{available_features[x][0]} {x}"
     )
     

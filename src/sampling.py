@@ -101,9 +101,11 @@ def build_stratified_sample(df: pd.DataFrame, n: int = 100_000, seed: int = 42) 
 	    "area_m2",          # 전용면적
 	    "built_year",       # 준공연도
 	    "contract_yyyymm",  # 계약연월 (연도 추출용)
-	    "floor",            # 층
-	    "price_10k_krw",    # 타깃 가격
-	]
+        "floor",            # 층
+        "price_10k_krw",    # 타깃 가격
+        "total_units",      # 전체 세대수 (Real data!)
+        "parking_spaces",   # 주차 대수 (Real data!)
+    ]
 	base = df[[c for c in required if c in df.columns]].copy()
 	base = prepare_sampling_columns(base)
 
