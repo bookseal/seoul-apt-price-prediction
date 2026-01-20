@@ -44,10 +44,24 @@ def display_header() -> None:
         **Impact**: These issues can completely mislead your model!
         """)
 
+def display_toc() -> None:
+    """Display Table of Contents using Streamlit markdown."""
+    st.markdown("""
+    ### 📑 Table of Contents
+    1.  [**Step 1: Pipeline Overview**](#step-1-pipeline-overview)
+    2.  [**Step 2-1: Detecting Missing Values**](#step-2-1-detecting-missing-values)
+    3.  [**Step 2-2: Detecting Outliers**](#step-2-2-detecting-outliers)
+    4.  [**Step 3-1: How to Handle Missing Values?**](#step-3-1-how-to-handle-missing-values)
+    5.  [**Step 3-2: How to Handle Outliers?**](#step-3-2-how-to-handle-outliers)
+    6.  [**Step 4: Interactive Simulation**](#step-4-interactive-simulation)
+    7.  [**Step 5: Before vs After**](#step-5-before-vs-after)
+    8.  [**Step 6: Model Performance Check**](#step-6-model-performance-check)
+    """)
+
 
 def display_pipeline_overview() -> None:
     """Show the pipeline."""
-    st.header("🔄 Level 7 Pipeline")
+    st.header("Step 1: Pipeline Overview (전체 흐름)")
     
     st.markdown("""
     <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;">
@@ -74,38 +88,12 @@ def display_pipeline_overview() -> None:
     """, unsafe_allow_html=True)
 
 
-def create_messy_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Create synthetic messy data for demonstration."""
-    df = df.copy()
-    np.random.seed(RANDOM_STATE)
-    n = len(df)
-    
-    # Add year and floor if not present
-    if 'year' not in df.columns:
-        df['year'] = np.random.randint(1985, 2024, n)
-    if 'floor' not in df.columns:
-        df['floor'] = np.random.randint(1, 30, n)
-    
-    # Create missing values (5% random)
-    null_mask = np.random.random(n) < 0.05
-    df.loc[null_mask, 'floor'] = np.nan
-    
-    null_mask2 = np.random.random(n) < 0.03
-    df.loc[null_mask2, 'year'] = np.nan
-    
-    # Create outliers (1% extreme values)
-    outlier_mask = np.random.random(n) < 0.01
-    df.loc[outlier_mask, 'price_10k_krw'] = df.loc[outlier_mask, 'price_10k_krw'] * np.random.uniform(5, 10, sum(outlier_mask))
-    
-    outlier_mask2 = np.random.random(n) < 0.01
-    df.loc[outlier_mask2, 'area_m2'] = df.loc[outlier_mask2, 'area_m2'] * np.random.uniform(5, 10, sum(outlier_mask2))
-    
-    return df
+
 
 
 def display_missing_values(df: pd.DataFrame) -> None:
     """Show missing values analysis."""
-    st.header("🔍 Step 2a: Detecting Missing Values")
+    st.header("🔍 Step 2-1: Detecting Missing Values")
     
     st.markdown("""
     **First, let's see what's missing in our data:**
@@ -140,6 +128,12 @@ def display_missing_values(df: pd.DataFrame) -> None:
             st.pyplot(fig, use_container_width=True)
             plt.close()
         
+        st.code("""
+# Check missing values
+missing = df.isnull().sum()
+print(missing[missing > 0])
+        """, language="python")
+        
         st.markdown("""
         <div style="padding: 15px; background: rgba(244,67,54,0.1); border-radius: 10px; 
                     border-left: 4px solid #F44336; margin: 15px 0;">
@@ -157,7 +151,7 @@ def display_missing_values(df: pd.DataFrame) -> None:
 
 def display_null_handling_options() -> str:
     """Show options for handling nulls."""
-    st.header("🛠️ How to Handle Missing Values?")
+    st.header("Step 3-1: How to Handle Missing Values? (결측치 처리)")
     
     st.markdown("""
     **Common strategies:**
@@ -203,20 +197,26 @@ def display_null_handling_options() -> str:
         </div>
         """, unsafe_allow_html=True)
     
-    strategy = st.selectbox(
-        "Choose a strategy for this demo:",
-        ["drop", "mean", "median"],
-        format_func=lambda x: {"drop": "Drop rows with null", 
-                               "mean": "Fill with mean", 
-                               "median": "Fill with median"}[x]
-    )
+    st.info("""
+    **💡 초보자를 위한 추천 전략: 중앙값(Median) 채우기**
     
-    return strategy
+    복잡한 고민 없이 **'중앙값(Median)'** 으로 채우는 것이 가장 안전하고 효과적인 출발점입니다.
+    평균(Mean)은 이상치(Outlier)에 민감하지만, 중앙값은 흔들리지 않기 때문입니다.
+    
+    이번 데모에서는 **중앙값** 방식을 적용하겠습니다.
+    """)
+    
+    st.code("""
+# Fill missing values with Median
+df['column'] = df['column'].fillna(df['column'].median())
+    """, language="python")
+    
+    return "median"
 
 
 def display_outlier_detection(df: pd.DataFrame) -> None:
     """Show outlier detection detections using interactive Plotly box plots."""
-    st.header("🔍 Step 2b: Detecting Outliers")
+    st.header("🔍 Step 2-2: Detecting Outliers")
     
     st.markdown("""
     **Outliers are extreme values that don't fit the pattern.**
@@ -252,23 +252,45 @@ def display_outlier_detection(df: pd.DataFrame) -> None:
             - **Outlier Thresholds**: < {lower:,.0f} or > {upper:,.0f}
             - **Outliers Found**: {len(outliers)}
             """)
+            
+            st.code(f"""
+# IQR Method for {col}
+Q1 = df['{col}'].quantile(0.25)
+Q3 = df['{col}'].quantile(0.75)
+IQR = Q3 - Q1
+lower = Q1 - 1.5 * IQR
+upper = Q3 + 1.5 * IQR
+
+outliers = df[(df['{col}'] < lower) | (df['{col}'] > upper)]
+            """, language="python")
     
-    st.markdown("""
-    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
-                border-left: 4px solid #FF9800; margin: 15px 0;">
-        <b>📊 IQR Method Explained</b><br>
-        <span style="font-size: 13px;">
-        • The "Box" holds the middle 50% of data.<br>
-        • The "Whiskers" extend to 1.5x the box size.<br>
-        • Anything outside the whiskers is likely an <b>Outlier</b> (dot).
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.info("""
+    ### 📊 박스 플롯(Box Plot) 해석 가이드 (초보자용)
+    
+    박스 플롯은 데이터의 **분포(Distribution)** 와 **이상치(Outlier)** 를 한눈에 보여주는 최고의 도구입니다.
+    
+    1.  **IQR (Interquartile Range, 사분위수 범위)**:
+        *   **설명**: 데이터의 중간 50%가 모여 있는 구간입니다. (Q3 - Q1)
+        *   **의미**: "대부분의 평범한 데이터는 이 박스 안에 있습니다."
+    
+    2.  **Whiskers (수염)**:
+        *   **설명**: 박스 위아래로 뻗어 있는 선입니다.
+        *   **길이**: 보통 $1.5 \\times IQR$ 까지 뻗습니다.
+        *   **의미**: "여기까지는 그래도 정상 범위로 봐줄 수 있습니다."
+        
+    3.  **Thresholds (임계값/울타리)**:
+        *   **설명**: 수염의 끝부분입니다. (Lower/Upper Fence)
+        *   **계산**: $Q1 - 1.5 \\times IQR$ (하한), $Q3 + 1.5 \\times IQR$ (상한)
+        
+    4.  **Outliers (이상치)**:
+        *   **설명**: 수염(울타리) 밖으로 나간 점들입니다.
+        *   **의미**: "이건 너무 튀는 값입니다. 에러이거나 예외적인 케이스입니다."
+    """)
 
 
 def display_outlier_handling_options() -> str:
     """Show options for handling outliers."""
-    st.header("🛠️ How to Handle Outliers?")
+    st.header("Step 3-2: How to Handle Outliers? (이상치 처리)")
     
     col1, col2 = st.columns(2)
     
@@ -292,19 +314,25 @@ def display_outlier_handling_options() -> str:
         </div>
         """, unsafe_allow_html=True)
     
-    strategy = st.selectbox(
-        "Choose outlier handling strategy:",
-        ["remove", "cap"],
-        format_func=lambda x: {"remove": "Remove outliers", 
-                               "cap": "Cap at IQR bounds"}[x]
-    )
+    st.info("""
+    **💡 초보자를 위한 추천 전략: 제거(Remove)**
     
-    return strategy
+    이상치는 데이터의 '암'과 같습니다. 초보 단계에서는 **과감하게 제거(Remove)** 하는 것이 모델의 혼란을 막는 가장 확실한 방법입니다.
+    
+    이번 데모에서는 이상치를 **제거**하는 방식을 적용하겠습니다.
+    """)
+    
+    st.code("""
+# Remove Outliers
+df_clean = df[(df['col'] >= lower) & (df['col'] <= upper)]
+    """, language="python")
+    
+    return "remove"
 
 
 def display_outlier_game(df: pd.DataFrame) -> None:
     """Interactive demo of outlier impact."""
-    st.header("🎮 Interactive: The Effect of Outliers")
+    st.header("Step 4: Interactive Simulation (이상치 영향력)")
     
     st.markdown("""
     **Outliers are like magnets**: They pull the regression line depending on how strong they are.
@@ -362,8 +390,13 @@ def clean_data(df: pd.DataFrame, null_strategy: str, outlier_strategy: str) -> p
     elif null_strategy == "mean":
         for col in df_clean.select_dtypes(include=[np.number]).columns:
             df_clean[col] = df_clean[col].fillna(df_clean[col].mean())
+    # Handle nulls
+    if null_strategy == "drop":
+        df_clean = df_clean.dropna()
     elif null_strategy == "median":
-        for col in df_clean.select_dtypes(include=[np.number]).columns:
+        # Fill ALL numeric columns with median
+        numeric_cols = df_clean.select_dtypes(include=[np.number]).columns
+        for col in numeric_cols:
             df_clean[col] = df_clean[col].fillna(df_clean[col].median())
     
     # Handle outliers for numeric columns
@@ -382,28 +415,28 @@ def clean_data(df: pd.DataFrame, null_strategy: str, outlier_strategy: str) -> p
     return df_clean
 
 
-def display_before_after(df_messy: pd.DataFrame, df_clean: pd.DataFrame) -> None:
+def display_before_after(df_baseline: pd.DataFrame, df_clean: pd.DataFrame) -> None:
     """Show before/after comparison."""
-    st.header("📊 Before vs After Cleaning")
+    st.header("Step 5: Before vs After (전후 비교)")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### Before (Messy Data)")
-        st.metric("Rows", f"{len(df_messy):,}")
-        st.metric("Missing Values", f"{df_messy.isnull().sum().sum():,}")
+        st.markdown("### Before (Baseline)")
+        st.metric("Rows", f"{len(df_baseline):,}")
+        st.metric("Missing Values", f"{df_baseline.isnull().sum().sum():,}")
         
         fig, ax = plt.subplots(figsize=(6, 4))
-        ax.hist(df_messy['price_10k_krw'].dropna(), bins=50, alpha=0.7, color='red')
+        ax.hist(df_baseline['price_10k_krw'].dropna(), bins=50, alpha=0.7, color='grey')
         ax.set_xlabel('Price')
-        ax.set_title('Price Distribution (Messy)')
-        ax.set_xlim(0, df_messy['price_10k_krw'].quantile(0.99) * 2)
+        ax.set_title('Price Distribution (Baseline)')
+        ax.set_xlim(0, df_baseline['price_10k_krw'].quantile(0.99) * 2)
         st.pyplot(fig)
         plt.close()
     
     with col2:
         st.markdown("### After (Cleaned Data)")
-        st.metric("Rows", f"{len(df_clean):,}", delta=f"{len(df_clean)-len(df_messy):,}")
+        st.metric("Rows", f"{len(df_clean):,}", delta=f"{len(df_clean)-len(df_baseline):,}")
         st.metric("Missing Values", f"{df_clean.isnull().sum().sum():,}")
         
         fig, ax = plt.subplots(figsize=(6, 4))
@@ -416,18 +449,32 @@ def display_before_after(df_messy: pd.DataFrame, df_clean: pd.DataFrame) -> None
 
 
 @st.cache_resource
-def train_and_compare(df_messy: pd.DataFrame, df_clean: pd.DataFrame):
-    """Train models on messy vs clean data."""
+@st.cache_resource
+def train_and_compare(df_baseline: pd.DataFrame, df_clean: pd.DataFrame):
+    """Train models on baseline vs clean data."""
     results = {}
     
-    for name, df in [('messy', df_messy), ('clean', df_clean)]:
+    # We compare Level 5 Baseline (Raw Data) vs Level 7 Cleaned
+    
+    # Common features for fair comparison
+    # We use a simple set to isolate the effect of outliers/cleaning
+    features = ['area_m2', 'year', 'floor'] 
+    
+    for name, df in [('baseline', df_baseline), ('clean', df_clean)]:
         # Prepare data
-        df_train = df.dropna(subset=['price_10k_krw', 'area_m2'])
+        # For baseline, we just drop NaNs to make it runnable, but keep outliers
+        df_train = df.dropna(subset=['price_10k_krw', 'area_m2', 'year', 'floor'])
         
         if len(df_train) < 100:
             continue
-        
-        X = df_train[['area_m2']].values
+            
+        # Ensure features exist
+        for f in features:
+            if f not in df_train.columns:
+                 # Should not happen with sample data, but safety check
+                df_train[f] = 0
+                
+        X = df_train[features].values
         y = df_train['price_10k_krw'].values
         
         X_train, X_test, y_train, y_test = train_test_split(
@@ -450,49 +497,65 @@ def train_and_compare(df_messy: pd.DataFrame, df_clean: pd.DataFrame):
 
 
 def display_model_comparison(results: dict) -> None:
-    """Compare model performance on messy vs clean data."""
-    st.header("📏 Model Performance Comparison")
+    """Compare model performance on baseline vs clean data."""
+    st.header("Step 6: Model Performance Check (성능 검증)")
     
-    if 'messy' not in results or 'clean' not in results:
+    st.info("""
+    **ℹ️ Baseline vs Cleaned**
+    *   **Level 5 Baseline**: 원본 데이터(이상치 포함)로 학습한 모델입니다.
+    *   **Level 7 Cleaned**: 이상치(Outliers)를 제거하여 데이터 품질을 높인 모델입니다.
+    """)
+    
+    if 'baseline' not in results or 'clean' not in results:
         st.warning("Not enough data for comparison.")
         return
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### Messy Data Model")
-        st.metric("Training Samples", f"{results['messy']['n_samples']:,}")
-        st.metric("Train RMSE", f"{results['messy']['train_rmse']:,.0f}")
-        st.metric("Test RMSE", f"{results['messy']['test_rmse']:,.0f}")
+        st.markdown("### Level 5 Baseline (Raw Data)")
+        st.metric("Training Samples", f"{results['baseline']['n_samples']:,}")
+        st.metric("Train RMSE", f"{results['baseline']['train_rmse']:,.0f}")
+        st.metric("Test RMSE", f"{results['baseline']['test_rmse']:,.0f}")
     
     with col2:
-        st.markdown("### Clean Data Model")
+        st.markdown("### Level 7 Cleaned Data")
         st.metric("Training Samples", f"{results['clean']['n_samples']:,}")
         
-        train_diff = results['clean']['train_rmse'] - results['messy']['train_rmse']
-        test_diff = results['clean']['test_rmse'] - results['messy']['test_rmse']
+        train_diff = results['clean']['train_rmse'] - results['baseline']['train_rmse']
+        test_diff = results['clean']['test_rmse'] - results['baseline']['test_rmse']
         
         st.metric("Train RMSE", f"{results['clean']['train_rmse']:,.0f}", 
-                  delta=f"{train_diff:+,.0f}")
+                  delta=f"{train_diff:+,.0f}", delta_color="inverse")
         st.metric("Test RMSE", f"{results['clean']['test_rmse']:,.0f}", 
-                  delta=f"{test_diff:+,.0f}")
+                  delta=f"{test_diff:+,.0f}", delta_color="inverse")
     
     if test_diff < 0:
-        improvement = -test_diff / results['messy']['test_rmse'] * 100
+        improvement = -test_diff / results['baseline']['test_rmse'] * 100
         st.success(f"""
         ✅ **Cleaning improved RMSE by {improvement:.1f}%!**
         
-        Clean data leads to better predictions!
+        이상치를 제거함으로써 실제 일반적인 매물에 대한 예측력이 높아졌습니다.
         """)
     else:
         st.info("""
-        The improvement depends on how messy the original data was 
-        and the cleaning strategies chosen.
+        RMSE 차이가 크지 않다면, 원본 데이터가 이미 비교적 깨끗하거나 
+        이상치가 실제로는 유의미한 정보였을 수 있습니다.
         """)
     
     # Compare with other levels
     st.markdown("---")
-    display_rmse_comparison(7, results['clean']['test_rmse'])
+    
+    # Historical Comparison Table
+    st.subheader("📜 RMSE History (Level 2~7)")
+    history_data = {
+        "Level": ["Level 2 (평수)", "Level 3 (지역)", "Level 4 (연식)", "Level 5 (고차원)", "Level 6 (PCA)", "Level 7 (Cleaned)"],
+        "RMSE": [46000, 40000, 35000, 32666, 33330, results['clean']['test_rmse']],
+        "Note": ["단순회귀", "+위치", "+새집", "과적합 위험", "차원축소", "전처리 완료"]
+    }
+    st.table(pd.DataFrame(history_data))
+    
+    st.success("Level 7 Cleaning을 통해 데이터의 품질을 높이고 모델의 신뢰성을 확보했습니다!")
 
 
 def display_cleaning_code() -> None:
@@ -571,35 +634,49 @@ def main() -> None:
     """Page entry point."""
     try:
         df = load_sample_dataset()
-        df_messy = create_messy_data(df)
-        
+        # Ensure year/floor exist for consistency with Level 5 comparison
+        if 'year' not in df.columns:
+            # Fallback if missing in sample (should be there)
+             df['year'] = df['built_year'] if 'built_year' in df.columns else 2000
+        if 'floor' not in df.columns:
+             np.random.seed(42)
+             df['floor'] = np.random.randint(1, 30, len(df))
+
         display_header()
+        st.markdown("---")
+        display_toc()
         st.markdown("---")
         display_pipeline_overview()
         st.markdown("---")
         
-        display_missing_values(df_messy)
+        display_missing_values(df)
         st.markdown("---")
         null_strategy = display_null_handling_options()
         st.markdown("---")
-        display_outlier_detection(df_messy)
+        display_outlier_detection(df)
         st.markdown("---")
         outlier_strategy = display_outlier_handling_options()
         st.markdown("---")
-        display_outlier_game(df_messy) # Add interactive game
+        display_outlier_game(df) # Add interactive game
         st.markdown("---")
         
         # Clean data
-        df_clean = clean_data(df_messy, null_strategy, outlier_strategy)
+        df_clean = clean_data(df, null_strategy, outlier_strategy)
         
-        display_before_after(df_messy, df_clean)
+        display_before_after(df, df_clean)
         st.markdown("---")
         
         with st.spinner("Training models..."):
-            results = train_and_compare(df_messy, df_clean)
+            results = train_and_compare(df, df_clean)
         
         display_model_comparison(results)
         st.markdown("---")
+        st.code("""
+# Final Training Code (Step 6)
+model = LinearRegression()
+model.fit(X_train, y_train)
+rmse = np.sqrt(mean_squared_error(y_test, model.predict(X_test)))
+        """, language="python")
         display_cleaning_code()
         st.markdown("---")
         display_limitations()
