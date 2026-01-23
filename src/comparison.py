@@ -15,11 +15,11 @@ LEVEL_RMSE = {
     3: {"name": "Multi-Feature", "rmse": 35000, "icon": "🏘️"},
     4: {"name": "3D (+Year)", "rmse": 34000, "icon": "🎯"},
     5: {"name": "High-Dim", "rmse": 32666, "icon": "🌌"},
-    6: {"name": "PCA", "rmse": 34000, "icon": "📉"},
-    7: {"name": "Cleaned", "rmse": 32000, "icon": "🧹"},
-    8: {"name": "Engineered", "rmse": 31000, "icon": "⚗️"},
-    9: {"name": "Regularized", "rmse": 30000, "icon": "🛡️"},
-    10: {"name": "Best Model", "rmse": 28000, "icon": "🏆"},
+    6: {"name": "PCA", "rmse": 33330, "icon": "📉"},
+    7: {"name": "Cleaned", "rmse": 25084, "icon": "🧹"},
+    8: {"name": "Engineered", "rmse": 24184, "icon": "⚗️"},
+    9: {"name": "Regularized", "rmse": 23903, "icon": "🛡️"},
+    10: {"name": "Gradient Boost", "rmse": 20004, "icon": "👑"},
 }
 
 
