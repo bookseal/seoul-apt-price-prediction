@@ -138,7 +138,7 @@ param_grid = [
     },
     # Search ElasticNet (Best of both worlds)
     {
-        'poly__degree': [1, 2, 3],
+        'poly__degree': [3, 4, 5],
         'model': [ElasticNet(max_iter=5000)],
         'model__alpha': [0.001, 0.01, 0.1],
         'model__l1_ratio': [0.2, 0.5, 0.8]

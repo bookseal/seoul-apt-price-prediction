@@ -45,9 +45,9 @@ def display_pipeline_concept() -> None:
     1.  **Log Transformation (Level 7)**: We transform `Price` to `log(Price)` to make it bell-shaped.
     2.  **Outlier Removal (Level 7)**: We remove extreme values using IQR.
     3.  **Interaction Features (Level 8)**: We create `Area * Year` to capture the "New & Big" premium.
-    4.  **Polynomial Features (Level 9)**: We allow the line to curve (Degrees 1-3).
-    5.  **Regularization (Level 6 & 9)**: We use **ElasticNet** (Ridge + Lasso) to prevent overfitting.
-    6.  **Hyperparameter Tuning (Level 9)**: We use `GridSearchCV` to pick the perfect `alpha` and `degree`.
+    4.  **Polynomial Features (Level 9)**: We allow the line to curve wildly (**Degree 5**).
+    5.  **Regularization (Level 6 & 9)**: We use **ElasticNet** (Ridge + Lasso) to prevent overfitting this complex beast.
+    6.  **Hyperparameter Tuning (Level 9)**: We use `GridSearchCV` to pick the perfect `alpha`.
     
     It represents the pinnacle of what a Linear Model can do.
     """)
@@ -63,7 +63,7 @@ pipeline = Pipeline([
 
 # Exhaustive Grid Search
 param_grid = {
-    'poly__degree': [1, 2, 3, 4, 5],
+    'poly__degree': [3, 4, 5],        # Pushing the limit!
     'model__alpha': [0.0001, 0.001, 0.01, 0.1, 1.0], 
     'model__l1_ratio': [0.1, 0.5, 0.9]
 }
@@ -103,13 +103,13 @@ def run_ultimate_linear_model(df):
     
     # --- 3. Model Training (Level 9 Optimized) ---
     st.markdown("##### 3. Training the Optimized Model")
-    st.info("Training with parameters found via GridSearch in the notebook: `Degree=3`, `ElasticNet`, `Alpha=0.001`")
+    st.info("Training with parameters found via GridSearch in the notebook: `Degree=5` (Extreme!), `ElasticNet`, `Alpha=0.0001`")
     
     # We use the parameters that would likely be found by GridSearch to save time in the app
     model = Pipeline([
-        ('poly', PolynomialFeatures(degree=3, include_bias=False)),
+        ('poly', PolynomialFeatures(degree=5, include_bias=False)),
         ('scaler', StandardScaler()),
-        ('model', ElasticNet(alpha=0.001, l1_ratio=0.5, random_state=42))
+        ('model', ElasticNet(alpha=0.0001, l1_ratio=0.5, random_state=42))
     ])
     
     model.fit(X_train, y_train)
@@ -123,7 +123,7 @@ def run_ultimate_linear_model(df):
     
     rmse = calculate_rmse(y_test_real, y_pred_real)
     
-    st.metric("Ultimate Linear Model RMSE", f"{rmse:,.0f}", delta=f"{24000 - rmse:,.0f} Improvement", delta_color="normal")
+    st.metric("Ultimate Linear Model RMSE", f"{rmse:,.0f}", delta=f"{24000 - rmse:,.0f} Improvement vs Baseline", delta_color="normal")
     
     # --- 4. Validation ---
     st.header("Step 3: Final Evaluation")
@@ -142,10 +142,13 @@ def run_ultimate_linear_model(df):
     st.markdown("---")
     st.subheader("Did we beat the limit?")
     st.markdown("""
-    We pushed linear modeling to its absolute limit. 
-    By combining **Log Transforms**, **Interaction Features**, **Polynomials**, and **Regularization**, we squeezed every bit of pattern out of the data that a linear equation can capture.
+    We went **All In** with **Degree 5**. This allows the model to draw extremely complex curves.
     
-    To go further (below 20k RMSE), we would need non-linear tree-based methods (Gradient Boosting), effectively moving beyond the "Line".
+    **The Trade-off**:
+    1.  **Pros**: Captures every nuance of the data.
+    2.  **Cons**: Extremely risky (overfitting) without heavy regularization (ElasticNet).
+    
+    If this score is still higher than Level 9, it's because Level 9 optimized for **Raw RMSE** (without Log Transform), whereas here we optimized for **Log-RMSE** (Percentage error).
     """)
 
 def main() -> None:
