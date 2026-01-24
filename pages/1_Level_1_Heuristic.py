@@ -45,6 +45,7 @@ def display_header() -> None:
     4. [📍 Group by District](#step-4-group-by-district)
     5. [📈 Calculate Median](#step-5-calculate-median-m)
     6. [🔮 Predict Price](#step-6-predict)
+    7. [📊 Evaluate (RMSE)](#step-7-how-accurate-is-this)
     """)
     
     # Explain what "Heuristic" means
@@ -603,8 +604,65 @@ print(f"Predicted: {{predicted_price:,}} 만원")  # {predicted_price:,.0f} 만�
         """, language="python")
 
 
-def display_questions() -> None:
-    """Show common questions users might have."""
+
+def display_step7_evaluate(df: pd.DataFrame) -> None:
+    """Step 7: Evaluate (RMSE)."""
+    st.header("📊 Step 7: How accurate is this?")
+    
+    st.markdown("""
+    <div style="padding: 10px 15px; background: rgba(233,30,99,0.15); border-radius: 8px; 
+                border-left: 4px solid #E91E63; margin-bottom: 15px;">
+        <b>Evaluation:</b> Let's check the error (RMSE) for ALL apartments!
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 1. Apply heuristic to all rows
+    df_eval = df.copy()
+    
+    # Pre-calculate median map
+    df_eval['price_per_m2'] = df_eval['price_10k_krw'] / df_eval['area_m2']
+    median_map = df_eval.groupby('district')['price_per_m2'].median().to_dict()
+    
+    # Predict
+    df_eval['predicted_price'] = df_eval['district'].map(median_map) * df_eval['area_m2']
+    
+    # 2. Calculate RMSE
+    from sklearn.metrics import mean_squared_error
+    import numpy as np
+    
+    rmse = np.sqrt(mean_squared_error(df_eval['price_10k_krw'], df_eval['predicted_price']))
+    
+    st.markdown(f"""
+    **RMSE (Root Mean Squared Error)**:
+    - This measures the "average error" of our predictions.
+    - Lower is better!
+    """)
+    
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.metric("Heuristic RMSE", f"{rmse:,.0f}", help="Average error in 10k KRW")
+        
+    with col2:
+        st.info(f"""
+        On average, our heuristic is off by about **{rmse:,.0f} 만원**. 
+        Not bad for simple math, but ML can do better!
+        """)
+        
+    # Scatter plot: Actual vs Predicted
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.scatter(df_eval['price_10k_krw'], df_eval['predicted_price'], alpha=0.3, s=10)
+    
+    # Ideal line
+    max_val = max(df_eval['price_10k_krw'].max(), df_eval['predicted_price'].max())
+    ax.plot([0, max_val], [0, max_val], 'r--', label='Perfect Prediction')
+    
+    ax.set_xlabel('Actual Price')
+    ax.set_ylabel('Predicted Price')
+    ax.set_title('Actual vs Predicted (Heuristic)')
+    ax.legend()
+    st.pyplot(fig, use_container_width=True)
+
+
     st.header("🤔 Questions You Might Have")
     
     st.markdown("""
@@ -728,6 +786,10 @@ def main() -> None:
         display_step5_median(df)
         st.markdown("---")
         display_step6_predict(df)
+        st.markdown("---")
+        display_step6_predict(df)
+        st.markdown("---")
+        display_step7_evaluate(df)
         st.markdown("---")
         display_questions()
         st.markdown("---")
