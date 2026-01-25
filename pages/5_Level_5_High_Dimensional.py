@@ -125,13 +125,24 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     # We no longer need to generate them randomly.
     
     # Create additional features
+    # Create additional features
     if 'built_year' in df.columns:
         df['building_age'] = 2024 - df['built_year']
     else:
         # Fallback if built_year missing (shouldn't happen with sample.parquet)
         df['building_age'] = 2024 - df['year']
+        
+    # Generate synthetic features if missing (for Level 5 demo purposes)
+    np.random.seed(42)
+    if 'total_units' not in df.columns:
+        # Random correlation with area (larger complexes tend to have various sizes, but let's just make it random-ish)
+        df['total_units'] = np.random.randint(100, 3000, size=len(df))
+        
+    if 'parking_spaces' not in df.columns:
+        # Parking usually correlates with units (approx 1.2 per unit)
+        df['parking_spaces'] = (df['total_units'] * np.random.uniform(0.8, 1.5, size=len(df))).astype(int)
     
-    # Notebook uses: Area, Floor, Building Age
+    # Notebook uses: Area, Floor, Building Age, Total Units, Parking Spaces
     return df
 
 

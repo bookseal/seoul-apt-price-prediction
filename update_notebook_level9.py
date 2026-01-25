@@ -18,6 +18,9 @@ Here, we will try to improve this by:
     
     # 2. Setup (From Level 8)
     nb.cells.append(nbf.v4.new_code_cell("""
+# Install necessary libraries if missing
+!pip install pyarrow fastparquet > /dev/null
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

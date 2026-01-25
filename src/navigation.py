@@ -179,3 +179,49 @@ def display_code_link(notebook_filename: str) -> None:
         </a>
     </div>
     """, unsafe_allow_html=True)
+
+
+def display_mlops_sidebar(current_level: int) -> None:
+    """
+    Display sidebar navigation for MLOps Part 2.
+    
+    Args:
+        current_level: Level number (11-20)
+    """
+    st.sidebar.title("Part 2: MLOps")
+    
+    levels = {
+        11: "Level 11: Data Creation",
+        12: "Level 12: Preprocessing",
+        13: "Level 13: Predictor",
+        14: "Level 14: AutoML",
+        15: "Level 15: Automation",
+        16: "Level 16: CI/CD",
+        17: "Level 17: MLflow",
+        18: "Level 18: DVC",
+        19: "Level 19: Monitoring",
+        20: "Level 20: Airflow"
+    }
+    
+    for lvl, title in levels.items():
+        if lvl == current_level:
+            st.sidebar.markdown(f"**👉 {title}**")
+        else:
+            # Mapping level to filename
+            file_map = {
+                11: "pages/11_MLOps_Lv1_Data.py",
+                12: "pages/12_MLOps_Lv2_Preprocessing.py",
+                13: "pages/13_MLOps_Lv3_Predictor.py",
+                14: "pages/14_MLOps_Lv4_AutoML.py",
+                15: "pages/15_MLOps_Lv5_Automation.py",
+                16: "pages/16_MLOps_Lv6_CICD.py",
+                17: "pages/17_MLOps_Lv7_MLflow.py",
+                18: "pages/18_MLOps_Lv8_DVC.py",
+                19: "pages/19_MLOps_Lv9_Monitoring.py",
+                20: "pages/20_MLOps_Lv10_Airflow.py"
+            }
+            if lvl in file_map:
+                st.sidebar.page_link(file_map[lvl], label=title)
+            
+    st.sidebar.markdown("---")
+    st.sidebar.page_link("app.py", label="🏠 Home")

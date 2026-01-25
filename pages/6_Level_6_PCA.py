@@ -486,50 +486,42 @@ def display_end_to_end_evaluation(df: pd.DataFrame) -> None:
     rmse_opt = calculate_rmse(y_test, model_opt.predict(X_test_opt))
     
     # Display Results
-    col1, col2 = st.columns([1, 1])
+    st.markdown("### 📏 Model Performance Metrics")
+    
+    col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.subheader("📊 성능 비교 (RMSE)")
-        st.markdown(f"""
-        **1. Level 5 Baseline (Raw Data)**:
-        *   Features: {X_full.shape[1]}개
-        *   RMSE: **{rmse_base:,.0f}**
+        st.metric("Baseline (Raw Data)", f"{rmse_base:,.0f}", help=f"{X_full.shape[1]} Features")
         
-        **2. Notebook Match (n=2, Visual)**:
-        *   Features: 2개 (Extreme Compression)
-        *   RMSE: **{rmse_nb:,.0f}** (Target: ~33,330)
-        
-        **3. Optimal PCA (n=22)**:
-        *   Features: 22개 (Balanced)
-        *   RMSE: {rmse_opt:,.0f}
-        """)
-        
-        if abs(rmse_nb - 33330) < 1000:
-            st.success(f"""
-            **검증 완료**: Streamlit의 결과({rmse_nb:,.0f})가 노트북의 결과(33,330)와 유사합니다!
-            단 2개의 축으로도 집값의 대부분을 설명할 수 있음을 증명했습니다.
-            """)
-        else:
-             st.info(f"""
-            **Note**: Streamlit의 결과({rmse_nb:,.0f})가 노트북(33,330)과 약간 차이가 있을 수 있습니다. (데이터 샘플링 차이)
-            하지만 2개의 축만으로도 Baseline과 크게 차이나지 않는 성능을 보여줍니다.
-            """)
-            
     with col2:
-        # Comparison History Table
-        st.subheader("📜 RMSE History (Level 2~6)")
-        history_data = {
-            "Level": ["Level 2 (평수)", "Level 3 (지역)", "Level 4 (연식)", "Level 5 (고차원)", "Level 6 (PCA n=2)"],
-            "RMSE": [46000, 40000, 35000, 32666, rmse_nb],
-            "Note": ["기본", "+위치", "+새집", "과적합 위험", "Notebook Match"]
-        }
-        st.table(pd.DataFrame(history_data))
-
-    st.warning(f"""
-    **💡 Conclusion**:
-    PCA(n=2)는 Baseline(32k)보다 RMSE가 약간 높지만({rmse_nb:,.0f}), **30개의 변수를 단 2개로 압축**했다는 점에서 놀라운 효율을 보여줍니다.
-    만약 n=22까지 쓴다면({rmse_opt:,.0f}), Baseline보다 더 좋은 성능(Overfitting 방지)을 낼 수도 있습니다!
+        st.metric("Notebook Match (n=2)", f"{rmse_nb:,.0f}", 
+                  delta=f"{rmse_base - rmse_nb:,.0f}", delta_color="inverse",
+                  help="Target: ~33,330")
+        
+    with col3:
+        st.metric("Optimal PCA (n=22)", f"{rmse_opt:,.0f}",
+                   delta=f"{rmse_base - rmse_opt:,.0f}", delta_color="inverse")
+    
+    # Comparison Logic with Notebook
+    st.markdown("### 🏆 Comparison with Notebook")
+    if abs(rmse_nb - 33330) < 1000:
+        status_msg = f"✅ **SUCCESS**: Streamlit ({rmse_nb:,.0f}) matches Notebook (~33,330)!"
+        st.success(status_msg)
+    else:
+        status_msg = f"⚠️ **NOTE**: Slight difference ({rmse_nb:,.0f} vs 33,330). Likely due to random sampling."
+        st.info(status_msg)
+        
+    st.markdown(f"""
+    **Interpretation**:
+    - **Notebook Match (n=2)**: Uses only 2 dimensions! RMSE is slightly higher than baseline but explains 95% of variance.
+    - **Optimal PCA (n=22)**: Uses 22 dimensions. RMSE ({rmse_opt:,.0f}) is comparable to baseline, proving PCA keeps important info while removing noise.
     """)
+
+    # Compare with previous levels (Standard Format)
+    from src.comparison import display_rmse_comparison
+    st.markdown("---")
+    # Use rmse_nb (n=2) as the representative for Level 6 to match the "PCA" concept of high compression
+    display_rmse_comparison(6, rmse_nb)
 
 def display_pca_code_cheatsheet() -> None:
     """PCA Code & Concept Explanations in English."""

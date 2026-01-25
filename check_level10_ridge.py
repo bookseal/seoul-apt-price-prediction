@@ -21,38 +21,33 @@ for col in numeric_cols: df[col] = df[col].fillna(df[col].median())
 if 'year' not in df.columns: df['year'] = 2000
 if 'floor' not in df.columns: df['floor'] = 10
 
-# Direct Price (Level 9 Style)
-# But we keep Level 10 cleaning (IQR 1.5) on price/area?
-# Level 9 used IQR 3.0. Level 10 used IQR 1.5.
-# Let's try matching Level 10's strict cleaning first.
-for col in ['price_10k_krw', 'area_m2']:
+# Level 10 Logic
+df['log_price'] = np.log1p(df['price_10k_krw'])
+
+# IQR 1.5 Cleaning (Same as Level 10 nb)
+for col in ['log_price', 'area_m2']:
     Q1 = df[col].quantile(0.25)
     Q3 = df[col].quantile(0.75)
     IQR = Q3 - Q1
     df = df[(df[col] >= Q1 - 1.5*IQR) & (df[col] <= Q3 + 1.5*IQR)]
 
-# Features
-# Try Level 9 features first
-features_l9 = ['area_m2', 'year', 'floor']
-# Try Level 10 features
 df['area_x_year'] = df['area_m2'] * df['year']
-features_l10 = ['area_m2', 'year', 'floor', 'area_x_year']
+features = ['area_m2', 'year', 'floor', 'area_x_year']
+
+X = df[features].values
+y = df['log_price'].values
+
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)
 
 print(f"Data Shape: {df.shape}")
 
-for name, feats in [("L9 Features", features_l9), ("L10 Features", features_l10)]:
-    X = df[feats].values
-    y = df['price_10k_krw'].values
-    
-    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    for deg in [4, 5]:
-        model = Pipeline([
-            ('poly', PolynomialFeatures(degree=deg, include_bias=False)),
-            ('scaler', StandardScaler()),
-            ('model', Ridge(alpha=0.001))
-        ])
-        model.fit(X_tr, y_tr)
-        y_pred = model.predict(X_te)
-        rmse = calculate_rmse(y_te, y_pred)
-        print(f"{name} Degree {deg} Ridge RMSE: {rmse:,.0f}")
+for deg in [4, 5]:
+    model = Pipeline([
+        ('poly', PolynomialFeatures(degree=deg, include_bias=False)),
+        ('scaler', StandardScaler()),
+        ('model', Ridge(alpha=0.001)) # Low alpha for high degree from Level 9 experience
+    ])
+    model.fit(X_tr, y_tr)
+    y_pred_log = model.predict(X_te)
+    rmse = calculate_rmse(np.expm1(y_te), np.expm1(y_pred_log))
+    print(f"Degree {deg} Ridge RMSE: {rmse:,.0f}")

@@ -241,25 +241,25 @@ def display_outlier_detection(df: pd.DataFrame) -> None:
             Q1 = df[col].quantile(0.25)
             Q3 = df[col].quantile(0.75)
             IQR = Q3 - Q1
-            lower = Q1 - 1.5 * IQR
-            upper = Q3 + 1.5 * IQR
+            lower = Q1 - 3.0 * IQR  # Relaxed threshold to match Notebook
+            upper = Q3 + 3.0 * IQR
             
             outliers = df[(df[col] < lower) | (df[col] > upper)]
             
             st.info(f"""
             **Stats:**
             - **IQR Range**: {Q1:,.0f} ~ {Q3:,.0f}
-            - **Outlier Thresholds**: < {lower:,.0f} or > {upper:,.0f}
+            - **Outlier Thresholds (3.0 IQR)**: < {lower:,.0f} or > {upper:,.0f}
             - **Outliers Found**: {len(outliers)}
             """)
             
             st.code(f"""
-# IQR Method for {col}
+# IQR Method for {col} (Extreme Outliers)
 Q1 = df['{col}'].quantile(0.25)
 Q3 = df['{col}'].quantile(0.75)
 IQR = Q3 - Q1
-lower = Q1 - 1.5 * IQR
-upper = Q3 + 1.5 * IQR
+lower = Q1 - 3.0 * IQR
+upper = Q3 + 3.0 * IQR
 
 outliers = df[(df['{col}'] < lower) | (df['{col}'] > upper)]
             """, language="python")
@@ -280,7 +280,8 @@ outliers = df[(df['{col}'] < lower) | (df['{col}'] > upper)]
         
     3.  **Thresholds (임계값/울타리)**:
         *   **설명**: 수염의 끝부분입니다. (Lower/Upper Fence)
-        *   **계산**: $Q1 - 1.5 \\times IQR$ (하한), $Q3 + 1.5 \\times IQR$ (상한)
+        *   **설명**: 수염의 끝부분입니다. (Lower/Upper Fence)
+        *   **계산**: $Q1 - 3.0 \\times IQR$ (하한), $Q3 + 3.0 \\times IQR$ (상한)
         
     4.  **Outliers (이상치)**:
         *   **설명**: 수염(울타리) 밖으로 나간 점들입니다.
@@ -404,8 +405,8 @@ def clean_data(df: pd.DataFrame, null_strategy: str, outlier_strategy: str) -> p
         Q1 = df_clean[col].quantile(0.25)
         Q3 = df_clean[col].quantile(0.75)
         IQR = Q3 - Q1
-        lower = Q1 - 1.5 * IQR
-        upper = Q3 + 1.5 * IQR
+        lower = Q1 - 3.0 * IQR
+        upper = Q3 + 3.0 * IQR
         
         if outlier_strategy == "remove":
             df_clean = df_clean[(df_clean[col] >= lower) & (df_clean[col] <= upper)]
@@ -506,56 +507,57 @@ def display_model_comparison(results: dict) -> None:
     *   **Level 7 Cleaned**: 이상치(Outliers)를 제거하여 데이터 품질을 높인 모델입니다.
     """)
     
+    st.markdown("### 📏 Model Performance Metrics")
+    
     if 'baseline' not in results or 'clean' not in results:
         st.warning("Not enough data for comparison.")
         return
     
-    col1, col2 = st.columns(2)
+    train_diff = results['clean']['train_rmse'] - results['baseline']['train_rmse']
+    test_diff = results['clean']['test_rmse'] - results['baseline']['test_rmse']
+    improvement = -test_diff / results['baseline']['test_rmse'] * 100
+    
+    col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("### Level 5 Baseline (Raw Data)")
-        st.metric("Training Samples", f"{results['baseline']['n_samples']:,}")
-        st.metric("Train RMSE", f"{results['baseline']['train_rmse']:,.0f}")
-        st.metric("Test RMSE", f"{results['baseline']['test_rmse']:,.0f}")
+        st.metric("Baseline (Raw Data)", f"{results['baseline']['test_rmse']:,.0f}", 
+                  help=f"Samples: {results['baseline']['n_samples']:,}")
     
     with col2:
-        st.markdown("### Level 7 Cleaned Data")
-        st.metric("Training Samples", f"{results['clean']['n_samples']:,}")
+        st.metric("Cleaned Data (Outliers Removed)", f"{results['clean']['test_rmse']:,.0f}", 
+                  delta=f"{test_diff:+,.0f}", delta_color="inverse",
+                  help=f"Samples: {results['clean']['n_samples']:,}")
         
-        train_diff = results['clean']['train_rmse'] - results['baseline']['train_rmse']
-        test_diff = results['clean']['test_rmse'] - results['baseline']['test_rmse']
-        
-        st.metric("Train RMSE", f"{results['clean']['train_rmse']:,.0f}", 
-                  delta=f"{train_diff:+,.0f}", delta_color="inverse")
-        st.metric("Test RMSE", f"{results['clean']['test_rmse']:,.0f}", 
-                  delta=f"{test_diff:+,.0f}", delta_color="inverse")
+    with col3:
+        st.metric("Improvement", f"{improvement:.1f}%",
+                   delta="Better Accuracy", delta_color="normal")
+    
+    # Analysis
+    # Analysis
+    notebook_target = 25084
+    diff_from_nb = abs(results['clean']['test_rmse'] - notebook_target)
     
     if test_diff < 0:
-        improvement = -test_diff / results['baseline']['test_rmse'] * 100
         st.success(f"""
-        ✅ **Cleaning improved RMSE by {improvement:.1f}%!**
-        
-        이상치를 제거함으로써 실제 일반적인 매물에 대한 예측력이 높아졌습니다.
+        ✅ **Success!** Cleaning improved RMSE by **{improvement:.1f}%**.
+        By removing outliers (extreme prices), the model learned the "general rule" better!
         """)
+        
+        if diff_from_nb < 1000:
+            st.info(f"🎉 **Matches Notebook**: Result ({results['clean']['test_rmse']:,.0f}) is close to notebook benchmark ({notebook_target:,.0f}).")
+            
     else:
         st.info("""
-        RMSE 차이가 크지 않다면, 원본 데이터가 이미 비교적 깨끗하거나 
-        이상치가 실제로는 유의미한 정보였을 수 있습니다.
+        **Note**: RMSE didn't improve much. This suggests the "outliers" might have been valid data points 
+        or the model needs more features to explain them (not just cleaning).
         """)
     
     # Compare with other levels
     st.markdown("---")
     
-    # Historical Comparison Table
+    # Historical Comparison (Standard Format)
     st.subheader("📜 RMSE History (Level 2~7)")
-    history_data = {
-        "Level": ["Level 2 (평수)", "Level 3 (지역)", "Level 4 (연식)", "Level 5 (고차원)", "Level 6 (PCA)", "Level 7 (Cleaned)"],
-        "RMSE": [46000, 40000, 35000, 32666, 33330, results['clean']['test_rmse']],
-        "Note": ["단순회귀", "+위치", "+새집", "과적합 위험", "차원축소", "전처리 완료"]
-    }
-    st.table(pd.DataFrame(history_data))
-    
-    st.success("Level 7 Cleaning을 통해 데이터의 품질을 높이고 모델의 신뢰성을 확보했습니다!")
+    display_rmse_comparison(7, results['clean']['test_rmse'])
 
 
 def display_cleaning_code() -> None:
@@ -580,8 +582,8 @@ df['column'] = df['column'].fillna(df['column'].median())
 Q1 = df['price'].quantile(0.25)
 Q3 = df['price'].quantile(0.75)
 IQR = Q3 - Q1
-lower = Q1 - 1.5 * IQR
-upper = Q3 + 1.5 * IQR
+lower = Q1 - 3.0 * IQR
+upper = Q3 + 3.0 * IQR
 
 # 4. Handle outliers
 # Option A: Remove
