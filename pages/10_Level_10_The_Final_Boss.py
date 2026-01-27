@@ -20,12 +20,12 @@ from src.comparison import display_rmse_comparison
 from src.navigation import display_code_link
 
 def display_header() -> None:
-    st.title("👑 Level 10: The Final Boss")
-    st.caption("Linear Models vs AutoML: The Ultimate Showdown")
+    st.title("👑 Level 10: Ultimate Linear Model & AutoML")
+    st.caption("The Final Showdown: White Box vs Black Box")
     st.markdown("""
-    **Goal**: Reach the Mathematical Limit of Linear Models (RMSE < 25,000).
+    **Goal**: Achieve the absolute limit of what a Linear Model can do (RMSE < 19,000).
     
-    Then, challenge it with a state-of-the-art **AutoML (Black Box)** model.
+    Then, we challenge it with **AutoML (PyCaret)** to see if a complex "Black Box" model can beat our carefully crafted "White Box" model.
     """)
 
 def display_toc() -> None:
@@ -136,6 +136,9 @@ model.fit(X_train, y_train)
     # --- 4. Validation ---
     st.header("Step 3: Linear Final Evaluation")
     
+    # RMSE Comparison
+    display_rmse_comparison(10, rmse)
+    
     # Residual Plot
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.scatter(y_test, y_pred, alpha=0.5, color='#4CAF50')
@@ -146,8 +149,12 @@ model.fit(X_train, y_train)
     ax.grid(True, alpha=0.3)
     st.pyplot(fig)
     
-    # st.subheader("💡 Analysis: Why did this beat Log-Transform?")
-    # st.markdown("In Level 7, we learned that Log-Transform fixes skewed distributions. So why drop it? ...")
+    st.caption("""
+    **Graph Interpretation**:
+    1.  **Linearity**: Points hug the diagonal line tightly, indicating high accuracy.
+    2.  **Homoscedasticity**: The spread of errors is relatively consistent across price ranges (thanks to targeting raw price).
+    3.  **Outliers**: Very few points are far from the line, showing the effectiveness of our IQR cleaning.
+    """)
     
     return rmse
 
@@ -194,6 +201,26 @@ best_model = compare_models(sort='RMSE')
     
     **Conclusion**: For a Linear Model to get this close to a state-of-the-art Boosting model is an incredible achievement. It remains the best choice when **Interpretability** is key.
     """)
+    
+    st.markdown("---")
+    st.header("🎉 Part 1 Complete: You are now a Data Scientist!")
+    st.balloons()
+    
+    st.markdown("""
+    You have mastered the **Art of Modeling**:
+    *   **Level 1-4**: You learned to frame problems and use Regression.
+    *   **Level 5-6**: You conquered High Dimensionality and PCA.
+    *   **Level 7-9**: You mastered Data Cleaning and Regularization.
+    *   **Level 10**: You reached the mathematical limit of White Box models.
+    
+    ### 🚀 What's Next? The Science of Production
+    Building a model is only 20% of the work. Now you need to **deploy** it, **monitor** it, and **automate** it.
+    
+    **Welcome to Part 2: MLOps.**
+    """)
+    
+    if st.button("Start Part 2: MLOps Track (Level 11)", type="primary", use_container_width=True):
+        st.switch_page("pages/11_MLOps_Lv1_Data.py")
 
 def main() -> None:
     try:

@@ -132,16 +132,16 @@ def home_page():
         
         with tab1:
             st.dataframe([
-                {"Level": 1, "Topic": "Heuristic", "Goal": "Beat the average", "Description": "Baseline model using simple rules (e.g. mean price by district).", "Tech": "Pandas, NumPy"},
-                {"Level": 2, "Topic": "Linear Regression", "Goal": "Draw the best line", "Description": "Introduction to OLS, loss functions, and basic training.", "Tech": "Scikit-Learn"},
-                {"Level": 3, "Topic": "Multi-Features", "Goal": "Use multiple signals", "Description": "Moving from univariate to multivariate regression.", "Tech": "Scikit-Learn"},
-                {"Level": 4, "Topic": "3D Regression", "Goal": "Visualize complexity", "Description": "Understanding hyperplanes and 3D visualization of errors.", "Tech": "Plotly"},
-                {"Level": 5, "Topic": "High Dimensionality", "Goal": "Handle many features", "Description": "The curse of dimensionality and feature importance.", "Tech": "Scikit-Learn"},
-                {"Level": 6, "Topic": "PCA", "Goal": "Dimensionality Reduction", "Description": "Principal Component Analysis to compress features.", "Tech": "PCA"},
-                {"Level": 7, "Topic": "Data Cleaning", "Goal": "Fix outliers & skews", "Description": "Handling missing values, outliers (IQR), and log-transforms.", "Tech": "Pandas"},
-                {"Level": 8, "Topic": "Feature Engineering", "Goal": "Create new signals", "Description": "Interaction terms, polynomial features, and domain knowledge.", "Tech": "Feature Engines"},
-                {"Level": 9, "Topic": "Regularization", "Goal": "Tame complexity", "Description": "Ridge, Lasso, and ElasticNet to prevent overfitting.", "Tech": "Regularization"},
-                {"Level": 10, "Topic": "The Final Boss", "Goal": "Mathematical Perfection", "Description": "Combining all techniques to reach the limit of linear modeling.", "Tech": "Pipeline, GridSearch"},
+                {"Level": 1, "Topic": "Heuristic", "Question": "Can we catch the average?", "Hypothesis": "Prices cluster around district means.", "Result": "Baseline RMSE established."},
+                {"Level": 2, "Topic": "Linear Regression", "Question": "Is there a trend?", "Hypothesis": "Price increases linearly with Area.", "Result": "Simple line captures basic trend."},
+                {"Level": 3, "Topic": "Multi-Features", "Question": "Does Year matter?", "Hypothesis": "Newer apartments are more expensive.", "Result": "Adding features improves accuracy."},
+                {"Level": 4, "Topic": "3D Regression", "Question": "How do Area & Year interact?", "Hypothesis": "We need a plane, not a line.", "Result": "Visualizing the hyperplane of fit."},
+                {"Level": 5, "Topic": "High Dimensionality", "Question": "More features = Better?", "Hypothesis": "Adding everything will solve it.", "Result": "Curse of Dimensionality / Overfitting."},
+                {"Level": 6, "Topic": "PCA", "Question": "Can we compress info?", "Hypothesis": "Many features are redundant.", "Result": "Reduced dimensions not losing much variance."},
+                {"Level": 7, "Topic": "Data Cleaning", "Question": "Are outliers hurting us?", "Hypothesis": "Removing anomalies creates stability.", "Result": "Massive improvement in RMSE."},
+                {"Level": 8, "Topic": "Feature Engineering", "Question": "Can we create new insights?", "Hypothesis": "Area * Year matters more than sum.", "Result": "Interaction terms capture nuance."},
+                {"Level": 9, "Topic": "Regularization", "Question": "Is the model too complex?", "Hypothesis": "We need to penalize large weights.", "Result": "Ridge/Lasso prevents overfitting."},
+                {"Level": 10, "Topic": "Ultimate Model", "Question": "What is the limit?", "Hypothesis": "Direct Price + Poly5 + Ridge is optimal.", "Result": "Final Boss Defeated (Lowest RMSE)."},
             ], use_container_width=True)
             
         with tab2:
