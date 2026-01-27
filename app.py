@@ -81,32 +81,37 @@ def home_page():
     tab1, tab2 = st.tabs(["Part 1: The Modeling Journey", "Part 2: The Systems Journey"])
     
     with tab1:
-        st.dataframe([
-            {"Level": 1, "Topic": "Heuristic", "Question": "Can we catch the average?", "Hypothesis": "Prices cluster around district means.", "Result": "Baseline RMSE established."},
-            {"Level": 2, "Topic": "Linear Regression", "Question": "Is there a trend?", "Hypothesis": "Price increases linearly with Area.", "Result": "Simple line captures basic trend."},
-            {"Level": 3, "Topic": "Multi-Features", "Question": "Does Year matter?", "Hypothesis": "Newer apartments are more expensive.", "Result": "Adding features improves accuracy."},
-            {"Level": 4, "Topic": "3D Regression", "Question": "How do Area & Year interact?", "Hypothesis": "We need a plane, not a line.", "Result": "Visualizing the hyperplane of fit."},
-            {"Level": 5, "Topic": "High Dimensionality", "Question": "More features = Better?", "Hypothesis": "Adding everything will solve it.", "Result": "Curse of Dimensionality / Overfitting."},
-            {"Level": 6, "Topic": "PCA", "Question": "Can we compress info?", "Hypothesis": "Many features are redundant.", "Result": "Reduced dimensions not losing much variance."},
-            {"Level": 7, "Topic": "Data Cleaning", "Question": "Are outliers hurting us?", "Hypothesis": "Removing anomalies creates stability.", "Result": "Massive improvement in RMSE."},
-            {"Level": 8, "Topic": "Feature Engineering", "Question": "Can we create new insights?", "Hypothesis": "Area * Year matters more than sum.", "Result": "Interaction terms capture nuance."},
-            {"Level": 9, "Topic": "Regularization", "Question": "Is the model too complex?", "Hypothesis": "We need to penalize large weights.", "Result": "Ridge/Lasso prevents overfitting."},
-            {"Level": 10, "Topic": "Ultimate Model", "Question": "What is the limit?", "Hypothesis": "Direct Price + Poly5 + Ridge is optimal.", "Result": "Final Boss Defeated (Lowest RMSE)."},
-        ], use_container_width=True)
+    with tab1:
+        st.markdown("""
+        | Level | Topic | Question | Hypothesis | Result |
+        | :--- | :--- | :--- | :--- | :--- |
+        | 1 | [Heuristic](1_Level_1_Heuristic) | Can we catch the average? | Prices cluster around district means. | Baseline RMSE established. |
+        | 2 | [Linear Regression](2_Level_2_Linear_Regression) | Is there a trend? | Price increases linearly with Area. | Simple line captures basic trend. |
+        | 3 | [Multi-Features](3_Level_3_Multi_Features) | Does Year matter? | Newer apartments are more expensive. | Adding features improves accuracy. |
+        | 4 | [3D Regression](4_Level_4_3D_Regression) | Area & Year interact? | We need a plane, not a line. | Visualizing the hyperplane of fit. |
+        | 5 | [High Dimensionality](5_Level_5_High_Dimensional) | More features = Better? | Adding everything will solve it. | Curse of Dimensionality / Overfitting. |
+        | 6 | [PCA](6_Level_6_PCA) | Can we compress info? | Many features are redundant. | Reduced dimensions not losing much variance. |
+        | 7 | [Data Cleaning](7_Level_7_Data_Cleaning) | Are outliers hurting us? | Removing anomalies creates stability. | Massive improvement in RMSE. |
+        | 8 | [Feature Engineering](8_Level_8_Feature_Engineering) | Create new insights? | Area * Year matters more than sum. | Interaction terms capture nuance. |
+        | 9 | [Regularization](9_Level_9_Regularization) | Model too complex? | We need to penalize large weights. | Ridge/Lasso prevents overfitting. |
+        | 10 | [Ultimate Model](10_Level_10_The_Final_Boss) | What is the limit? | Direct Price + Poly5 + Ridge is optimal. | Final Boss Defeated (Lowest RMSE). |
+        """)
         
     with tab2:
-        st.dataframe([
-            {"Level": 11, "Topic": "Data Creation", "Goal": "Build a dataset", "Description": "Generating synthetic trend data for 'Yo-Zeum Seongsu'.", "Tech": "Faker, Pandas"},
-            {"Level": 12, "Topic": "Preprocessing", "Goal": "Scalable cleaning", "Description": "Building robust preprocessing pipelines for production.", "Tech": "Scikit-Learn Pipelines"},
-            {"Level": 13, "Topic": "Predictor", "Goal": "Interactive Dashboards", "Description": "Serving models via Streamlit for end-users.", "Tech": "Streamlit"},
-            {"Level": 14, "Topic": "AutoML", "Goal": "Model Selection", "Description": "Automated model comparison and selection (PyCaret/AutoGluon style).", "Tech": "AutoML"},
-            {"Level": 15, "Topic": "Automation", "Goal": "Scheduling Scripts", "Description": "Writing scripts to run jobs automatically (Crontab basics).", "Tech": "Python Scripts"},
-            {"Level": 16, "Topic": "CI/CD", "Goal": "GitHub Actions", "Description": "Continuous Integration and Deployment for ML.", "Tech": "GitHub Actions"},
-            {"Level": 17, "Topic": "MLflow", "Goal": "Experiment Tracking", "Description": "Logging params, metrics, and artifacts.", "Tech": "MLflow"},
-            {"Level": 18, "Topic": "DVC", "Goal": "Data Versioning", "Description": "Versioning large datasets like code (Data Version Control).", "Tech": "DVC"},
-            {"Level": 19, "Topic": "Monitoring", "Goal": "Drift Detection", "Description": "Detecting concept drift and data quality issues.", "Tech": "Evidently AI"},
-            {"Level": 20, "Topic": "Airflow", "Goal": "Complex DAGs", "Description": "Orchestrating complex ML workflows with DAGs.", "Tech": "Apache Airflow"},
-        ], use_container_width=True)
+        st.markdown("""
+        | Level | Topic | Goal | Description | Tech |
+        | :--- | :--- | :--- | :--- | :--- |
+        | 11 | [Data Creation](11_MLOps_Lv1_Data) | Build a dataset | Generating synthetic trend data. | Faker, Pandas |
+        | 12 | [Preprocessing](12_MLOps_Lv2_Preprocessing) | Scalable cleaning | Robust pipelines for production. | Scikit-Learn |
+        | 13 | [Predictor](13_MLOps_Lv3_Predictor) | Interactive Dashboards | Serving models via Streamlit. | Streamlit |
+        | 14 | [AutoML](14_MLOps_Lv4_AutoML) | Model Selection | Automated model comparison. | AutoML |
+        | 15 | [Automation](15_MLOps_Lv5_Automation) | Scheduling Scripts | Running jobs automatically. | Crontab |
+        | 16 | [CI/CD](16_MLOps_Lv6_CICD) | GitHub Actions | Continuous Integration. | GitHub Actions |
+        | 17 | [MLflow](17_MLOps_Lv7_MLflow) | Experiment Tracking | Logging params & metrics. | MLflow |
+        | 18 | [DVC](18_MLOps_Lv8_DVC) | Data Versioning | Versioning large datasets. | DVC |
+        | 19 | [Monitoring](19_MLOps_Lv9_Monitoring) | Drift Detection | Detecting concept drift. | Evidently AI |
+        | 20 | [Airflow](20_MLOps_Lv10_Airflow) | Orchestration | Complex ML workflows. | Apache Airflow |
+        """)
 
     st.markdown("---")
     
