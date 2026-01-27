@@ -193,6 +193,11 @@ best_model = compare_models(sort='RMSE')
         st.caption("Model: Poly5 + Ridge (White Box)")
         
     st.markdown("""
+    > **Note on AutoML Winner**: The winning model found by PyCaret is **CatBoost**, which uses **Gradient Boosting**. 
+    > Unlike linear models, it builds thousands of decision trees, where each new tree corrects the errors of the previous ones.
+    """)
+    
+    st.markdown("""
     ### 🏆 The Verdict
     
     1.  **Performance**: The **AutoML (CatBoost)** wins purely on numbers (~11% better). Non-linear tree models are simply more flexible and can capture sharp discontinuities that Polynomials cannot.

@@ -75,6 +75,39 @@ def home_page():
     This platform bridges the gap between **Data Science theory** and **Real-world MLOps systems**.
     """)
     
+    
+    st.markdown("---")
+    
+    tab1, tab2 = st.tabs(["Part 1: The Modeling Journey", "Part 2: The Systems Journey"])
+    
+    with tab1:
+        st.dataframe([
+            {"Level": 1, "Topic": "Heuristic", "Question": "Can we catch the average?", "Hypothesis": "Prices cluster around district means.", "Result": "Baseline RMSE established."},
+            {"Level": 2, "Topic": "Linear Regression", "Question": "Is there a trend?", "Hypothesis": "Price increases linearly with Area.", "Result": "Simple line captures basic trend."},
+            {"Level": 3, "Topic": "Multi-Features", "Question": "Does Year matter?", "Hypothesis": "Newer apartments are more expensive.", "Result": "Adding features improves accuracy."},
+            {"Level": 4, "Topic": "3D Regression", "Question": "How do Area & Year interact?", "Hypothesis": "We need a plane, not a line.", "Result": "Visualizing the hyperplane of fit."},
+            {"Level": 5, "Topic": "High Dimensionality", "Question": "More features = Better?", "Hypothesis": "Adding everything will solve it.", "Result": "Curse of Dimensionality / Overfitting."},
+            {"Level": 6, "Topic": "PCA", "Question": "Can we compress info?", "Hypothesis": "Many features are redundant.", "Result": "Reduced dimensions not losing much variance."},
+            {"Level": 7, "Topic": "Data Cleaning", "Question": "Are outliers hurting us?", "Hypothesis": "Removing anomalies creates stability.", "Result": "Massive improvement in RMSE."},
+            {"Level": 8, "Topic": "Feature Engineering", "Question": "Can we create new insights?", "Hypothesis": "Area * Year matters more than sum.", "Result": "Interaction terms capture nuance."},
+            {"Level": 9, "Topic": "Regularization", "Question": "Is the model too complex?", "Hypothesis": "We need to penalize large weights.", "Result": "Ridge/Lasso prevents overfitting."},
+            {"Level": 10, "Topic": "Ultimate Model", "Question": "What is the limit?", "Hypothesis": "Direct Price + Poly5 + Ridge is optimal.", "Result": "Final Boss Defeated (Lowest RMSE)."},
+        ], use_container_width=True)
+        
+    with tab2:
+        st.dataframe([
+            {"Level": 11, "Topic": "Data Creation", "Goal": "Build a dataset", "Description": "Generating synthetic trend data for 'Yo-Zeum Seongsu'.", "Tech": "Faker, Pandas"},
+            {"Level": 12, "Topic": "Preprocessing", "Goal": "Scalable cleaning", "Description": "Building robust preprocessing pipelines for production.", "Tech": "Scikit-Learn Pipelines"},
+            {"Level": 13, "Topic": "Predictor", "Goal": "Interactive Dashboards", "Description": "Serving models via Streamlit for end-users.", "Tech": "Streamlit"},
+            {"Level": 14, "Topic": "AutoML", "Goal": "Model Selection", "Description": "Automated model comparison and selection (PyCaret/AutoGluon style).", "Tech": "AutoML"},
+            {"Level": 15, "Topic": "Automation", "Goal": "Scheduling Scripts", "Description": "Writing scripts to run jobs automatically (Crontab basics).", "Tech": "Python Scripts"},
+            {"Level": 16, "Topic": "CI/CD", "Goal": "GitHub Actions", "Description": "Continuous Integration and Deployment for ML.", "Tech": "GitHub Actions"},
+            {"Level": 17, "Topic": "MLflow", "Goal": "Experiment Tracking", "Description": "Logging params, metrics, and artifacts.", "Tech": "MLflow"},
+            {"Level": 18, "Topic": "DVC", "Goal": "Data Versioning", "Description": "Versioning large datasets like code (Data Version Control).", "Tech": "DVC"},
+            {"Level": 19, "Topic": "Monitoring", "Goal": "Drift Detection", "Description": "Detecting concept drift and data quality issues.", "Tech": "Evidently AI"},
+            {"Level": 20, "Topic": "Airflow", "Goal": "Complex DAGs", "Description": "Orchestrating complex ML workflows with DAGs.", "Tech": "Apache Airflow"},
+        ], use_container_width=True)
+
     st.markdown("---")
     
     col1, col2 = st.columns(2)
@@ -125,38 +158,7 @@ def home_page():
         if st.button("Start Part 2: MLOps Track", use_container_width=True):
             st.switch_page("pages/11_MLOps_Lv1_Data.py")
 
-    st.markdown("---")
-    
-    with st.expander("🗺️ View Full Curriculum Detail"):
-        tab1, tab2 = st.tabs(["Part 1: The Modeling Journey", "Part 2: The Systems Journey"])
-        
-        with tab1:
-            st.dataframe([
-                {"Level": 1, "Topic": "Heuristic", "Question": "Can we catch the average?", "Hypothesis": "Prices cluster around district means.", "Result": "Baseline RMSE established."},
-                {"Level": 2, "Topic": "Linear Regression", "Question": "Is there a trend?", "Hypothesis": "Price increases linearly with Area.", "Result": "Simple line captures basic trend."},
-                {"Level": 3, "Topic": "Multi-Features", "Question": "Does Year matter?", "Hypothesis": "Newer apartments are more expensive.", "Result": "Adding features improves accuracy."},
-                {"Level": 4, "Topic": "3D Regression", "Question": "How do Area & Year interact?", "Hypothesis": "We need a plane, not a line.", "Result": "Visualizing the hyperplane of fit."},
-                {"Level": 5, "Topic": "High Dimensionality", "Question": "More features = Better?", "Hypothesis": "Adding everything will solve it.", "Result": "Curse of Dimensionality / Overfitting."},
-                {"Level": 6, "Topic": "PCA", "Question": "Can we compress info?", "Hypothesis": "Many features are redundant.", "Result": "Reduced dimensions not losing much variance."},
-                {"Level": 7, "Topic": "Data Cleaning", "Question": "Are outliers hurting us?", "Hypothesis": "Removing anomalies creates stability.", "Result": "Massive improvement in RMSE."},
-                {"Level": 8, "Topic": "Feature Engineering", "Question": "Can we create new insights?", "Hypothesis": "Area * Year matters more than sum.", "Result": "Interaction terms capture nuance."},
-                {"Level": 9, "Topic": "Regularization", "Question": "Is the model too complex?", "Hypothesis": "We need to penalize large weights.", "Result": "Ridge/Lasso prevents overfitting."},
-                {"Level": 10, "Topic": "Ultimate Model", "Question": "What is the limit?", "Hypothesis": "Direct Price + Poly5 + Ridge is optimal.", "Result": "Final Boss Defeated (Lowest RMSE)."},
-            ], use_container_width=True)
-            
-        with tab2:
-            st.dataframe([
-                {"Level": 11, "Topic": "Data Creation", "Goal": "Build a dataset", "Description": "Generating synthetic trend data for 'Yo-Zeum Seongsu'.", "Tech": "Faker, Pandas"},
-                {"Level": 12, "Topic": "Preprocessing", "Goal": "Scalable cleaning", "Description": "Building robust preprocessing pipelines for production.", "Tech": "Scikit-Learn Pipelines"},
-                {"Level": 13, "Topic": "Predictor", "Goal": "Interactive Dashboards", "Description": "Serving models via Streamlit for end-users.", "Tech": "Streamlit"},
-                {"Level": 14, "Topic": "AutoML", "Goal": "Model Selection", "Description": "Automated model comparison and selection (PyCaret/AutoGluon style).", "Tech": "AutoML"},
-                {"Level": 15, "Topic": "Automation", "Goal": "Scheduling Scripts", "Description": "Writing scripts to run jobs automatically (Crontab basics).", "Tech": "Python Scripts"},
-                {"Level": 16, "Topic": "CI/CD", "Goal": "GitHub Actions", "Description": "Continuous Integration and Deployment for ML.", "Tech": "GitHub Actions"},
-                {"Level": 17, "Topic": "MLflow", "Goal": "Experiment Tracking", "Description": "Logging params, metrics, and artifacts.", "Tech": "MLflow"},
-                {"Level": 18, "Topic": "DVC", "Goal": "Data Versioning", "Description": "Versioning large datasets like code (Data Version Control).", "Tech": "DVC"},
-                {"Level": 19, "Topic": "Monitoring", "Goal": "Drift Detection", "Description": "Detecting concept drift and data quality issues.", "Tech": "Evidently AI"},
-                {"Level": 20, "Topic": "Airflow", "Goal": "Complex DAGs", "Description": "Orchestrating complex ML workflows with DAGs.", "Tech": "Apache Airflow"},
-            ], use_container_width=True)
+
 
 def main() -> None:
     """Entry point with navigation."""

@@ -19,7 +19,7 @@ LEVEL_RMSE = {
     7: {"name": "Cleaned", "rmse": 25084, "icon": "🧹"},
     8: {"name": "Engineered", "rmse": 24184, "icon": "⚗️"},
     9: {"name": "Regularized", "rmse": 23903, "icon": "🛡️"},
-    10: {"name": "Gradient Boost", "rmse": 20004, "icon": "👑"},
+    10: {"name": "AutoML (Black Box)", "rmse": 20004, "icon": "👑"},
 }
 
 
