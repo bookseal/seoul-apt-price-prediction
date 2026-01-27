@@ -81,7 +81,6 @@ def home_page():
     tab1, tab2 = st.tabs(["Part 1: The Modeling Journey", "Part 2: The Systems Journey"])
     
     with tab1:
-    with tab1:
         st.markdown("""
         | Level | Topic | Question | Hypothesis | Result |
         | :--- | :--- | :--- | :--- | :--- |
