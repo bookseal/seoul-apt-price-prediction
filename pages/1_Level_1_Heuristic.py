@@ -310,7 +310,7 @@ def display_step3_eda(df: pd.DataFrame) -> None:
     
     fig, ax = plt.subplots(figsize=(10, 3))
     ax.hist(df['price_10k_krw'], bins=50, color='#9C27B0', alpha=0.7, edgecolor='white')
-    ax.set_xlabel('Price (10K KRW)')
+    ax.set_xlabel('Price (10k KRW)')
     ax.set_ylabel('Count')
     ax.axvline(df['price_10k_krw'].median(), color='red', linestyle='--', linewidth=2, label=f"Median: {df['price_10k_krw'].median():,.0f}")
     ax.axvline(df['price_10k_krw'].mean(), color='orange', linestyle='--', linewidth=2, label=f"Mean: {df['price_10k_krw'].mean():,.0f}")
@@ -321,9 +321,9 @@ def display_step3_eda(df: pd.DataFrame) -> None:
     
     # Insight for Price Distribution
     col1, col2, col3 = st.columns(3)
-    col1.metric("Median Price", f"{df['price_10k_krw'].median():,.0f} 만원")
-    col2.metric("Mean Price", f"{df['price_10k_krw'].mean():,.0f} 만원")
-    col3.metric("Difference", f"{df['price_10k_krw'].mean() - df['price_10k_krw'].median():,.0f} 만원")
+    col1.metric("Median Price", f"{df['price_10k_krw'].median():,.0f} (10k KRW)")
+    col2.metric("Mean Price", f"{df['price_10k_krw'].mean():,.0f} (10k KRW)")
+    col3.metric("Difference", f"{df['price_10k_krw'].mean() - df['price_10k_krw'].median():,.0f} (10k KRW)")
     
     st.markdown("""
     <div style="padding: 12px; background: rgba(156,39,176,0.1); border-radius: 8px; margin: 10px 0;">
@@ -349,7 +349,7 @@ def display_step3_eda(df: pd.DataFrame) -> None:
     ax.scatter(sample['area_m2'], sample['price_10k_krw'], 
                alpha=0.3, s=15, c='#2196F3')
     ax.set_xlabel('Area (m²)')
-    ax.set_ylabel('Price (10K KRW)')
+    ax.set_ylabel('Price (10k KRW)')
     ax.grid(True, alpha=0.3)
     
     # Add trend line
@@ -364,13 +364,13 @@ def display_step3_eda(df: pd.DataFrame) -> None:
     # Insight for Area vs Price
     col1, col2 = st.columns(2)
     col1.metric("Correlation (r)", f"{corr:.3f}", "Strong positive!")
-    col2.metric("Trend", f"+{z[0]:,.0f} 만원/m²", "Price increase per m²")
+    col2.metric("Trend", f"+{z[0]:,.0f} (10k KRW/m²)", "Price increase per m²")
     
     st.markdown("""
     <div style="padding: 12px; background: rgba(33,150,243,0.1); border-radius: 8px; margin: 10px 0;">
         <b>🔍 What we learned:</b><br>
         • <b>Strong positive correlation</b> - Bigger area = Higher price (obvious!)<br>
-        • <b>BUT look at the spread!</b> - Same 85m² can be 5억 or 20억. Why?<br>
+        • <b>BUT look at the spread!</b> - Same 85m² can be 500M or 2B KRW. Why?<br>
         • <b>Hidden variable</b> - Something else affects price. What is it?<br>
         • <b>Answer:</b> <span style="color: #FF9800; font-weight: bold;">LOCATION (District)!</span>
     </div>
@@ -395,7 +395,7 @@ def display_step3_eda(df: pd.DataFrame) -> None:
               for i in range(len(district_median_en))]
     district_median_en.plot(kind='bar', ax=ax, color=colors, edgecolor='white')
     ax.set_xlabel('District')
-    ax.set_ylabel('Median Price per m² (10K KRW)')
+    ax.set_ylabel('Median Price per m² (10k KRW)')
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontsize=8)
     ax.grid(True, alpha=0.3, axis='y')
     st.pyplot(fig, use_container_width=True)
@@ -421,7 +421,7 @@ def display_step3_eda(df: pd.DataFrame) -> None:
     <div style="padding: 12px; background: rgba(255,152,0,0.1); border-radius: 8px; margin: 10px 0;">
         <b>🔍 What we learned:</b><br>
         • <b>Huge price gap!</b> - Top district is <b>{price_gap:.1f}x</b> more expensive than bottom<br>
-        • <b>Gangnam effect</b> - 강남, 서초, 용산 are premium areas<br>
+        • <b>Gangnam effect</b> - Gangnam, Seocho, Yongsan are premium areas<br>
         • <b>Location = Everything</b> - Same apartment, different district = VERY different price<br>
         • <b>Conclusion:</b> We MUST consider district when predicting price!
     </div>
@@ -453,7 +453,7 @@ def display_step4_group(df: pd.DataFrame) -> None:
     with col2:
         st.markdown("**Top 5 Districts**")
         for district, count in district_counts.head(5).items():
-            st.markdown(f"• **{district}**: {count:,} 건")
+            st.markdown(f"• **{district}**: {count:,} txs")
     
     st.code("""
 # Group by district
@@ -503,11 +503,11 @@ def display_step5_median(df: pd.DataFrame) -> None:
         <b>🤔 Why MEDIAN instead of MEAN?</b><br><br>
         <table style="width: 100%;">
             <tr>
-                <td style="padding: 8px;"><b>Mean (평균)</b></td>
-                <td style="padding: 8px;">Sensitive to outliers. One 100억 apartment skews everything!</td>
+                <td style="padding: 8px;"><b>Mean</b></td>
+                <td style="padding: 8px;">Sensitive to outliers. One 10B KRW apartment skews everything!</td>
             </tr>
             <tr>
-                <td style="padding: 8px;"><b>Median (중앙값)</b></td>
+                <td style="padding: 8px;"><b>Median</b></td>
                 <td style="padding: 8px;">Robust. The "middle" value - outliers don't affect it much.</td>
             </tr>
         </table>
@@ -531,7 +531,7 @@ def predict_heuristic(df: pd.DataFrame, district: str, area: float) -> float:
         area: Exclusive area in m²
     
     Returns:
-        Predicted price in 10K KRW
+        Predicted price in 10k KRW
     """
     df_calc = df.copy()
     df_calc['price_per_m2'] = df_calc['price_10k_krw'] / df_calc['area_m2']
@@ -555,11 +555,11 @@ def display_step6_predict(df: pd.DataFrame) -> None:
     
     with col1:
         districts = sorted(df['district'].unique())
-        selected_district = st.selectbox("🏘️ Select District", districts)
+        selected_district = st.selectbox("🏘️ Select District", districts, key="level1_district_select")
     
     with col2:
         selected_area = st.slider("📐 Exclusive Area (m²)", 
-                                   min_value=10, max_value=200, value=84)
+                                   min_value=10, max_value=200, value=84, key="level1_area_slider")
     
     # Predict
     predicted_price = predict_heuristic(df, selected_district, selected_area)
@@ -575,10 +575,10 @@ def display_step6_predict(df: pd.DataFrame) -> None:
                 border-radius: 15px; margin: 20px 0; border: 3px solid #4CAF50;">
         <div style="font-size: 14px; color: #888; margin-bottom: 5px;">PREDICTED PRICE</div>
         <div style="font-size: 36px; font-weight: bold; color: #4CAF50;">
-            {predicted_price:,.0f} <span style="font-size: 18px;">만원</span>
+            {predicted_price:,.0f} <span style="font-size: 18px;">(10k KRW)</span>
         </div>
         <div style="font-size: 16px; color: #888; margin-top: 5px;">
-            ≈ {predicted_price/10000:.1f} 억원
+            ≈ {predicted_price/10000:.1f} Billion KRW
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -590,9 +590,9 @@ def display_step6_predict(df: pd.DataFrame) -> None:
         
         **Calculation**:
         1. District: **{selected_district}**
-        2. Median price/m² in {selected_district}: **{median_ppm2:,.0f}** 만원/m²
+        2. Median price/m² in {selected_district}: **{median_ppm2:,.0f}** (10k KRW/m²)
         3. Your area: **{selected_area}** m²
-        4. Result: {median_ppm2:,.0f} × {selected_area} = **{predicted_price:,.0f}** 만원
+        4. Result: {median_ppm2:,.0f} × {selected_area} = **{predicted_price:,.0f}** (10k KRW)
         """)
         
         st.code(f"""
@@ -600,7 +600,7 @@ def display_step6_predict(df: pd.DataFrame) -> None:
 median_price_per_m2 = {median_ppm2:,.0f}  # for {selected_district}
 area = {selected_area}
 predicted_price = median_price_per_m2 * area
-print(f"Predicted: {{predicted_price:,}} 만원")  # {predicted_price:,.0f} 만원
+print(f"Predicted: {{predicted_price:,}} (10k KRW)")  # {predicted_price:,.0f} (10k KRW)
         """, language="python")
 
 
@@ -644,7 +644,7 @@ def display_step7_evaluate(df: pd.DataFrame) -> None:
         
     with col2:
         st.info(f"""
-        On average, our heuristic is off by about **{rmse:,.0f} 만원**. 
+        On average, our heuristic is off by about **{rmse:,.0f} (10k KRW)**. 
         Not bad for simple math, but ML can do better!
         """)
         
@@ -787,12 +787,10 @@ def main() -> None:
         st.markdown("---")
         display_step6_predict(df)
         st.markdown("---")
-        display_step6_predict(df)
-        st.markdown("---")
+
         display_step7_evaluate(df)
         st.markdown("---")
-        display_questions()
-        st.markdown("---")
+
         display_limitations()
         
         # Code Link

@@ -56,7 +56,7 @@ def display_toc() -> None:
 
 def display_pipeline_overview() -> None:
     """Show the pipeline."""
-    st.header("Step 1: Pipeline Overview (전체 흐름)")
+    st.header("Step 1: Pipeline Overview")
     
     st.markdown("""
     <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;">
@@ -88,9 +88,9 @@ def display_pca_vs_fe() -> None:
     st.header("Step 2: PCA vs Feature Engineering")
     
     st.markdown("""
-    **Q: "Level 6에서 배운 PCA랑 뭐가 달라요?"**
+    **Q: "How is this different from PCA in Level 6?"**
     
-    아주 좋은 질문입니다! 둘 다 데이터를 다루지만 **목적**이 완전히 반대입니다.
+    Great question! Both deal with data, but their **goals** are opposite.
     """)
     
     col1, col2 = st.columns(2)
@@ -100,10 +100,10 @@ def display_pca_vs_fe() -> None:
         <div style="padding: 15px; background: rgba(33,150,243,0.1); border-radius: 10px; border: 2px solid #2196F3;">
             <div style="text-align: center; font-size: 20px; margin-bottom: 10px;">📉 <b>PCA</b></div>
             <ul>
-                <li><b>목적</b>: 정보 압축 (Reduction)</li>
-                <li><b>방향</b>: 특성 개수를 <b>줄임</b></li>
-                <li><b>비유</b>: "과일을 믹서기에 갈아서 <b>주스</b> 한 잔 만들기" (맛은 유지하되 양은 줄임)</li>
-                <li><b>사용처</b>: 데이터가 너무 많거나 시각화할 때</li>
+                <li><b>Goal</b>: Information Reduction</li>
+                <li><b>Direction</b>: <b>Decrease</b> number of features</li>
+                <li><b>Analogy</b>: "Grind fruits into a <b>Juice</b>" (Keep flavor, reduce volume)</li>
+                <li><b>Use Case</b>: Visualization or too many features</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -113,10 +113,10 @@ def display_pca_vs_fe() -> None:
         <div style="padding: 15px; background: rgba(76,175,80,0.1); border-radius: 10px; border: 2px solid #4CAF50;">
             <div style="text-align: center; font-size: 20px; margin-bottom: 10px;">🧪 <b>Feature Engineering</b></div>
             <ul>
-                <li><b>목적</b>: 정보 확장 (Exploration)</li>
-                <li><b>방향</b>: 특성 개수를 <b>늘리거나 변형함</b></li>
-                <li><b>비유</b>: "밀가루 반죽을 오븐에 구워 <b>빵</b> 만들기" (새로운 가치를 창조)</li>
-                <li><b>사용처</b>: 모델 성능을 극대화할 때</li>
+                <li><b>Goal</b>: Information Exploration</li>
+                <li><b>Direction</b>: <b>Increase/Transform</b> features</li>
+                <li><b>Analogy</b>: "Bake flour dough into <b>Bread</b>" (Create new value)</li>
+                <li><b>Use Case</b>: Maximizing model performance</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -138,19 +138,27 @@ def prepare_data(df: pd.DataFrame) -> pd.DataFrame:
 
 def display_scaling_comparison(df: pd.DataFrame) -> None:
     """Compare different scaling methods."""
-    st.header("Step 3: Feature Scaling (스케일링)")
+    st.header("Step 3: Feature Scaling")
     
     st.markdown("""
-    **Q: "Level 2에서도 스케일링(StandardScaler)을 언급하지 않았나요?"**
+    **Q: "Didn't we talk about scaling in Level 2?"**
     
-    맞습니다! **Level 2의 시뮬레이터(SGD)** 파트에서 스케일링이 필수라고 배웠습니다.
-    (경사 하강법은 데이터 크기가 다르면 길을 잃기 쉽거든요!)
+    Correct! In **Level 2 Simulator (SGD)**, scaling was mandatory.
     
-    하지만 `LinearRegression` 자체(OLS 방식)는 스케일링 없이도 수학적으로 계산이 가능했습니다.
-    이제 **본격적인 특성 공학**을 위해, 두 스케일링 기법의 차이를 **눈으로 확실히** 확인해봅시다.
+    However, `LinearRegression` itself (OLS) can work without it.
+    Now, for **Advanced Feature Engineering**, let's visually confirm the difference.
     
-    👇 **아래 그래프에서 `Outlier (5000)`가 있을 때 `Normal Data`가 어떻게 변하는지 보세요!**
+    👇 **See how `Normal Data` changes when there is an `Outlier (5000)`!**
     """)
+    
+    # ... (code omitted for brevity in replacement, but I must match TargetContent exactly)
+    # Actually I can replace the header and markdown only if I carefully target lines.
+    # But wait, looking at the code structure provided in view_file,
+    # Lines 141-153 are the markdown.
+    # Lines 208-222 are content inside columns.
+    
+    # Let's target the first block (141-153)
+
     
     # Create simple data with one huge outlier
     np.random.seed(42)
@@ -207,22 +215,22 @@ def display_scaling_comparison(df: pd.DataFrame) -> None:
     with col1:
         st.info("""
         **Standard Scaler**
-        *   **특징**: 평균 0, 분산 1
-        *   **이상치 영향**: 이상치는 여전히 평균에서 멀리 떨어져 있습니다. (+7 Sigma)
-        *   **데이터 보존**: 정상 데이터들이 0 근처에 **적절히 퍼져 있습니다.**
-        *   **결론**: 이상치가 있어도 정보 손실이 적습니다.
+        *   **Feature**: Mean 0, Variance 1
+        *   **Outlier Effect**: Outliers are still far from mean (+7 Sigma)
+        *   **Data Preservation**: Normal data is **appropriately spread** around 0.
+        *   **Conclusion**: Less info loss even with outliers.
         """)
     with col2:
         st.error("""
         **MinMax Scaler**
-        *   **특징**: 최소 0, 최대 1
-        *   **이상치 영향**: 이상치가 혼자 `1.0`을 차지합니다.
-        *   **데이터 파괴**: 정상 데이터(약 100)들이 `0.0`~`0.02` 사이의 **아주 좁은 구간에 찌그러집니다.**
-        *   **결론**: 이상치가 하나라도 있으면 나머지 데이터의 차이를 구분하기 힘들어집니다.
+        *   **Feature**: Min 0, Max 1
+        *   **Outlier Effect**: Outlier takes `1.0` alone.
+        *   **Data Destruction**: Normal data (~100) gets **squashed** into `0.0`~`0.02`.
+        *   **Conclusion**: Hard to distinguish normal data differences if an outlier exists.
         """)
     
     st.code("""
-# 코드 예시 (StandardScaler vs MinMaxScaler)
+# Code Example (StandardScaler vs MinMaxScaler)
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 # 1. StandardScaler (Outlier에 강함)
@@ -237,11 +245,11 @@ X_scaled = scaler.fit_transform(X)
 
 def display_log_transformation(df: pd.DataFrame) -> None:
     """Show log transformation for skewed data."""
-    st.header("Step 4: Log Transformation (로그 변환)")
+    st.header("Step 4: Log Transformation")
     
     st.markdown("""
-    부동산 가격처럼 **"왼쪽으로 쏠린(Skewed)"** 데이터는 모델이 학습하기 어렵습니다.
-    로그(Log)를 씌우면 데이터가 **정규분포(종 모양)**에 가까워져 학습이 훨씬 잘 됩니다.
+    **"Skewed"** data like real estate prices is hard for models to learn.
+    Applying Log makes the data closer to **Normal Distribution (Bell Curve)**.
     """)
     
     sample = df['price_10k_krw'].head(5000)
@@ -264,13 +272,13 @@ def display_log_transformation(df: pd.DataFrame) -> None:
     plt.close()
     
     st.warning("""
-    **⚠️ 로그 변환의 단점 (주의사항)**
+    **⚠️ Downsides of Log Transform**
     
-    1.  **0 또는 음수 처리 불가**: 로그 함수 $\log(x)$는 $x \le 0$에서 정의되지 않습니다.
-        *   해결책: $\log(x + 1)$을 사용하는 `np.log1p()`를 씁니다.
-    2.  **해석의 어려움**: 모델이 예측한 값도 로그 스케일입니다.
-        *   "로그 가격이 1 증가했다" → 실제 가격이 몇 배 증가했는지 직관적으로 알기 어렵습니다.
-        *   반드시 마지막에 `np.expm1()`으로 **원래 가격으로 되돌려야** 합니다.
+    1.  **Cannot handle 0 or negative**: $\log(x)$ is undefined for $x \le 0$.
+        *   Solution: Use `np.log1p()` which does $\log(x + 1)$.
+    2.  **Interpretation Difficulty**: Predicted values are also in log scale.
+        *   "Log price increased by 1" → Hard to understand intuitively.
+        *   Must reverse with `np.expm1()` to get **original price**.
     """)
     
     st.code("""
@@ -291,10 +299,10 @@ pred_real = np.expm1(pred_log)  # exp(x) - 1 to reverse log1p
 
 def display_feature_creation(df: pd.DataFrame) -> None:
     """Show creating new features."""
-    st.header("Step 5: Feature Creation (파생 변수)")
+    st.header("Step 5: Feature Creation (Derived Features)")
     
     st.markdown("""
-    **"도메인 지식(Domain Knowledge)"**을 활용해 새로운 정보를 만들어냅니다.
+    Using **"Domain Knowledge"** to create new information.
     """)
     
     df = df.copy()
@@ -305,9 +313,9 @@ def display_feature_creation(df: pd.DataFrame) -> None:
     
     st.markdown("##### 💡 Example Features")
     features = [
-        ("building_age", "2024 - year", "건물 연식 (오래될수록 가격 하락?)"),
-        ("price_per_m2", "price / area", "평당 가격 (지역별 가격 수준 비교용)"),
-        ("is_new", "year > 2015", "신축 여부 (프리미엄)")
+        ("building_age", "2024 - year", "Building Age (Older = Cheaper?)"),
+        ("price_per_m2", "price / area", "Price per m² (For comparison)"),
+        ("is_new", "year > 2015", "Is New? (Premium)")
     ]
     st.table(pd.DataFrame(features, columns=['Feature', 'Formula', 'Meaning']))
     
@@ -322,18 +330,18 @@ df['is_new'] = (df['year'] > 2015).astype(int)
 
 def display_polynomial_features(df: pd.DataFrame) -> None:
     """Show interactive polynomial features demo."""
-    st.header("Step 6: Polynomial Features (다항 회귀)")
+    st.header("Step 6: Polynomial Features")
     
     st.markdown("""
-    **Q: "스케일링과 다항 특성은 뭐가 달라요?"**
+    **Q: "Difference between Scaling and Polynomial?"**
     
-    *   **스케일링**: 데이터의 **크기(Range)**만 바꿉니다. (모양은 그대로)
-    *   **다항 특성(Polynomial)**: 데이터의 **모양(Shape)**을 바꿉니다. (곡선, 입체)
+    *   **Scaling**: Changes **Range** of data. (Shape stays same)
+    *   **Polynomial**: Changes **Shape** of data. (Curve, 3D)
     
-    데이터가 직선이 아니라 **곡선** 형태일 때 필수적입니다!
+    Essential when data is **Curved** (Non-linear)!
     """)
     
-    degree = st.slider("Polynomial Degree (차수)", 1, 10, 2)
+    degree = st.slider("Polynomial Degree", 1, 10, 2)
     
     # Create non-linear data
     np.random.seed(42)
@@ -358,7 +366,7 @@ def display_polynomial_features(df: pd.DataFrame) -> None:
     st.pyplot(fig, use_container_width=True)
     
     if degree > 5:
-        st.warning("⚠️ 차수가 너무 높으면 **과적합(Overfitting)** 되어 꼬불꼬불해집니다!")
+        st.warning("⚠️ High degree causes **Overfitting** (Wiggly line)!")
         
     st.code(f"""
 from sklearn.preprocessing import PolynomialFeatures
@@ -427,7 +435,7 @@ def train_models(df: pd.DataFrame):
 
 def display_compare_performance(results: dict) -> None:
     """Show final comparison."""
-    st.header("Step 7: Performance Comparison (성능 비교)")
+    st.header("Step 7: Performance Comparison")
     
     results_df = pd.DataFrame(list(results.items()), columns=['Model', 'RMSE']).sort_values('RMSE')
     

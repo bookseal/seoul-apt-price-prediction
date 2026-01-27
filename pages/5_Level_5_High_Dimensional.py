@@ -87,6 +87,59 @@ def display_pipeline_overview() -> None:
     </div>
     """, unsafe_allow_html=True)
 
+    # What happens at each step
+    st.markdown("### 🔍 What happens at each step?")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(33,150,243,0.1); border-radius: 10px; 
+                border-left: 4px solid #2196F3; margin: 10px 0;">
+        <b>📥 Step 1: Load Data</b><br>
+        <span style="font-size: 13px;">
+        Load all available raw columns (Area, Floor, Age, Units, Parking...)
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(156,39,176,0.1); border-radius: 10px; 
+                border-left: 4px solid #9C27B0; margin: 10px 0;">
+        <b>🎯 Step 2: Select Features</b><br>
+        <span style="font-size: 13px;">
+        Pick 10+ features to use. More info = Better model? Or confusion?
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(0,188,212,0.1); border-radius: 10px; 
+                border-left: 4px solid #00BCD4; margin: 10px 0;">
+        <b>⚡ Step 3: Encode & Scale</b><br>
+        <span style="font-size: 13px;">
+        One-Hot Encode Districts (25 cols) + Scale numeric features.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
+                border-left: 4px solid #FF9800; margin: 10px 0;">
+        <b>🎓 Step 4: Train</b><br>
+        <span style="font-size: 13px;">
+        Train Linear Regression on this massive table (30+ columns).
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(76,175,80,0.1); border-radius: 10px; 
+                border-left: 4px solid #4CAF50; margin: 10px 0;">
+        <b>📉 Step 5: Analyze (Overfitting?)</b><br>
+        <span style="font-size: 13px;">
+        Check feature importance and see if the model memorized noise (Overfitting).
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 def display_why_level5() -> None:
     """Explain motivation for Level 5."""
@@ -109,6 +162,8 @@ def display_why_level5() -> None:
         </span>
     </div>
     """, unsafe_allow_html=True)
+
+
     
     st.markdown("""
     **Question**: If we use ALL these features, will our model be better?
@@ -180,6 +235,8 @@ def display_feature_selection(df: pd.DataFrame) -> list:
                 <div style="font-size: 9px; color: gray;">{desc[:30]}...</div>
             </div>
             """, unsafe_allow_html=True)
+
+
     
     st.markdown("---")
     
@@ -208,6 +265,8 @@ def display_feature_selection(df: pd.DataFrame) -> list:
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+
     
     if total_dims >= 10:
         st.warning("🌌 **This is HIGH-DIMENSIONAL data!** Can't visualize this in a single plot!")
@@ -313,6 +372,8 @@ def display_correlation_heatmap(df: pd.DataFrame, features: list) -> None:
         <b>🎯 Key Findings:</b>
     </div>
     """, unsafe_allow_html=True)
+
+
     
     # Finding 1: Best predictor
     best_feat = price_corr.index[0]
@@ -515,6 +576,8 @@ def display_feature_importance(model, feature_names: list, n_numeric: int) -> No
         </span>
     </div>
     """, unsafe_allow_html=True)
+
+
     
     # Show top 3 insights
     st.markdown("### 🔍 Key Insights")
@@ -572,6 +635,8 @@ def display_evaluation(rmse_train: float, rmse_test: float, n_features: int) -> 
         </span>
     </div>
     """, unsafe_allow_html=True)
+
+
     
     if n_features > 20: 
         st.markdown("### 🏆 Comparison with Notebook")
@@ -625,6 +690,8 @@ def display_visualization_problem() -> None:
         </span>
     </div>
     """, unsafe_allow_html=True)
+
+
     
     col1, col2 = st.columns(2)
     
@@ -751,6 +818,8 @@ def display_limitations() -> None:
         </span>
     </div>
     """, unsafe_allow_html=True)
+
+
     
     st.markdown("""
     <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
@@ -762,6 +831,8 @@ def display_limitations() -> None:
         </span>
     </div>
     """, unsafe_allow_html=True)
+
+
     
     st.markdown("""
     <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
@@ -773,6 +844,8 @@ def display_limitations() -> None:
         </span>
     </div>
     """, unsafe_allow_html=True)
+
+
     
     st.markdown("---")
     

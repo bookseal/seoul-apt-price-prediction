@@ -96,6 +96,9 @@ def display_pipeline_overview() -> None:
     """, unsafe_allow_html=True)
     
     # Step explanations
+    # What happens at each step - Single column layout with motivating questions
+    st.markdown("### 🔍 What happens at each step?")
+    
     st.markdown("""
     <div style="padding: 15px; background: rgba(33,150,243,0.1); border-radius: 10px; 
                 border-left: 4px solid #2196F3; margin: 10px 0;">
@@ -410,7 +413,7 @@ def display_coefficient_analysis(model, district_names) -> None:
     
     with col1:
         st.metric("Area Coefficient", f"{area_coef:,.1f}")
-        st.caption(f"Each additional m² adds ~{area_coef:,.0f} (10K KRW) to price")
+        st.caption(f"Each additional m² adds ~{area_coef:,.0f} (10k KRW) to price")
     
     with col2:
         st.metric("Bias (Base Price)", f"{model.intercept_:,.0f}")
@@ -526,8 +529,8 @@ def display_evaluation(rmse_train: float, rmse_test: float, y_test, y_pred) -> N
     ax.scatter(y_test[sample_idx], y_pred[sample_idx], alpha=0.3, s=15, c='steelblue')
     max_val = max(y_test.max(), y_pred.max())
     ax.plot([0, max_val], [0, max_val], 'r--', linewidth=2, label='Perfect prediction')
-    ax.set_xlabel('Actual Price (10K KRW)')
-    ax.set_ylabel('Predicted Price (10K KRW)')
+    ax.set_xlabel('Actual Price (10k KRW)')
+    ax.set_ylabel('Predicted Price (10k KRW)')
     ax.set_title('Actual vs Predicted: Level 3')
     ax.legend()
     ax.grid(True, alpha=0.3)
@@ -581,8 +584,8 @@ def display_demo(df: pd.DataFrame, model, encoder) -> None:
         price = model.predict(X_input)[0]
         
         st.success(f"""
-        ### 💰 Predicted Price: {price:,.0f} (10K KRW)
-        ≈ **{price/10000:.2f} 억원**
+        ### 💰 Predicted Price: {price:,.0f} (10k KRW)
+        ≈ **{price/10000:.2f} Billion KRW**
         """)
     
     with tab2:
@@ -625,9 +628,9 @@ def display_demo(df: pd.DataFrame, model, encoder) -> None:
         
         diff = price_a - price_b
         if diff > 0:
-            st.info(f"**{dist_a_en}** is **{diff/10000:.2f} 억원** more expensive than {dist_b_en}!")
+            st.info(f"**{dist_a_en}** is **{diff/10000:.2f} Billion KRW** more expensive than {dist_b_en}!")
         elif diff < 0:
-            st.info(f"**{dist_b_en}** is **{abs(diff)/10000:.2f} 억원** more expensive than {dist_a_en}!")
+            st.info(f"**{dist_b_en}** is **{abs(diff)/10000:.2f} Billion KRW** more expensive than {dist_a_en}!")
         else:
             st.info("Same price!")
 

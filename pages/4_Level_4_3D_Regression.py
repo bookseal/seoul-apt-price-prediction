@@ -77,16 +77,59 @@ def display_pipeline_overview() -> None:
     </div>
     """, unsafe_allow_html=True)
     
+    # What happens at each step - Single column layout with motivating questions
+    st.markdown("### 🔍 What happens at each step?")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(33,150,243,0.1); border-radius: 10px; 
+                border-left: 4px solid #2196F3; margin: 10px 0;">
+        <b>📥 Step 1: Load Data</b><br>
+        <span style="font-size: 13px;">
+        Get data including the new 'Year' column.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(156,39,176,0.1); border-radius: 10px; 
+                border-left: 4px solid #9C27B0; margin: 10px 0;">
+        <b>🔄 Step 2: Encode</b><br>
+        <span style="font-size: 13px;">
+        One-Hot Encode Districts (Level 3) + Keep Year as number.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
     st.markdown("""
     <div style="padding: 15px; background: rgba(0,188,212,0.1); border-radius: 10px; 
                 border-left: 4px solid #00BCD4; margin: 10px 0;">
-        <b>🆕 New in Level 4: 3D Visualization!</b><br>
+        <b>🆕 Step 3: Visualize (3D)</b><br>
         <span style="font-size: 13px;">
         With 3 numeric features, we can create interactive 3D scatter plots!<br>
         • X-axis: Area<br>
         • Y-axis: Building Year<br>
         • Z-axis: Price<br>
         <i>Rotate, zoom, and explore the data in 3D!</i>
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
+                border-left: 4px solid #FF9800; margin: 10px 0;">
+        <b>🎓 Step 4: Train</b><br>
+        <span style="font-size: 13px;">
+        Train Linear Regression with 3 types of features: Area, Year, District.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(76,175,80,0.1); border-radius: 10px; 
+                border-left: 4px solid #4CAF50; margin: 10px 0;">
+        <b>🔮 Step 5: Predict</b><br>
+        <span style="font-size: 13px;">
+        Predict price considering Age. New building = Higher price!
         </span>
     </div>
     """, unsafe_allow_html=True)
@@ -163,7 +206,7 @@ def display_building_year_analysis(df: pd.DataFrame) -> None:
     ax.plot(year_price['year'], p(year_price['year']), 'r--', linewidth=2, label='Trend')
     
     ax.set_xlabel('Building Year')
-    ax.set_ylabel('Median Price (10K KRW)')
+    ax.set_ylabel('Median Price (10k KRW)')
     ax.set_title('Building Year vs Price')
     ax.legend()
     ax.grid(True, alpha=0.3)
@@ -246,7 +289,7 @@ def display_3d_visualization(df: pd.DataFrame) -> None:
         scene=dict(
             xaxis_title='Area (m²)',
             yaxis_title='Building Year',
-            zaxis_title='Price (10K KRW)'
+            zaxis_title='Price (10k KRW)'
         ),
         height=600,
         margin=dict(l=0, r=0, b=0, t=40)
@@ -461,7 +504,7 @@ def display_demo(df: pd.DataFrame, model, encoder) -> None:
         st.metric("Predicted", f"{predicted_price:,.0f}")
     
     st.success(f"""
-    **Predicted Price**: {predicted_price:,.0f} (10K KRW) ≈ **{predicted_price/10000:.2f} 억원**
+    **Predicted Price**: {predicted_price:,.0f} (10k KRW) ≈ **{predicted_price/10000:.2f} Billion KRW**
     """)
     
     # Compare old vs new

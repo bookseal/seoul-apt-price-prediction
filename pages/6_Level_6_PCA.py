@@ -24,113 +24,112 @@ st.set_page_config(layout="wide")
 
 def display_intro_hyperspace() -> None:
     """Introduction: The Hyperspace and Curse of Dimensionality."""
-    st.title("🔬 Level 6: PCA (주성분 분석)")
-    st.subheader("매트릭스의 세계로: 초공간(Hyperspace)과 차원의 저주")
+    st.title("🔬 Level 6: PCA (Hyperspace)")
+    st.subheader("Enter the Matrix: Hyperspace and the Curse of Dimensionality")
     
     st.markdown("""
-    이 모든 요소가 얽히고설켜 수만 개의 데이터 포인트로 구성된 거대한 **초공간(Hyperspace)** 을 형성합니다.
-    '서울 아파트 실거래가 예측' 프로젝트를 진행하며 레벨 5, 즉 **'고차원의 저주(Curse of Dimensionality)'** 에 도달한 당신은 이제 선택의 기로에 서 있습니다.
+    All these factors intertwine to form a massive **Hyperspace** consisting of tens of thousands of data points.
+    Having reached Level 5, the **'Curse of Dimensionality'**, in your 'Seoul Apartment Price Prediction' project, you now stand at a crossroads.
     
-    변수를 무작정 늘려 모델을 혼란에 빠뜨릴 것인가, 아니면 **데이터의 본질적인 구조**를 꿰뚫어 볼 것인가.
+    Will you blindly increase variables and confuse the model? Or will you see through the **intrinsic structure of the data**?
     
-    많은 입문자가 데이터 사이언스 여정에서 **PCA(Principal Component Analysis)** 라는 거대한 장벽을 마주합니다.
-    Scikit-learn에서 `PCA(n_components=k)`라는 단 한 줄로 실행되는 이 알고리즘은, 
-    그 간결함 뒤에 심오한 **기하학적 철학** 과 **정보 이론적 통찰** 을 숨기고 있습니다.
+    Many beginners face a huge barrier called **PCA (Principal Component Analysis)** in their data science journey.
+    This algorithm, executed with a single line `PCA(n_components=k)` in Scikit-learn, hides profound **geometric philosophy** and **information theoretic insights** behind its simplicity.
     
-    단순히 "데이터를 압축하는 기술"로 치부하기엔 PCA가 제시하는 **'세상을 바라보는 새로운 축'** 의 가치가 너무나 큽니다.
-    이제 엑셀의 평면적인 행과 열에서 벗어나, 데이터가 춤추는 다차원 기하학의 세계로 진입해 봅시다.
+    The value of the **'new axis to view the world'** proposed by PCA is too great to dismiss it simply as a "data compression technique".
+    Now, let's move away from the flat rows and columns of Excel and enter the world of multidimensional geometry where data dances.
     """)
 
 def display_info_theory() -> None:
     """Information Theory: Variance as Information."""
-    st.header("1. 정보 이론적 기초: 분산(Variance), 불확실성이라는 이름의 정보")
+    st.header("1. Information Theory: Variance as Information")
     
     st.markdown("""
-    우리가 데이터를 다루는 목적은 불확실성을 줄이고 예측의 정확도를 높이는 것입니다.
-    이 과정에서 **'분산(Variance)'** 은 흔히 에러나 리스크로 오해받곤 합니다.
-    그러나 정보 이론(Information Theory)의 관점에서 **분산은 곧 정보(Information)이자 가능성**입니다.
+    Our goal in handling data is to reduce uncertainty and increase prediction accuracy.
+    In this process, **'Variance'** is often misunderstood as error or risk.
+    However, from the perspective of Information Theory, **Variance is Information and Possibility**.
     """)
     
     col1, col2 = st.columns(2)
     
     with col1:
         with st.container(border=True):
-            st.subheader("📉 낮은 분산: 정보의 부재")
+            st.subheader("📉 Low Variance: Absence of Information")
             st.markdown("""
-            **상황**: 모든 아파트의 '국가'가 '대한민국'인 경우.
-            *   **분산($\\sigma^2$)**: 0
-            *   **정보 가치**: 없음 (None)
+            **Situation**: 'Country' of all apartments is 'South Korea'.
+            *   **Variance($\\sigma^2$)**: 0
+            *   **Info Value**: None
             
-            변화가 없는 곳에는 정보가 존재하지 않습니다. 놀라움(Surprise)이 없기 때문입니다.
-            모델이 아무리 데이터를 봐도 구분할 수 없습니다.
+            Where there is no change, there is no information. Because there is no Surprise.
+            No matter how much the model looks at the data, it cannot distinguish them.
             """)
             
     with col2:
         with st.container(border=True):
-            st.subheader("📈 높은 분산: 정보의 풍요")
+            st.subheader("📈 High Variance: Abundance of Information")
             st.markdown("""
-            **상황**: 전용면적이 15$m^2$부터 240$m^2$까지 다양한 경우.
-            *   **분산**: 매우 큼
-            *   **정보 가치**: **매우 높음**
+            **Situation**: Exclusive area ranges from 15$m^2$ to 240$m^2$.
+            *   **Variance**: Very High
+            *   **Info Value**: **Very High**
             
-            데이터가 넓게 퍼져 있다는 것은 서로 다름을 주장하고 있다는 뜻입니다.
-            **분산이 클수록 대상을 명확하게 구별(Discrimination)할 수 있습니다.**
+            Data being widely spread means they are claiming to be different from each other.
+            **The larger the variance, the clearer we can distinguish (Discrimination) targets.**
             """)
             
     st.info("""
-    🃏 **직관적 사고 실험: 카드 덱**
+    🃏 **Intuitive Thought Experiment: Card Deck**
     
-    *   **낮은 분산**: 카드 덱을 바닥 1cm 위에서 떨어뜨리면 뭉쳐 있어서 스페이드 에이스를 찾을 수 없습니다. (정보 붕괴)
-    *   **높은 분산**: 카드 덱을 공중 높이 던져 방 전체에 흩뿌리면 ($x, y$ 분산 극대화), 모든 카드가 명확히 식별됩니다.
+    *   **Low Variance**: If you drop a deck of cards from 1cm above the floor, they are clumped together and you can't find the Ace of Spades. (Info Collapse)
+    *   **High Variance**: If you throw the deck high into the air and scatter them all over the room (maximize $x, y$ variance), every card is clearly identified.
     
-    **PCA의 목표는 데이터 포인트들을 수학적 공간 안에서 최대한 멀리 흩뿌릴 수 있는 '최적의 투척 각도(축)'를 찾는 것입니다.**
+    **The goal of PCA is to find the 'Optimal Throwing Angle (Axis)' that can scatter data points as far as possible in mathematical space.**
     """)
 
 def display_selection_vs_extraction() -> None:
     """Feature Selection vs Extraction (Salad vs Smoothie)."""
-    st.header("2. 변수 선택(Selection) vs 추출(Extraction): 샐러드와 스무디")
+    st.header("2. Selection vs Extraction: Salad vs Smoothie")
     
     st.markdown("""
-    "변수가 너무 많으면 그냥 상관관계 높은 거 하나 버리면 되지 않나?" 
-    이를 **변수 선택(Feature Selection)** 이라고 합니다. 하지만 위험한 접근일 수 있습니다.
+    "If there are too many variables, can't we just drop the ones with high correlation?"
+    This is called **Feature Selection**. However, it can be a dangerous approach.
     
-    **다중공선성(Multicollinearity)의 함정**:
-    '전용면적'과 '방 개수'는 둘 다 중요합니다. 하나를 버리면 미세한 정보(예: 면적은 넓은데 방이 적은 펜트하우스 구조)가 영원히 사라집니다.
+    **Trap of Multicollinearity**:
+    'Exclusive Area' and 'Number of Rooms' are both important. If you discard one, subtle information (e.g., a penthouse with large area but few rooms) disappears forever.
     """)
     
-    st.markdown("### 🥗 샐러드 vs 🥤 스무디")
+    st.markdown("### 🥗 Salad vs 🥤 Smoothie")
     
     # Custom Table
     data = {
-        "구분": ["변수 선택 (Selection)", "변수 추출 (Extraction / PCA)"],
-        "비유": ["과일 샐러드 (Fruit Salad)", "과일 스무디 (Green Smoothie)"],
-        "방법": ["딸기(면적)와 사과(방 개수) 중 사과를 버린다.", "딸기와 사과를 믹서기에 넣고 갈아버린다."],
-        "결과물": ["원본 변수 중 일부 (딸기)", "새로운 변수 (혼합 주스)"],
-        "장점": ["해석이 명확하다. ('가격 상승은 면적 때문')", "정보의 손실이 거의 없다. (모든 영양소 보존)"],
-        "단점": ["버려진 변수의 고유 정보(사과의 풍미) 영구 손실", "새로운 변수의 이름을 붙이기 어렵다. ('이 맛은 뭐지?')"]
+        "Type": ["Feature Selection", "Feature Extraction (PCA)"],
+        "Analogy": ["Fruit Salad", "Green Smoothie"],
+        "Method": ["Throw away Apple (Rooms) among Strawberry (Area) and Apple.", "Put Strawberry and Apple in a blender and grind them."],
+        "Result": ["Some of original variables (Strawberry)", "New variables (Mixed Juice)"],
+        "Pros": ["Interpretation is clear. ('Price rose due to Area')", "Little information loss. (All nutrients preserved)"],
+        "Cons": ["Permanent loss of unique info of discarded variable (Apple flavor)", "Hard to name new variables. ('What is this taste?')"]
     }
-    st.table(pd.DataFrame(data).set_index("구분"))
+    st.table(pd.DataFrame(data).set_index("Type"))
     
     st.success("""
-    **PCA의 마법 (직교의 기적)**:
-    PCA는 변수를 섞어서(Smoothie) 서로 **수직(Orthogonal)** 인 새로운 축을 만듭니다.
+    **Magic of PCA (Miracle of Orthogonality)**:
+    PCA mixes variables (Smoothie) to create new axes that are **perpendicular (Orthogonal)** to each other.
     
-    *   **PC1 (주거 용량)**: 면적 + 방 개수 (공통된 힘)
-    *   **PC2 (공간 밀도)**: 면적 대비 방 개수 (차이와 특이성)
+    *   **PC1 (Residential Capacity)**: Area + Rooms (Common force)
+    *   **PC2 (Space Density)**: Rooms relative to Area (Difference and specificity)
     
-    이제 모델은 다중공선성 걱정 없이 두 정보를 모두 독립적으로 학습할 수 있습니다.
+    Now the model can learn both information independently without worrying about multicollinearity.
     """)
 
 def display_geometry_rotator(df: pd.DataFrame) -> None:
     """Interactive Manual Rotator using Real Data."""
-    st.header("3. 기하학적 아키텍처: 나만의 축 찾기 (The Manual Rotator)")
+    st.header("3. Geometric Architecture: Finding My Own Axis (The Manual Rotator)")
     
     st.markdown("""
-    PCA는 데이터(구름)는 그대로 두고, 우리가 세상을 바라보는 **기준틀(나침반, Axis)** 만 돌리는 것입니다.
-    직접 축을 회전시켜 보며 **분산이 최대화되는 순간** 을 찾아보세요.
+    PCA is leaving the data (cloud) as is, and only turning the **Frame of Reference (Compass, Axis)** through which we view the world.
+    Try rotating the axis yourself to find the **moment when Variance is maximized**.
     
-    > **Note**: 이해를 돕기 위해 실제 서울 아파트의 **전용면적(Area)** 과 **가격(Price)** 데이터를 사용합니다.
-    > (원래 머신러닝에서는 예측 대상인 '가격'을 입력 변수로 쓰면 안 되지만, 여기서는 두 변수의 상관관계를 시각적으로 확인하기 위해 예외적으로 사용합니다.)
+    > **Note**: To help understanding, we use actual **Exclusive Area** and **Price** data of Seoul apartments.
+    > (Strictly speaking, 'Price' which is the target should not be used as input in ML, but we use it here exceptionally to visually check the correlation between the two variables.)
     """)
     
     # Use Real Data
@@ -148,7 +147,7 @@ def display_geometry_rotator(df: pd.DataFrame) -> None:
     
     # Check if data is valid (variance > 0)
     if np.var(X_std) < 0.1:
-        st.error("데이터의 변산성이 너무 낮아 시각화할 수 없습니다.")
+        st.error("Data variance is too low to visualize.")
         return
 
     # Sliders using columns
@@ -175,10 +174,10 @@ def display_geometry_rotator(df: pd.DataFrame) -> None:
         st.metric("Variance on X-axis", f"{var_x:.3f}", delta="Max it!" if not is_optimal else "Perfect! 🎉")
         
         if is_optimal:
-            st.success("🎉 정답입니다! 분산이 최대화되었습니다.")
+            st.success("🎉 Correct! Variance is maximized.")
             st.balloons()
         else:
-            st.info("💡 분산이 더 커지는 각도를 찾아보세요.")
+            st.info("💡 Find the angle where variance gets larger.")
             
         st.markdown("""
         **Mission**: Find the angle where Variance is **Maximized**!
@@ -211,45 +210,45 @@ def display_geometry_rotator(df: pd.DataFrame) -> None:
     
     if is_optimal:
         st.success("""
-        ### 👏 Aha! Point: 방금 찾으신 것이 바로 'Eigenvector'입니다!
+        ### 👏 Aha! Point: You just found the 'Eigenvector'!
         
-        1.  **Eigenvector (고유벡터)**: 데이터가 가장 길게 뻗어 있는 **'방향'** (지금 맞추신 X축의 각도).
-            *   *해석*: "이 데이터값들은 주로 이 방향으로 퍼져있구나!"
-        2.  **Eigenvalue (고유값)**: 그 방향으로 데이터가 얼마나 퍼져 있는지를 나타내는 **'값'** (Variance: {:.3f}).
-            *   *해석*: "이 축이 데이터를 {:.1f}% 설명하는구나!"
+        1.  **Eigenvector**: The **'direction'** where data extends the most (The angle of X-axis you just set).
+            *   *Interpretation*: "These data points are mainly spread in this direction!"
+        2.  **Eigenvalue**: The **'value'** indicating how spread out the data is in that direction (Variance: {:.3f}).
+            *   *Interpretation*: "This axis explains {:.1f}% of the data!"
             
-        **이 예시에서의 의미**:
-        여러분이 찾은 이 축은 **'집의 크기(Area)'와 '가격(Price)'이 동시에 커지는 방향**입니다.
-        즉, 서울 아파트 시장을 관통하는 가장 강력한 트렌드(주성분)는 "큰 집이 비싸다"는 **'가치(Value)'** 축임을 수학적으로 증명하신 겁니다.
+        **Meaning in this example**:
+        The axis you found is the direction where **'Area' and 'Price' increase simultaneously**.
+        You have mathematically proven that the most powerful trend (Principal Component) penetrating the Seoul apartment market is the **'Value'** axis where "Larger houses are expensive".
         """.format(max_variance, (max_variance / np.sum(np.var(X_std, axis=0))) * 100))
     else:
         st.info("""
-    **Aha! 포인트**: 그래프를 돌려서 데이터가 **옆으로 가장 길게 퍼지는(뚱뚱해지는)** 순간.
-    그 순간의 X축이 바로 **고유벡터(Eigenvector)**이고, 그때의 퍼짐 정도(분산)가 **고유값(Eigenvalue)**입니다.
+    **Aha! Point**: The moment when you rotate the graph and the data spreads **widest horizontally (becomes fat)**.
+    The X-axis at that moment is the **Eigenvector**, and the spread (variance) at that time is the **Eigenvalue**.
     
-    이 데이터에서 PC1은 **'크기(Size)와 가격(Value)의 공통된 힘'**을 나타냅니다.
+    In this data, PC1 represents the **'Common force of Size and Value'**.
     """)
 
 def display_correlation_heatmap(df: pd.DataFrame) -> None:
     """Correlation Matrix Heatmap."""
-    st.header("4. 상관계수(Correlation)와 히트맵: 공분산의 사촌")
+    st.header("4. Correlation and Heatmap: Cousin of Covariance")
     
     st.markdown("""
-    혹시 **'상관계수(Correlation Coefficient)'**가 떠오르셨나요? 맞습니다!
-    우리가 데이터 분석에서 흔히 보는 **히트맵(Heatmap)**이 바로 이 관계를 시각화한 것입니다.
+    Did **'Correlation Coefficient'** come to mind? Correct!
+    The **Heatmap** we often see in data analysis is exactly visualizing this relationship.
     """)
     
     col1, col2 = st.columns([1, 1])
     
     with col1:
         st.info("""
-        **Q: 공분산(Covariance)과 상관계수의 차이는?**
+        **Q: Difference between Covariance and Correlation?**
         
-        *   **공분산**: 단위에 영향을 받습니다 (예: $m^2$, 평). 값이 커서 해석하기 어렵습니다.
-        *   **상관계수**: 공분산을 -1에서 1 사이로 **정규화(Normalization)**한 것입니다.
+        *   **Covariance**: Affected by units (e.g., $m^2$, pyeong). Large values make it hard to interpret.
+        *   **Correlation**: **Normalized** Covariance between -1 and 1.
         
-        PCA를 돌릴 때 데이터를 표준화(Standard Scaling)한다면, 
-        사실상 **상관계수 행렬**을 분해하는 것과 같습니다.
+        If you Standardize data (Standard Scaling) when running PCA, 
+        it is essentially decomposing the **Correlation Matrix**.
         """)
         
     with col2:
@@ -268,32 +267,32 @@ def display_correlation_heatmap(df: pd.DataFrame) -> None:
         st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("""
-    이 히트맵에서 **붉은색(높은 상관관계)**으로 표시되는 변수들이 보이시나요?
-    PCA는 이렇게 서로 **끈끈하게 연결된 변수들을 하나로 묶어주는 역할**을 합니다.
+    Do you see the variables marked in **Red (High Correlation)** in this heatmap?
+    PCA plays the role of **bundling these sticky variables into one**.
     """)
 
 def display_math_deep_dive() -> None:
     """Covariance Matrix and Spectral Theorem."""
-    st.header("5. 공분산 행렬(Covariance Matrix)의 해부")
+    st.header("5. Anatomy of Covariance Matrix")
     
     st.markdown("""
-    PCA의 엔진 룸에는 **공분산 행렬($\\Sigma$)**이 있습니다.
+    In the engine room of PCA lies the **Covariance Matrix ($\\Sigma$)**.
     $$
     \\Sigma = \\frac{1}{n-1} X^T X
     $$
-    이 행렬은 변수들 간의 **커플 댄스**를 기록한 지도입니다.
-    *   **대각 성분**: 각 변수의 독무 실력 (**분산**)
-    *   **비대각 성분**: 두 변수의 호흡 (**공분산**, 상관관계)
+    This matrix is a map recording the **Couple Dance** between variables.
+    *   **Diagonal elements**: Solo dance skill of each variable (**Variance**)
+    *   **Off-diagonal elements**: Chemistry between two variables (**Covariance**, Correlation)
     
-    비대각 성분이 0이 아니라는 건 변수들이 서로 엉켜 있다는 뜻입니다.
-    PCA는 스펙트럼 정리(Spectral Theorem)를 이용해 이 행렬을 **대각화(Diagonalization)**합니다.
-    즉, 엉켜 있는 댄서들을 떼어내어 서로 쳐다보지도 않고 각자 춤추게 만드는(독립) 과정입니다.
+    Non-zero off-diagonal elements mean variables are tangled together.
+    PCA uses the Spectral Theorem to **Diagonalize** this matrix.
+    In other words, it is a process of separating tangled dancers so they don't look at each other and dance alone (Independence).
     """)
 
 def display_biplot_investigator(df: pd.DataFrame) -> None:
     """Biplot Interactive Visualization."""
-    st.header("6. Case Study & Biplot 수사관 (Investigator)")
-    st.markdown("서울 아파트 데이터의 PC1과 PC2가 실제로 무엇을 의미하는지 **Biplot**으로 수사해 봅시다.")
+    st.header("6. Case Study & Biplot Investigator")
+    st.markdown("Let's investigate what PC1 and PC2 actually mean for Seoul Apartment data using **Biplot**.")
     
     # Prep Sample Data
     numeric_features = ['area_m2', 'year', 'floor', 'building_age', 'total_units', 'parking_ratio']
@@ -355,20 +354,20 @@ def display_biplot_investigator(df: pd.DataFrame) -> None:
     st.plotly_chart(fig, use_container_width=True)
     
     st.info("""
-    **🕵️‍♀️ 수사 가이드**:
-    *   **빨간 화살표**: 원래 변수(Area, Year 등)가 PC 축에 얼마나 기여하는지 보여줍니다.
-    *   **같은 방향의 화살표**: 서로 상관관계가 높습니다 (한통속).
-    *   **직각(90도)인 화살표**: 서로 상관관계가 없습니다 (독립).
+    **🕵️‍♀️ Investigation Guide**:
+    *   **Red Arrows**: Show how much original variables (Area, Year, etc.) contribute to PC axes.
+    *   **Arrows in same direction**: Highly correlated (Partners).
+    *   **Perpendicular (90 deg) Arrows**: Uncorrelated (Independent).
     
-    PC1(가로축)은 주로 어떤 변수들의 화살표와 나란한가요? 그것이 PC1의 정체입니다.
+    Which variable arrows are parallel to PC1 (Horizontal axis)? That is the identity of PC1.
     """)
 
 def display_dimensionality_collapser(df: pd.DataFrame) -> None:
     """3D to 2D Projection Visualization."""
-    st.header("7. 차원 붕괴 시뮬레이터 (Dimensionality Collapser)")
+    st.header("7. Dimensionality Collapser")
     st.markdown("""
-    고차원에서 저차원으로 갈 때 정보가 어떻게 손실되는지 눈으로 확인해 봅시다.
-    3차원 데이터를 바닥(2D)이나 선(1D)으로 '눌러버리는(Project)' 과정입니다.
+    Let's visually confirm how information is lost when going from high to low dimension.
+    It is a process of 'pressing (Projecting)' 3D data onto the floor (2D) or a line (1D).
     """)
     
     # Prep 3D Data (PC1, PC2, PC3)
@@ -385,7 +384,7 @@ def display_dimensionality_collapser(df: pd.DataFrame) -> None:
     X_sample = X_pca[idx]
     price_sample = df['price_10k_krw'].iloc[idx]
     
-    view_mode = st.radio("차원 선택", ["3D (Original)", "2D (Project to Floor)", "1D (Collapse to Line)"], horizontal=True)
+    view_mode = st.radio("Select Dimension", ["3D (Original)", "2D (Project to Floor)", "1D (Collapse to Line)"], horizontal=True)
     
     x_data = X_sample[:, 0]
     y_data = X_sample[:, 1]
@@ -393,13 +392,13 @@ def display_dimensionality_collapser(df: pd.DataFrame) -> None:
     
     if view_mode == "2D (Project to Floor)":
         z_data = np.zeros_like(z_data) - 3 # Project to floor
-        title = "2D 투영: 높이(PC3) 정보 소멸"
+        title = "2D Projection: Height (PC3) info lost"
     elif view_mode == "1D (Collapse to Line)":
         z_data = np.zeros_like(z_data)
         y_data = np.zeros_like(y_data)
-        title = "1D 투영: 오직 길이(PC1)만 남음"
+        title = "1D Projection: Only Length (PC1) remains"
     else:
-        title = "3D 원본 데이터"
+        title = "3D Original Data"
         
     fig = go.Figure(data=[go.Scatter3d(
         x=x_data, y=y_data, z=z_data,
@@ -425,16 +424,16 @@ def display_dimensionality_collapser(df: pd.DataFrame) -> None:
     st.plotly_chart(fig, use_container_width=True)
     
     if view_mode != "3D (Original)":
-        st.warning("⚠️ 차원이 줄어들면서 겹치는 점들이 생기셨나요? 그것이 바로 **정보 손실(Information Loss)**입니다.")
+        st.warning("⚠️ Did you see overlapping points as dimensions reduced? That is **Information Loss**.")
 
 def display_end_to_end_evaluation(df: pd.DataFrame) -> None:
     """Compare PCA model performance with Baseline."""
-    st.header("8. End-to-End 검증: PCA의 실제 위력")
+    st.header("8. End-to-End Verification: Real Power of PCA")
     st.markdown("""
-    "그래서, PCA를 쓰면 뭐가 좋은데?"
+    "So, what is good about using PCA?"
     
-    이제 **실제 예측 모델(Linear Regression)**을 돌려서 결과를 확인해 봅시다.
-    우리는 **모든 변수를 다 썼을 때(Level 5)**와 **PCA로 압축했을 때(Level 6)**의 성능을 비교할 것입니다.
+    Now let's run the **Actual Prediction Model (Linear Regression)** and check the results.
+    We will compare performance when using **All Variables (Level 5)** vs **Compressed with PCA (Level 6)**.
     """)
     
     # 1. Prepare Data (Full Logic with Districts)
@@ -525,10 +524,9 @@ def display_end_to_end_evaluation(df: pd.DataFrame) -> None:
 
 def display_pca_code_cheatsheet() -> None:
     """PCA Code & Concept Explanations in English."""
-    st.header("9. PCA Code & Concept Cheat Sheet (English)")
+    st.header("9. PCA Code & Concept Cheat Sheet")
     st.markdown("""
     To help you transition to the Jupyter Notebook, here are the core PCA concepts and code snippets in **English**.
-    (노트북 코드와 친해지기 위한 핵심 영어 가이드입니다.)
     """)
     
     st.subheader("Step 1: Standardization (StandardScaler)")
@@ -631,14 +629,14 @@ def main() -> None:
         display_pca_code_cheatsheet()
         
         st.markdown("---")
-        st.header("🏁 결론: 데이터 건축가로 거듭나기")
+        st.header("🏁 Conclusion: Becoming a Data Architect")
         st.markdown("""
-        우리는 지금까지 서울 아파트 가격이라는 현상을 이해하기 위해 분산의 정보적 가치, 행렬의 기하학적 힘, 그리고 PCA라는 직교 아키텍처를 탐구했습니다.
+        We have explored the informational value of variance, geometric power of matrices, and the orthogonal architecture called PCA to understand the phenomenon of Seoul apartment prices.
         
-        레벨 5 **'고차원의 저주'** 는 피해야 할 재앙이 아니라, 우리가 더 높은 차원에서 세상을 조망할 기회였습니다.
-        이제 당신은 수십 개의 변수가 얽힌 혼돈 속에서 **'시장 가치'** 라는 주성분을 추출해낼 수 있는 능력을 갖추었습니다.
+        Level 5 **'Curse of Dimensionality'** was not a disaster to avoid, but an opportunity to view the world from a higher dimension.
+        Now you have the ability to extract the principal component called **'Market Value'** from the chaos of dozens of entangled variables.
         
-        두려움을 거두고, **나침반을 돌리세요.** 그곳에 데이터의 진짜 모습이 기다리고 있습니다.
+        Let go of fear and **turn the compass.** The true form of data awaits there.
         """)
         
         display_code_link("Level_6_PCA.ipynb")

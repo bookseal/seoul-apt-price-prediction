@@ -91,6 +91,18 @@ def display_pipeline_overview() -> None:
     """, unsafe_allow_html=True)
     
     # Step explanations
+    # Key difference from Level 1
+    st.info("""
+    **🆚 Key Difference from Level 1:**
+    
+    Level 1: We calculated median manually → No training needed
+    
+    Level 2: Computer **learns** w and b from data → This is Machine Learning!
+    """)
+
+    # What happens at each step - Single column layout with motivating questions
+    st.markdown("### 🔍 What happens at each step?")
+    
     st.markdown("""
     <div style="padding: 15px; background: rgba(33,150,243,0.1); border-radius: 10px; 
                 border-left: 4px solid #2196F3; margin: 10px 0;">
@@ -144,15 +156,6 @@ def display_pipeline_overview() -> None:
         </span>
     </div>
     """, unsafe_allow_html=True)
-    
-    # Key difference from Level 1
-    st.info("""
-    **🆚 Key Difference from Level 1:**
-    
-    Level 1: We calculated median manually → No training needed
-    
-    Level 2: Computer **learns** w and b from data → This is Machine Learning!
-    """)
 
 
 def display_why_level2() -> None:
@@ -254,7 +257,7 @@ def display_method() -> None:
     col1, col2 = st.columns(2)
     with col1:
         st.info("""
-        **📏 Linear (선형)**
+        **📏 Linear**
         
         The relationship is a **Straight Line**.
         *   If Area goes up, Price goes up (proportionally).
@@ -262,7 +265,7 @@ def display_method() -> None:
         """)
     with col2:
         st.info("""
-        **🎯 Regression (회귀)**
+        **🎯 Regression**
         
         We are predicting a **Number** (Continuous Quantity).
         *   "How much?" (Price, Temperature, Height)
@@ -284,8 +287,8 @@ def display_method() -> None:
         # Split
         {rank=same; Linear; Regression}
         
-        Linear [label="Linear (선형)", fillcolor="#E3F2FD", color="#2196F3", penwidth=2];
-        Regression [label="Regression (회귀)", fillcolor="#E8F5E9", color="#4CAF50", penwidth=2];
+        Linear [label="Linear", fillcolor="#E3F2FD", color="#2196F3", penwidth=2];
+        Regression [label="Regression", fillcolor="#E8F5E9", color="#4CAF50", penwidth=2];
         
         LR -> Linear [penwidth=2, color="#2196F3"];
         LR -> Regression [penwidth=2, color="#4CAF50"];
@@ -362,7 +365,7 @@ def display_data_insight(df: pd.DataFrame) -> None:
     ax.plot(line_x, line_y, 'r-', linewidth=2, label=f'Best fit: y = {slope:.1f}x + {intercept:.0f}')
     
     ax.set_xlabel('Exclusive Area (m²)')
-    ax.set_ylabel('Price (10K KRW)')
+    ax.set_ylabel('Price (10k KRW)')
     ax.set_title('Area vs Price with Regression Line')
     ax.legend()
     ax.grid(True, alpha=0.3)
@@ -785,7 +788,7 @@ def display_model_info(df: pd.DataFrame) -> None:
             <b>Price</b> = <span style="color:#4CAF50">{info['coefficient']:,.2f}</span> × Area + <span style="color:#9C27B0">{info['intercept']:,.2f}</span>
         </p>
         <p style="font-size: 14px; color: gray; margin: 0;">
-            +1 m² → +{info['coefficient']:,.0f} (10K KRW) → +{info['coefficient']/100:.1f} 백만원
+            +1 m² → +{info['coefficient']:,.0f} (10k KRW) → +{info['coefficient']/100:.1f} Million KRW
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -807,7 +810,7 @@ def display_model_info(df: pd.DataFrame) -> None:
             label=f'Trained model: y = {info["coefficient"]:.1f}x + {info["intercept"]:.0f}')
     
     ax.set_xlabel('Area (m²)', fontsize=12)
-    ax.set_ylabel('Price (10K KRW)', fontsize=12)
+    ax.set_ylabel('Price (10k KRW)', fontsize=12)
     ax.set_title('Trained Linear Regression Model', fontsize=14)
     ax.legend(fontsize=11)
     ax.grid(True, alpha=0.3)
@@ -832,7 +835,7 @@ def display_model_info(df: pd.DataFrame) -> None:
             "Type": desc,
             "Area (m²)": area,
             "Predicted Price": f"{pred:,.0f}",
-            "In 억원": f"{pred/10000:.1f}억"
+            "Billion KRW": f"{pred/10000:.1f}"
         })
     
     st.dataframe(pd.DataFrame(example_data), use_container_width=True, hide_index=True)
@@ -849,7 +852,7 @@ model = joblib.load('models/linear_area_model.pkl')
 # Make a prediction
 area = 84  # m²
 predicted_price = model.predict([[area]])[0]
-print(f"Predicted price: {predicted_price:,.0f} (10K KRW)")
+print(f"Predicted price: {predicted_price:,.0f} (10k KRW)")
 
 # Get model parameters
 w = model.coef_[0]       # Weight
@@ -895,7 +898,7 @@ def display_evaluation(df: pd.DataFrame) -> None:
     
     with col1:
         st.metric("RMSE", f"{metrics['rmse']:,.0f}")
-        st.caption("Average error (10K KRW)")
+        st.caption("Average error (10k KRW)")
     
     with col2:
         st.metric("MAE", f"{metrics['mae']:,.0f}")
@@ -939,8 +942,8 @@ def display_evaluation(df: pd.DataFrame) -> None:
                 xy=(150000, 80000), fontsize=9, color='gray',
                 ha='center')
     
-    ax.set_xlabel('Actual Price (10K KRW)')
-    ax.set_ylabel('Predicted Price (10K KRW)')
+    ax.set_xlabel('Actual Price (10k KRW)')
+    ax.set_ylabel('Predicted Price (10k KRW)')
     ax.set_title('Actual vs Predicted: How Close Are We?')
     ax.legend(loc='upper left')
     ax.grid(True, alpha=0.3)
@@ -1002,7 +1005,7 @@ def display_demo(df: pd.DataFrame) -> None:
         st.metric("Input Area", f"{selected_area} m²")
     
     with col2:
-        st.metric("Predicted Price", f"{predicted_price:,.0f} (10K KRW)")
+        st.metric("Predicted Price", f"{predicted_price:,.0f} (10k KRW)")
     
     # Show calculation
     st.info(f"""
@@ -1012,7 +1015,7 @@ def display_demo(df: pd.DataFrame) -> None:
     
     = {info['coefficient'] * selected_area:,.2f} + {info['intercept']:,.2f}
     
-    = **{predicted_price:,.0f}** (10K KRW) ≈ **{predicted_price/10000:.1f} 억원**
+    = **{predicted_price:,.0f}** (10k KRW) ≈ **{predicted_price/10000:.1f} Billion KRW**
     """)
 
 

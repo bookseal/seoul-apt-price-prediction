@@ -61,7 +61,7 @@ def display_toc() -> None:
 
 def display_pipeline_overview() -> None:
     """Show the pipeline."""
-    st.header("Step 1: Pipeline Overview (전체 흐름)")
+    st.header("Step 1: Pipeline Overview")
     
     st.markdown("""
     <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;">
@@ -151,7 +151,7 @@ print(missing[missing > 0])
 
 def display_null_handling_options() -> str:
     """Show options for handling nulls."""
-    st.header("Step 3-1: How to Handle Missing Values? (결측치 처리)")
+    st.header("Step 3-1: How to Handle Missing Values?")
     
     st.markdown("""
     **Common strategies:**
@@ -198,12 +198,12 @@ def display_null_handling_options() -> str:
         """, unsafe_allow_html=True)
     
     st.info("""
-    **💡 초보자를 위한 추천 전략: 중앙값(Median) 채우기**
+    **💡 Recommended Strategy for Beginners: Fill with Median**
     
-    복잡한 고민 없이 **'중앙값(Median)'** 으로 채우는 것이 가장 안전하고 효과적인 출발점입니다.
-    평균(Mean)은 이상치(Outlier)에 민감하지만, 중앙값은 흔들리지 않기 때문입니다.
+    Filling with **'Median'** is the safest and most effective starting point without complex worries.
+    Mean is sensitive to Outliers, but Median is robust.
     
-    이번 데모에서는 **중앙값** 방식을 적용하겠습니다.
+    We will use the **Median** method in this demo.
     """)
     
     st.code("""
@@ -265,33 +265,32 @@ outliers = df[(df['{col}'] < lower) | (df['{col}'] > upper)]
             """, language="python")
     
     st.info("""
-    ### 📊 박스 플롯(Box Plot) 해석 가이드 (초보자용)
+    ### 📊 Box Plot Guide (For Beginners)
     
-    박스 플롯은 데이터의 **분포(Distribution)** 와 **이상치(Outlier)** 를 한눈에 보여주는 최고의 도구입니다.
+    Box Plot is the best tool to see **Distribution** and **Outliers** at a glance.
     
-    1.  **IQR (Interquartile Range, 사분위수 범위)**:
-        *   **설명**: 데이터의 중간 50%가 모여 있는 구간입니다. (Q3 - Q1)
-        *   **의미**: "대부분의 평범한 데이터는 이 박스 안에 있습니다."
+    1.  **IQR (Interquartile Range)**:
+        *   **Description**: The range where the middle 50% of data lies. (Q3 - Q1)
+        *   **Meaning**: "Most normal data is inside this box."
     
-    2.  **Whiskers (수염)**:
-        *   **설명**: 박스 위아래로 뻗어 있는 선입니다.
-        *   **길이**: 보통 $1.5 \\times IQR$ 까지 뻗습니다.
-        *   **의미**: "여기까지는 그래도 정상 범위로 봐줄 수 있습니다."
+    2.  **Whiskers**:
+        *   **Description**: Lines extending from the box.
+        *   **Length**: Usually extends up to $1.5 \\times IQR$.
+        *   **Meaning**: "We can consider data up to here as normal range."
         
-    3.  **Thresholds (임계값/울타리)**:
-        *   **설명**: 수염의 끝부분입니다. (Lower/Upper Fence)
-        *   **설명**: 수염의 끝부분입니다. (Lower/Upper Fence)
-        *   **계산**: $Q1 - 3.0 \\times IQR$ (하한), $Q3 + 3.0 \\times IQR$ (상한)
+    3.  **Thresholds**:
+        *   **Description**: The ends of whiskers. (Lower/Upper Fence)
+        *   **Calculation**: $Q1 - 3.0 \\times IQR$ (Lower), $Q3 + 3.0 \\times IQR$ (Upper)
         
-    4.  **Outliers (이상치)**:
-        *   **설명**: 수염(울타리) 밖으로 나간 점들입니다.
-        *   **의미**: "이건 너무 튀는 값입니다. 에러이거나 예외적인 케이스입니다."
+    4.  **Outliers**:
+        *   **Description**: Points outside the whiskers.
+        *   **Meaning**: "These are too extreme. Likely errors or exceptional cases."
     """)
 
 
 def display_outlier_handling_options() -> str:
     """Show options for handling outliers."""
-    st.header("Step 3-2: How to Handle Outliers? (이상치 처리)")
+    st.header("Step 3-2: How to Handle Outliers?")
     
     col1, col2 = st.columns(2)
     
@@ -316,11 +315,11 @@ def display_outlier_handling_options() -> str:
         """, unsafe_allow_html=True)
     
     st.info("""
-    **💡 초보자를 위한 추천 전략: 제거(Remove)**
+    **💡 Recommended Strategy for Beginners: Remove**
     
-    이상치는 데이터의 '암'과 같습니다. 초보 단계에서는 **과감하게 제거(Remove)** 하는 것이 모델의 혼란을 막는 가장 확실한 방법입니다.
+    Outliers are like 'cancer' in data. At a beginner level, **removing** them is the surest way to prevent model confusion.
     
-    이번 데모에서는 이상치를 **제거**하는 방식을 적용하겠습니다.
+    We will use the **Remove** method in this demo.
     """)
     
     st.code("""
@@ -333,7 +332,7 @@ df_clean = df[(df['col'] >= lower) & (df['col'] <= upper)]
 
 def display_outlier_game(df: pd.DataFrame) -> None:
     """Interactive demo of outlier impact."""
-    st.header("Step 4: Interactive Simulation (이상치 영향력)")
+    st.header("Step 4: Interactive Simulation")
     
     st.markdown("""
     **Outliers are like magnets**: They pull the regression line depending on how strong they are.
@@ -418,7 +417,7 @@ def clean_data(df: pd.DataFrame, null_strategy: str, outlier_strategy: str) -> p
 
 def display_before_after(df_baseline: pd.DataFrame, df_clean: pd.DataFrame) -> None:
     """Show before/after comparison."""
-    st.header("Step 5: Before vs After (전후 비교)")
+    st.header("Step 5: Before vs After")
     
     col1, col2 = st.columns(2)
     
@@ -499,12 +498,12 @@ def train_and_compare(df_baseline: pd.DataFrame, df_clean: pd.DataFrame):
 
 def display_model_comparison(results: dict) -> None:
     """Compare model performance on baseline vs clean data."""
-    st.header("Step 6: Model Performance Check (성능 검증)")
+    st.header("Step 6: Model Performance Check")
     
     st.info("""
     **ℹ️ Baseline vs Cleaned**
-    *   **Level 5 Baseline**: 원본 데이터(이상치 포함)로 학습한 모델입니다.
-    *   **Level 7 Cleaned**: 이상치(Outliers)를 제거하여 데이터 품질을 높인 모델입니다.
+    *   **Level 5 Baseline**: Model trained on raw data (including outliers).
+    *   **Level 7 Cleaned**: Model trained on cleaned data (outliers removed).
     """)
     
     st.markdown("### 📏 Model Performance Metrics")
