@@ -329,10 +329,54 @@ def display_method() -> None:
     
     with st.expander("🤔 Why Linear Regression?"):
         st.markdown("""
-        - **Simple**: Easy to understand and explain.
-        - **Fast**: Computers can calculate it instantly.
         - **Baseline**: Always start simple! If a line works, you don't need complex AI.
         """)
+        
+    st.markdown("### 3. 🤔 What if it's NOT Linear?")
+    
+    st.markdown("""
+    "Linear" assumes a constant change. But the world is often **Non-Linear**!
+    """)
+    
+    c1, c2, c3 = st.columns(3)
+    
+    with c1:
+        st.info("""
+        **📏 Linear**
+        *   **Shape**: Straight Line
+        *   **Logic**: "Constant Return"
+        *   **Example**: Buying apples.
+            *   1 apple = \$1
+            *   10 apples = \$10
+            *   100 apples = \$100
+        """)
+        
+    with c2:
+        st.warning("""
+        **🚀 Exponential (Curve)**
+        *   **Shape**: J-Curve (Explosion) 
+        *   **Logic**: "Viral Growth"
+        *   **Example**: Bacteria or Bitcoin.
+            *   Day 1 = 2 bugs
+            *   Day 2 = 4 bugs
+            *   Day 10 = 1,024 bugs!
+        """)
+        
+    with c3:
+        st.error("""
+        **🛑 Threshold (Step)**
+        *   **Shape**: Staircase
+        *   **Logic**: "Sudden Jump"
+        *   **Example**: Test Score vs Pass/Fail.
+            *   Score 59 = Fail
+            *   Score 60 = **PASS!** (Big jump)
+        """)
+        
+    st.markdown("""
+    > **Note**: For apartment prices, the relationship is mostly Linear (bigger = generally more expensive), 
+    > but sometimes **Non-Linear** (e.g., Luxury Penthouses cost exponentially more!).
+    > We will handle these curves in **Level 8 (Polynomials)**!
+    """)
 
 
 def display_data_insight(df: pd.DataFrame) -> None:
