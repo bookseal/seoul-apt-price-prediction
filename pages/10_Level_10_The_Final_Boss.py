@@ -208,6 +208,9 @@ best_model = compare_models(sort='RMSE')
     """)
     
     st.markdown("---")
+    display_questions()
+    display_summary()
+    st.markdown("---")
     st.header("🎉 Part 1 Complete: You are now a Data Scientist!")
     st.balloons()
     
@@ -226,6 +229,55 @@ best_model = compare_models(sort='RMSE')
     
     if st.button("Start Part 2: MLOps Track (Level 11)", type="primary", use_container_width=True):
         st.switch_page("pages/11_MLOps_Lv1_Data.py")
+
+
+def display_questions() -> None:
+    """Show common questions."""
+    st.header("🤔 Questions You Might Have")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "Is AutoML better than me?"</b><br>
+        <span style="color: #FFC107;">→ Usually yes for baseline!</span> 
+        It tries 20+ models in minutes. But it can't fix bad data or understand business context. 
+        You are the **Pilot**, AutoML is the **Autopilot**.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "What models are tried?"</b><br>
+        <span style="color: #FFC107;">→ Everything!</span> 
+        Decision Trees, Random Forests, Gradient Boosting (XGBoost, CatBoost, LightGBM), SVM, KNN...
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q3: "Why use Linear Model if AutoML is better?"</b><br>
+        <span style="color: #FFC107;">→ Trust & Speed.</span> 
+        Banks and Hospitals often require **Explainable AI**. You can explain a formula, but you can't easy explain a Black Box.
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def display_summary() -> None:
+    """Show summary."""
+    st.markdown("""
+    ### 🎓 Summary
+    
+    You've completed Level 10! You learned:
+    
+    1.  **Ultimate Linear Model**: Pushing a simple model to its limits (Poly 5 + Ridge).
+    2.  **AutoML**: Using automatic tools (PyCaret) to find the best model.
+    3.  **Trade-off**: Accuracy (AutoML) vs Explainability (Linear).
+    
+    **Problem:** We have a great model... on my laptop. How do we share it?
+    **Next:** Part 2: MLOps covers Deployment, Automation, and Monitoring!
+    """)
 
 def main() -> None:
     try:

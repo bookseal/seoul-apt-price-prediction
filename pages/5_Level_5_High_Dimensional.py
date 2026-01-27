@@ -804,14 +804,32 @@ def display_curse_of_dimensionality(df: pd.DataFrame) -> None:
     st.pyplot(fig, use_container_width=True)
 
 
-def display_limitations() -> None:
-    """Show limitations and next steps."""
+def display_questions() -> None:
+    """Show common questions."""
     st.header("🤔 Questions You Might Have")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "Why not just plot 10 dimensions?"</b><br>
+        <span style="color: #FFC107;">→ Human limit!</span> We live in a 3D world. We can use time (animation) or color for 4D/5D, 
+        but 10D? Impossible for our brains. We need calculating, not looking.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "What is the Curse of Dimensionality?"</b><br>
+        <span style="color: #FFC107;">→ Too much space!</span> As dimensions grow, data points get further apart. 
+        To cover the space, we need Exponentially more data. If not, the model learns noise (Overfitting).
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("""
     <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
                 border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q1: How do we reduce dimensions?</b><br>
+        <b>Q3: How do we reduce dimensions?</b><br>
         <span style="font-size: 13px;">
         PCA (Principal Component Analysis) can compress many features into fewer!<br>
         <i>→ Level 6 teaches PCA!</i>
@@ -820,43 +838,22 @@ def display_limitations() -> None:
     """, unsafe_allow_html=True)
 
 
-    
+def display_summary() -> None:
+    """Show summary."""
     st.markdown("""
-    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
-                border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q2: What about bad data (nulls, outliers)?</b><br>
-        <span style="font-size: 13px;">
-        We've been assuming clean data. Real data is messy!<br>
-        <i>→ Level 7 covers data cleaning!</i>
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
-
-
+    ---
     
-    st.markdown("""
-    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
-                border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q3: Should we add more features or improve existing ones?</b><br>
-        <span style="font-size: 13px;">
-        Feature engineering (creating better features) can be more valuable!<br>
-        <i>→ Level 8 explores feature engineering!</i>
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
-
-
+    ### 🎓 Summary
     
-    st.markdown("---")
+    You've completed Level 5! You learned:
     
-    st.markdown("""
-    ### 🚀 What's Next in Level 6?
+    1.  **High Dimensionality**: Handling many features (10+).
+    2.  **Correlation Matrix**: Checking how features relate to each other.
+    3.  **Curse of Dimensionality**: Why adding random noise hurts the model.
+    4.  **Overfitting**: When the model memorizes noise instead of learning patterns.
     
-    | Level 5 (Now) | Level 6 (Next) |
-    |---------------|----------------|
-    | 10+ dimensions | Reduce to 2-3 with PCA |
-    | Can't visualize | Can visualize again! |
-    | Risk of overfitting | Compressed, robust features |
+    **Problem:** Too many features to visualize, and risk of overfitting.
+    **Next:** Let's simplify the data using **PCA** in Level 6!
     """)
 
 
@@ -904,7 +901,8 @@ def main() -> None:
         st.markdown("---")
         display_curse_of_dimensionality(df)
         st.markdown("---")
-        display_limitations()
+        display_questions()
+        display_summary()
         
         # Code Link
         

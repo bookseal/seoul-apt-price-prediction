@@ -533,14 +533,33 @@ def display_demo(df: pd.DataFrame, model, encoder) -> None:
     """)
 
 
-def display_limitations() -> None:
-    """Show limitations of Level 4."""
+
+def display_questions() -> None:
+    """Show common questions."""
     st.header("🤔 Questions You Might Have")
-    
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "Why 3D?"</b><br>
+        <span style="color: #FFC107;">→ To visualize interactions!</span> Sometimes Area alone isn't enough. 
+        Seeing how Price changes with BOTH Area and Year helps us understand the "shape" of the market.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "Can we go to 4D, 5D?"</b><br>
+        <span style="color: #FFC107;">→ Yes, but we can't draw it!</span> Mathematically, we can have 100 dimensions. 
+        But our eyes can only see 3. For higher dimensions, we rely on math (metrics) instead of plots.
+    </div>
+    """, unsafe_allow_html=True)
+
     st.markdown("""
     <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
                 border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q1: Can we add even more features?</b><br>
+        <b>Q3: Can we add even more features?</b><br>
         <span style="font-size: 13px;">
         Yes! Floor, parking ratio, nearby subway stations...<br>
         But how do we visualize 4D, 5D, 10D data?<br>
@@ -548,43 +567,23 @@ def display_limitations() -> None:
         </span>
     </div>
     """, unsafe_allow_html=True)
-    
+
+
+def display_summary() -> None:
+    """Show summary."""
     st.markdown("""
-    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
-                border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q2: 3D is the limit of visualization?</b><br>
-        <span style="font-size: 13px;">
-        Basically, yes. We can use color/size for 4th/5th dimension, but it gets confusing.<br>
-        <b>This is why we need techniques like PCA!</b><br>
-        <i>→ Level 6 introduces dimensionality reduction!</i>
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    ---
     
-    st.markdown("""
-    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
-                border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q3: More features = always better?</b><br>
-        <span style="font-size: 13px;">
-        Not necessarily! Adding irrelevant features can hurt performance.<br>
-        This is called the "Curse of Dimensionality".<br>
-        <i>→ We'll learn about this in Level 5 and 6!</i>
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    ### 🎓 Summary
     
-    st.markdown("---")
+    You've completed Level 4! You learned:
     
-    st.markdown("""
-    ### 🚀 What's Next?
+    1.  **3D Visualization**: Plotting 3 variables (Area, Year, Price) to see complex patterns.
+    2.  **Building Year**: A crucial feature! Newer buildings cost much more.
+    3.  **Interaction**: Seeing how Area and Year work *together* to affect price.
     
-    | Level 4 (Now) | Level 5 (Next) |
-    |---------------|----------------|
-    | 3 features | 10+ features |
-    | 3D visualization | Can't visualize! |
-    | Simple Linear Regression | Need new techniques |
-    
-    Ready to go beyond 3D? Level 5 awaits! →
+    **Problem:** We still have only 3 features. What about the other 20?
+    **Next:** Let's unlock ALL available features in Level 5!
     """)
 
 
@@ -621,7 +620,8 @@ def main() -> None:
         st.markdown("---")
         display_demo(df, model, encoder)
         st.markdown("---")
-        display_limitations()
+        display_questions()
+        display_summary()
         
         # Code Link
         

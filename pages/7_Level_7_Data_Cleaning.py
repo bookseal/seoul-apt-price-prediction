@@ -593,41 +593,56 @@ df['price'] = df['price'].clip(lower, upper)
 """, language='python')
 
 
-def display_limitations() -> None:
-    """Show limitations and next steps."""
-    st.header("🤔 What's Next?")
+
+def display_questions() -> None:
+    """Show common questions."""
+    st.header("🤔 Questions You Might Have")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "Why median imputation?"</b><br>
+        <span style="color: #FFC107;">→ To be safe!</span> If we use **Mean**, one huge outlier can mess up the value. 
+        **Median** is the "middle" value, so it ignores extreme highs/lows.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "Should we always remove outliers?"</b><br>
+        <span style="color: #FFC107;">→ No!</span> Sometimes outliers are real and important (e.g., a luxury penthouse). 
+        Only remove them if they are likely **errors** or if they confuse your specific model.
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("""
     <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
                 border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q: Is cleaning enough?</b><br>
+        <b>Q3: Is cleaning enough?</b><br>
         <span style="font-size: 13px;">
         Cleaning fixes problems, but doesn't create new information.<br>
         <i>→ Level 8 teaches Feature Engineering!</i>
         </span>
     </div>
     """, unsafe_allow_html=True)
-    
+
+
+def display_summary() -> None:
+    """Show summary."""
     st.markdown("""
-    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
-                border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q: What about transforming features?</b><br>
-        <span style="font-size: 13px;">
-        Some features work better after transformation (log, scaling).<br>
-        <i>→ Level 8 covers this too!</i>
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    ---
     
-    st.markdown("---")
+    ### 🎓 Summary
     
-    st.markdown("""
-    ### 🚀 Level 8 Preview: Feature Engineering
+    You've completed Level 7! You learned:
     
-    - **Scaling**: StandardScaler, MinMaxScaler
-    - **Transformation**: Log transform for skewed data
-    - **Creation**: Build new features from existing ones
-    - **Polynomial**: Capture non-linear relationships
+    1.  **Missing Values**: How to find them (blue bars) and fill them (Imputation).
+    2.  **Outliers**: How to detect them (Boxplot, IQR) and handle them (Remove/Cap).
+    3.  **Impact**: Clean data = Better model accuracy!
+    
+    **Problem:** Our features are still "Raw". Can we make them smarter?
+    **Next:** Let's create new features in Level 8: Feature Engineering!
     """)
 
 
@@ -680,7 +695,8 @@ rmse = np.sqrt(mean_squared_error(y_test, model.predict(X_test)))
         """, language="python")
         display_cleaning_code()
         st.markdown("---")
-        display_limitations()
+        display_questions()
+        display_summary()
         
         # Code Link
         

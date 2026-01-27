@@ -578,6 +578,55 @@ print(f"Total Preserved: {sum(variance_ratio):.2%}")
     *   **Projection**: Casting the data shadow onto the new axes.
     """)
 
+def display_questions() -> None:
+    """Show common questions."""
+    st.header("🤔 Questions You Might Have")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "Did we lose information?"</b><br>
+        <span style="color: #FFC107;">→ Yes, a little!</span> We kept 95%+ of the variance (info). 
+        We threw away 5% which was mostly noise. It's a trade-off: simpler model vs perfect data.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "What do the axes (PC1, PC2) mean?"</b><br>
+        <span style="color: #FFC107;">→ They are mixtures!</span> PC1 might be "Size + Room Count". 
+        PC2 might be "Age - Parking". They represent abstract concepts, not single features.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q3: "Why not just delete columns?"</b><br>
+        <span style="color: #FFC107;">→ PC is smarter!</span> Deleting a column loses 100% of that info. 
+        PCA combines all columns to keep the *best parts* of everyone.
+    </div>
+    """, unsafe_allow_html=True)
+
+def display_summary() -> None:
+    """Show summary."""
+    st.markdown("""
+    ---
+    
+    ### 🎓 Summary
+    
+    You've completed Level 6! You learned:
+    
+    1.  **Dimensionality Reduction**: Simplifying complex data.
+    2.  **PCA**: Finding the "Principal Components" (most important directions).
+    3.  **Variance**: Using spread of data as a measure of information.
+    4.  **Trade-off**: Losing a tiny bit of info to gain massive simplicity (2D Visualization!).
+    
+    **Problem:** PCA assumes data is **Clean**. What if we have missing values?
+    **Next:** Let's learn to clean our data in Level 7!
+    """)
+
 def prepare_data_korean_logic() -> pd.DataFrame:
     """Load and prep data."""
     df = load_sample_dataset()
@@ -627,17 +676,9 @@ def main() -> None:
         display_end_to_end_evaluation(df)
         st.markdown("---")
         display_pca_code_cheatsheet()
-        
         st.markdown("---")
-        st.header("🏁 Conclusion: Becoming a Data Architect")
-        st.markdown("""
-        We have explored the informational value of variance, geometric power of matrices, and the orthogonal architecture called PCA to understand the phenomenon of Seoul apartment prices.
-        
-        Level 5 **'Curse of Dimensionality'** was not a disaster to avoid, but an opportunity to view the world from a higher dimension.
-        Now you have the ability to extract the principal component called **'Market Value'** from the chaos of dozens of entangled variables.
-        
-        Let go of fear and **turn the compass.** The true form of data awaits there.
-        """)
+        display_questions()
+        display_summary()
         
         display_code_link("Level_6_PCA.ipynb")
         display_next_level_teaser(6)

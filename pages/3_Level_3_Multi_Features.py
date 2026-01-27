@@ -635,14 +635,42 @@ def display_demo(df: pd.DataFrame, model, encoder) -> None:
             st.info("Same price!")
 
 
-def display_limitations() -> None:
-    """Show limitations of Level 3."""
+
+def display_questions() -> None:
+    """Show common questions."""
     st.header("🤔 Questions You Might Have")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "Why did we need One-Hot Encoding?"</b><br>
+        <span style="color: #FFC107;">→ Computers only understand numbers!</span> We can't multiply "Gangnam" by a weight. 
+        So we turn it into "Is Gangnam? Yes/No" (1 or 0).
+    </div>
+    """, unsafe_allow_html=True)
     
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "Can we add ANY feature?"</b><br>
+        <span style="color: #FFC107;">→ Only if it's useful!</span> Adding random noise (like "current temperature") won't help. 
+        We need features that actually affect price (like Location, Floor, Age).
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q3: "Does more features always mean better?"</b><br>
+        <span style="color: #FFC107;">→ Not always!</span> If we add too many, the model might get confused (Overfitting).
+        But adding <b>District</b> definitely helped here because location is critical!
+    </div>
+    """, unsafe_allow_html=True)
+
     st.markdown("""
     <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
                 border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q1: What about building age?</b><br>
+        <b>Q4: What about building age?</b><br>
         <span style="font-size: 13px;">
         A 20-year-old apartment and a brand new one in the same district 
         still get the same price prediction. That doesn't seem right!<br>
@@ -650,42 +678,23 @@ def display_limitations() -> None:
         </span>
     </div>
     """, unsafe_allow_html=True)
-    
+
+
+def display_summary() -> None:
+    """Show summary."""
     st.markdown("""
-    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
-                border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q2: What about floor number?</b><br>
-        <span style="font-size: 13px;">
-        Higher floors often have better views and cost more. But we're not using that information!<br>
-        <i>→ We'll add more features later!</i>
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    ---
     
-    st.markdown("""
-    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
-                border-left: 4px solid #FF9800; margin: 10px 0;">
-        <b>Q3: How do we visualize 3+ dimensions?</b><br>
-        <span style="font-size: 13px;">
-        With Area alone (Level 2), we drew a 2D scatter plot.<br>
-        With Area + District (Level 3), visualization is getting harder.<br>
-        <i>→ Level 4 explores 3D visualization!</i>
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    ### 🎓 Summary
     
-    st.markdown("---")
+    You've completed Level 3! You learned:
     
-    st.markdown("""
-    ### 🚀 What's Next in Level 4?
+    1.  **Multiple Features**: Using more than one input (Area + District).
+    2.  **One-Hot Encoding**: Converting text (District) into numbers the model can use.
+    3.  **Model Improvement**: Adding District reduced Error (RMSE) significantly!
     
-    | This Level (3) | Next Level (4) |
-    |----------------|----------------|
-    | Area + District | Area + District + Building Year |
-    | 2D visualization | 3D visualization with Plotly |
-    | Can't see 3rd dimension | Can rotate and explore 3D space! |
-    
-    Ready to add another dimension? Let's go to Level 4! →
+    **Problem:** We still ignore **Age** and **Floor**!
+    **Next:** Let's add Building Year in Level 4!
     """)
 
 
@@ -715,7 +724,8 @@ def main() -> None:
         st.markdown("---")
         display_demo(df, model, encoder)
         st.markdown("---")
-        display_limitations()
+        display_questions()
+        display_summary()
         
         # Code Link
         

@@ -381,6 +381,61 @@ ridge.fit(X_train, y_train)
     
     display_rmse_comparison(9, rmse_final)
 
+
+def display_questions() -> None:
+    """Show common questions."""
+    st.header("🤔 Questions You Might Have")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "L1 (Lasso) vs L2 (Ridge)?"</b><br>
+        <span style="color: #FFC107;">→ Selection vs Shrinkage.</span> 
+        <b>Lasso</b> deletes weak features (sets weight to 0). Useful for finding key drivers.<br>
+        <b>Ridge</b> keeps everything but shrinks weights. Useful when all features matter a bit.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "What is alpha?"</b><br>
+        <span style="color: #FFC107;">→ The Penalty Strength.</span> 
+        High alpha = "Don't you dare overfit!" (Bias high).<br>
+        Low alpha = "Go crazy, I trust you." (Variance high).<br>
+        We must tune it (Hyperparameter Tuning).
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q3: "Why did scaling matter?"</b><br>
+        <span style="color: #FFC107;">→ Penalties need fairness.</span> 
+        If 'Price' is 100,000 and 'Parking' is 1, the penalty punishes the big number more. 
+        Scaling makes everyone equal so the penalty is fair.
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def display_summary() -> None:
+    """Show summary."""
+    st.markdown("""
+    ---
+    
+    ### 🎓 Summary
+    
+    You've completed Level 9! You learned:
+    
+    1.  **Overfitting**: When complex models (Poly 5) learn noise.
+    2.  **Regularization**: Adding a "Penalty" to stop the model from learning noise.
+    3.  **Lasso vs Ridge**: Two ways to penalize (Delete vs Shrink).
+    4.  **Hyperparameter Tuning**: Finding the perfect `alpha`.
+    
+    **Problem:** We tuned this manually. Isn't there an automatic way?
+    **Next:** Let's meet the ultimate tool in Level 10: AutoML!
+    """)
+
 def main() -> None:
     """Page entry point."""
     try:
@@ -399,6 +454,9 @@ def main() -> None:
         display_cross_validation_concept()
         st.markdown("---")
         run_poly_comparison(df)
+        st.markdown("---")
+        display_questions()
+        display_summary()
         
         display_code_link("Level_9_Regularization.ipynb")
         display_next_level_teaser(9)

@@ -459,6 +459,57 @@ def display_compare_performance(results: dict) -> None:
     display_rmse_comparison(8, best_rmse)
 
 
+def display_questions() -> None:
+    """Show common questions."""
+    st.header("🤔 Questions You Might Have")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "Why Log transform?"</b><br>
+        <span style="color: #FFC107;">→ To fix skewness!</span> Models like Normal distributions (Bell curve). 
+        Real prices are often right-skewed (many cheap, few super expensive). Log squashes the expensive ones to make it look Normal.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "What is a polynomial feature?"</b><br>
+        <span style="color: #FFC107;">→ Bending the line!</span> Linear Regression draws straight lines. 
+        Adding $x^2$ (Square) lets it draw a Curve. Adding $x^3$ (Cube) lets it wiggle.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q3: "Should we simple square EVERYTHING?"</b><br>
+        <span style="color: #FFC107;">→ Careful!</span> That explodes the number of features. 
+        10 features squared = 100 features. This leads to **Overfitting** (Level 5).
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def display_summary() -> None:
+    """Show summary."""
+    st.markdown("""
+    ---
+    
+    ### 🎓 Summary
+    
+    You've completed Level 8! You learned:
+    
+    1.  **Scaling**: Making features fair (StandardScaler).
+    2.  **Log Transform**: Handling skewed data (Prices).
+    3.  **Polynomials**: allowing Linear Regression to fit Curves.
+    4.  **Feature Creation**: Making new features like `Building Age` from `Year`.
+    
+    **Problem:** With so many new features (Polynomials!), we might **Overfit**.
+    **Next:** Let's learn how to control this complexity in Level 9: Regularization!
+    """)
+
+
 def main() -> None:
     """Page entry point."""
     try:
@@ -486,6 +537,9 @@ def main() -> None:
             results = train_models(df)
             
         display_compare_performance(results)
+        st.markdown("---")
+        display_questions()
+        display_summary()
         
         display_code_link("Level_8_Feature_Engineering.ipynb")
         display_next_level_teaser(8)

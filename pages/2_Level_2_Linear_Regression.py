@@ -1113,6 +1113,57 @@ def display_comparison() -> None:
     """)
 
 
+def display_questions() -> None:
+    """Show common questions."""
+    st.header("🤔 Questions You Might Have")
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q1: "Why is the line straight?"</b><br>
+        <span style="color: #FFC107;">→ Nature of Linear Regression!</span> We told the computer to find a line ($y=wx+b$). 
+        If real prices curve, our model will be wrong. We'll fix this in <b>Level 8</b> (Polynomials)!
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q2: "What is RMSE?"</b><br>
+        <span style="color: #FFC107;">→ Average Error.</span> It stands for <b>Root Mean Squared Error</b>. 
+        If RMSE is 20,000, it means our predictions are off by about 200 Million KRW on average.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,193,7,0.1); border-radius: 10px; 
+                border-left: 4px solid #FFC107; margin: 10px 0;">
+        <b>Q3: "Why split data (Train/Test)?"</b><br>
+        <span style="color: #FFC107;">→ To prevent cheating!</span> If we test on data the model has already seen, 
+        it might just "memorize" the answers. We need to check if it works on <b>new</b> data.
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def display_summary() -> None:
+    """Show summary."""
+    st.markdown("""
+    ---
+    
+    ### 🎓 Summary
+    
+    You've completed Level 2! You learned:
+    
+    1.  **Linear Regression**: Drawing the best straight line through data.
+    2.  **Training**: Finding the best `w` (slope) and `b` (bias).
+    3.  **Evaluation**: Using **RMSE** to measure error.
+    4.  **Prediction**: Using the learned formula to guess prices.
+    
+    **Problem:** We ignored **Location**!
+    **Next:** Let's add District info in Level 3!
+    """)
+
+
 def main() -> None:
     """Page entry point."""
     try:
@@ -1137,6 +1188,9 @@ def main() -> None:
         display_demo(df)
         st.markdown("---")
         display_comparison()
+        st.markdown("---")
+        display_questions()
+        display_summary()
         
         # Code Link
         
