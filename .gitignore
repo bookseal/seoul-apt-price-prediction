@@ -11,6 +11,4 @@ data/raw/
 data/interim/
 data/*.csv
 data/*.tar
-data/*.tar.gz
-*.log
-catboost_info/
+data/*.tar.gz*.log

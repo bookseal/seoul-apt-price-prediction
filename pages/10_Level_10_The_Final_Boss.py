@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Level 10: The Final Boss (Ultimate Linear Model)
+Level 10: The Final Boss (Ultimate Linear Model vs AutoML)
 
-The mathematical limit of linear modeling: Integrating all techniques.
+The mathematical limit of linear modeling vs The Brute Force of AutoML.
 """
 import streamlit as st
 import pandas as pd
@@ -20,58 +20,60 @@ from src.comparison import display_rmse_comparison
 from src.navigation import display_code_link
 
 def display_header() -> None:
-    st.title("👑 Level 10: The Final Boss (Ultimate Linear Model)")
-    st.balloons()
-    st.success("""
+    st.title("👑 Level 10: The Final Boss")
+    st.caption("Linear Models vs AutoML: The Ultimate Showdown")
+    st.markdown("""
     **Goal**: Reach the Mathematical Limit of Linear Models (RMSE < 25,000).
     
-    We have extensively tested Log-Transforms, ElasticNets, and Lassos.
-    **The Winner is a raw, brutal force of polynomial math.**
+    Then, challenge it with a state-of-the-art **AutoML (Black Box)** model.
     """)
 
 def display_toc() -> None:
     st.markdown("""
     ### 📑 Table of Contents
-    1.  [**Step 1: The Winning Strategy**](#step-1-the-winning-strategy)
-    2.  [**Step 2: The Pipeline Execution**](#step-2-the-pipeline-execution)
-    3.  [**Step 3: Final Evaluation**](#step-3-final-evaluation)
+    1.  [**Step 1: The Winning Strategy (Linear)**](#step-1-the-winning-strategy-linear)
+    2.  [**Step 2: Linear Pipeline Execution**](#step-2-linear-pipeline-execution)
+    3.  [**Step 3: Linear Final Evaluation**](#step-3-linear-final-evaluation)
+    4.  [**Step 4: The AutoML Challenger**](#step-4-the-automl-challenger)
     """)
 
 def display_pipeline_concept() -> None:
-    st.header("Step 1: The Winning Strategy")
+    st.header("Step 1: The Winning Strategy (Linear)")
     st.markdown("""
     After rigorous experimentation (Level 9), we found the optimal configuration to minimize **Real Price RMSE**:
     
-    1.  **Target Variable**: **Direct Price** (No Log Transform). 
+    1.  **Target Variable**: **Direct Price** (No Log Transform).
         *   *Why?* Log-transform minimizes *percentage error*, which helps cheaper apartments but punishes expensive ones less in absolute terms. To win the RMSE game, we must target the raw numbers directly.
     2.  **Cleaning (Level 7)**: Strict Outlier Removal (**IQR 1.5**) on the Raw Price.
     3.  **Feature Engineering (Level 5 & 8)**: Interaction Terms (`Area * Year`) are crucial.
     4.  **Model Complexity (Level 9)**: **Polynomial Degree 5**. This is extreme curvature.
     5.  **Regularization**: **Ridge** (L2). Lasso knocks out features, but we need *every bit of signal* from those polynomials. Ridge keeps them but tames them.
     """)
-    
-    with st.expander("Show Code: The Champion Pipeline"):
-        st.code("""
-# The Champion Pipeline
-pipeline = Pipeline([
-    ('poly', PolynomialFeatures(degree=5, include_bias=False)), # Extreme Curvature
-    ('scaler', StandardScaler()),                               # Essential for Ridge
-    ('model', Ridge(alpha=0.0001))                              # Minimal penalty, maximum learning
-])
-        """, language='python')
 
 def run_ultimate_linear_model(df):
-    st.header("Step 2: The Pipeline Execution")
+    st.header("Step 2: Linear Pipeline Execution")
     
-    # --- 1. Data Cleaning (Level 7) ---
+    # --- 1. Data Cleaning ---
     st.markdown("##### 1. Data Cleaning (Target: Raw Price)")
-    df_clean = df.copy()
     
-    # Target Selection
+    with st.expander("Show Code: Data Cleaning"):
+        st.code("""
+# Outlier Removal (IQR 1.5 on Raw Price)
+def remove_outliers(data, column):
+    Q1 = data[column].quantile(0.25)
+    Q3 = data[column].quantile(0.75)
+    IQR = Q3 - Q1
+    lower = Q1 - 1.5 * IQR
+    upper = Q3 + 1.5 * IQR
+    return data[(data[column] >= lower) & (data[column] <= upper)]
+
+df_clean = remove_outliers(df, 'price_10k_krw')
+        """, language='python')
+
+    df_clean = df.copy()
     target_col = 'price_10k_krw'
     
-    # Outlier Removal (IQR 1.5 on Raw Price)
-    # This was the key finding: Cleaning the raw distribution aggressively helps Ridge the most.
+    # Outlier Removal
     for col in [target_col, 'area_m2']:
         Q1 = df_clean[col].quantile(0.25)
         Q3 = df_clean[col].quantile(0.75)
@@ -82,19 +84,37 @@ def run_ultimate_linear_model(df):
     
     st.write(f"Data shape after cleaning: `{df_clean.shape}`")
 
-    # --- 2. Feature Engineering (Level 8) ---
+    # --- 2. Feature Engineering ---
     st.markdown("##### 2. Feature Engineering (Interactions)")
+    
+    with st.expander("Show Code: Interaction Features"):
+        st.code("""
+# Creating Interaction Terms
+df_clean['area_x_year'] = df_clean['area_m2'] * df_clean['year']
+features = ['area_m2', 'year', 'floor', 'area_x_year']
+        """, language='python')
+
     df_clean['area_x_year'] = df_clean['area_m2'] * df_clean['year']
     features = ['area_m2', 'year', 'floor', 'area_x_year']
     
     X = df_clean[features].values
-    y = df_clean[target_col].values # Direct Target!
+    y = df_clean[target_col].values 
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     # --- 3. Model Training ---
     st.markdown("##### 3. Training the Optimized Model")
     st.info("Pipeline: `Degree=5` + `Ridge(alpha=0.0001)`")
+    
+    with st.expander("Show Code: The Training Pipeline"):
+        st.code("""
+model = Pipeline([
+    ('poly', PolynomialFeatures(degree=5, include_bias=False)),
+    ('scaler', StandardScaler()),
+    ('model', Ridge(alpha=0.0001))
+])
+model.fit(X_train, y_train)
+        """, language='python')
     
     model = Pipeline([
         ('poly', PolynomialFeatures(degree=5, include_bias=False)),
@@ -114,7 +134,7 @@ def run_ultimate_linear_model(df):
     st.metric("Ultimate Linear Model RMSE", f"{rmse:,.0f}", delta=f"{24000 - rmse:,.0f} Improvement vs Level 9", delta_color="normal")
     
     # --- 4. Validation ---
-    st.header("Step 3: Final Evaluation")
+    st.header("Step 3: Linear Final Evaluation")
     
     # Residual Plot
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -126,17 +146,53 @@ def run_ultimate_linear_model(df):
     ax.grid(True, alpha=0.3)
     st.pyplot(fig)
     
-    display_rmse_comparison(10, rmse)
+    # st.subheader("💡 Analysis: Why did this beat Log-Transform?")
+    # st.markdown("In Level 7, we learned that Log-Transform fixes skewed distributions. So why drop it? ...")
     
-    st.markdown("---")
-    st.subheader("💡 Analysis: Why did this beat Log-Transform?")
+    return rmse
+
+def run_automl_challenger(linear_rmse):
+    st.header("Step 4: The AutoML Challenger")
     st.markdown("""
-    In Level 7, we learned that Log-Transform fixes skewed distributions. So why drop it?
+    **Can modern AutoML beat our specialized Linear Model?**
     
-    1.  **The Metric Matters**: We are optimizing for **RMSE (Root Mean Squared Error)**, which measures absolute error.
-    2.  **The Cost of Log**: Log-transform optimizes for *relative* error. It tries hard not to be wrong by 10% on a cheap apartment, but doesn't care if it's wrong by 10% on a luxury apartment.
-    3.  **The Luxury Penalty**: A 10% error on a 2 Billion KRW apartment adds a **huge** amount to the total RMSE score. 
-    4.  **The Solution**: By training on the **Raw Price**, the model is forced to care deeply about minimizing the absolute errors on the expensive apartments, driving the total RMSE down.
+    We ran `PyCaret` to test advanced algorithms like **CatBoost**, **XGBoost**, and **LightGBM** on the exact same data.
+    """)
+    
+    with st.expander("Show Code: PyCaret AutoML Setup"):
+        st.code("""
+from pycaret.regression import *
+
+# 1. Setup (Auto-Preprocessing)
+exp = setup(data, target='target', session_id=42)
+
+# 2. Battle Royale (Compare All Models)
+best_model = compare_models(sort='RMSE')
+        """, language='python')
+    
+    # Hardcoded results from the notebook execution to avoid long wait times
+    automl_rmse = 16842 # CatBoost Result
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.info("### 🤖 AutoML (CatBoost)")
+        st.metric("Best AutoML RMSE", f"{automl_rmse:,.0f}", delta=f"{linear_rmse - automl_rmse:,.0f} Better", delta_color="inverse")
+        st.caption("Model: CatBoost Regressor (Black Box)")
+        
+    with col2:
+        st.success("### 👑 Ultimate Linear Model")
+        st.metric("Our Linear RMSE", f"{linear_rmse:,.0f}", delta="Benchmark")
+        st.caption("Model: Poly5 + Ridge (White Box)")
+        
+    st.markdown("""
+    ### 🏆 The Verdict
+    
+    1.  **Performance**: The **AutoML (CatBoost)** wins purely on numbers (~11% better). Non-linear tree models are simply more flexible and can capture sharp discontinuities that Polynomials cannot.
+    2.  **Explainability**: Our **Linear Model** is a formula we can write down ($y = w_1x_1 + w_2x_2^2 ...$). AutoML is a "Black Box" - hard to explain *why* it predicts what it predicts.
+    3.  **Efficiency**: Linear Model trains in seconds. AutoML took minutes to hours to search.
+    
+    **Conclusion**: For a Linear Model to get this close to a state-of-the-art Boosting model is an incredible achievement. It remains the best choice when **Interpretability** is key.
     """)
 
 def main() -> None:
@@ -148,7 +204,9 @@ def main() -> None:
         st.markdown("---")
         display_pipeline_concept()
         st.markdown("---")
-        run_ultimate_linear_model(df)
+        linear_rmse = run_ultimate_linear_model(df)
+        st.markdown("---")
+        run_automl_challenger(linear_rmse)
         
         st.markdown("---")
         display_code_link("Level_10_The_Final_Boss.ipynb")
