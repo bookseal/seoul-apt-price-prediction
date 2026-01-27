@@ -400,6 +400,27 @@ def display_coefficient_analysis(model, district_names) -> None:
     </div>
     """, unsafe_allow_html=True)
     
+    # Intuitive Explanation Section
+    st.markdown("### 🧠 What is a 'Coefficient'?")
+    st.info("""
+    Think of a **Coefficient** as a **"Price Tag"** for each feature.
+    
+    *   **Area**: The price tag for 1 $m^2$ of space.
+    *   **District**: The price tag for the **Location**.
+    
+    The model says: *"To calculate the total price, just add up all the price tags!"*
+    """)
+    
+    st.markdown("### 📍 Interpreting District Coefficients")
+    st.markdown("""
+    This represents the **Location Premium**.
+    *   If **Gangnam** has a coefficient of **150,000**...
+    *   And **Dobong** has a coefficient of **50,000**...
+    
+    It means: Living in **Gangnam adds 1 Billion KRW (100k difference)** to the price compared to Dobong, 
+    *even if the house size and age are exactly the same!*
+    """)
+    
     # District coefficients (top 5 and bottom 5)
     district_name_map = {
         '강남구': 'Gangnam', '서초구': 'Seocho', '송파구': 'Songpa', '용산구': 'Yongsan',
