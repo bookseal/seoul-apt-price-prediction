@@ -504,6 +504,12 @@ def train_model(df: pd.DataFrame, features: list, include_district: bool):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
+
+    # Handle NaNs (Simple imputation for stability)
+    from sklearn.impute import SimpleImputer
+    imputer = SimpleImputer(strategy='median')
+    X_train = imputer.fit_transform(X_train)
+    X_test = imputer.transform(X_test)
     
     # Train
     model = LinearRegression()
