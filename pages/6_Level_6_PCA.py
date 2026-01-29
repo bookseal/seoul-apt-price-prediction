@@ -617,6 +617,22 @@ def display_end_to_end_evaluation(df: pd.DataFrame) -> None:
     - **Notebook Match (n=2)**: Uses only 2 dimensions! RMSE is slightly higher than baseline but explains 95% of variance.
     - **Optimal PCA (n=22)**: Uses 22 dimensions. RMSE ({rmse_opt:,.0f}) is comparable to baseline, proving PCA keeps important info while removing noise.
     """)
+    
+    st.info("""
+    ### 💡 Truth about PCA & RMSE
+    
+    **"Wait, why didn't RMSE drop dramatically? I thought PCA makes models better?"**
+    
+    Excellent observation! Here is the truth that many tutorials skip:
+    
+    1.  **Information Loss**: PCA *removes* information (dimensions). Less info usually means higher bias (slightly worse training error).
+    2.  **Why do it?**:
+        *   **Prevent Overfitting**: If you have 100 features and 50 data points, Linear Regression explodes. PCA reduces 100 features to 5, preventing the model from going crazy.
+        *   **Fix Multicollinearity**: Linear Regression hates it when 'Area' and 'Rooms' move together. PCA fixes this by creating 'PC1' and 'PC2' which are mathematically distinct (Orthogonal).
+        *   **Visualization**: You can't see 10D, but you can see 2D (Biplot).
+    
+    **Conclusion**: PCA trades a tiny bit of accuracy (Training RMSE) for **Stability and Simplicity** (Test Generalization).
+    """)
 
     # Compare with previous levels (Standard Format)
     from src.comparison import display_rmse_comparison
