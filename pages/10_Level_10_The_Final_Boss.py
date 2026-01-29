@@ -31,14 +31,48 @@ def display_header() -> None:
 def display_toc() -> None:
     st.markdown("""
     ### 📑 Table of Contents
-    1.  [**Step 1: The Winning Strategy (Linear)**](#step-1-the-winning-strategy-linear)
-    2.  [**Step 2: Linear Pipeline Execution**](#step-2-linear-pipeline-execution)
-    3.  [**Step 3: Linear Final Evaluation**](#step-3-linear-final-evaluation)
-    4.  [**Step 4: The AutoML Challenger**](#step-4-the-automl-challenger)
+    1.  [**Step 1: Pipeline Overview**](#step-1-pipeline-overview)
+    2.  [**Step 2: The Winning Strategy (Linear)**](#step-2-the-winning-strategy-linear)
+    3.  [**Step 3: Linear Pipeline Execution**](#step-3-linear-pipeline-execution)
+    4.  [**Step 4: Linear Final Evaluation**](#step-4-linear-final-evaluation)
+    5.  [**Step 5: The AutoML Challenger**](#step-5-the-automl-challenger)
     """)
 
+def display_pipeline_overview() -> None:
+    """Show the pipeline."""
+    st.header("Step 1: Pipeline Overview")
+    
+    st.markdown("""
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;">
+        <div style="padding: 12px 15px; background: linear-gradient(135deg, #2196F3, #1976D2); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>1. Load</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 15px; background: linear-gradient(135deg, #F44336, #D32F2F); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>2. Strict Filter</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 15px; background: linear-gradient(135deg, #9C27B0, #7B1FA2); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>3. Poly Degree 5</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 15px; background: linear-gradient(135deg, #4CAF50, #388E3C); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>4. Ridge Optim</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 15px; background: linear-gradient(135deg, #FF9800, #F57C00); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>5. vs AutoML</b>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 def display_pipeline_concept() -> None:
-    st.header("Step 1: The Winning Strategy (Linear)")
+    st.header("Step 2: The Winning Strategy (Linear)")
     st.markdown("""
     After rigorous experimentation (Level 9), we found the optimal configuration to minimize **Real Price RMSE**:
     
@@ -51,7 +85,7 @@ def display_pipeline_concept() -> None:
     """)
 
 def run_ultimate_linear_model(df):
-    st.header("Step 2: Linear Pipeline Execution")
+    st.header("Step 3: Linear Pipeline Execution")
     
     # --- 1. Data Cleaning ---
     st.markdown("##### 1. Data Cleaning (Target: Raw Price)")
@@ -134,7 +168,7 @@ model.fit(X_train, y_train)
     st.metric("Ultimate Linear Model RMSE", f"{rmse:,.0f}", delta=f"{24000 - rmse:,.0f} Improvement vs Level 9", delta_color="normal")
     
     # --- 4. Validation ---
-    st.header("Step 3: Linear Final Evaluation")
+    st.header("Step 4: Linear Final Evaluation")
     
     # RMSE Comparison
     display_rmse_comparison(10, rmse)
@@ -159,7 +193,7 @@ model.fit(X_train, y_train)
     return rmse
 
 def run_automl_challenger(linear_rmse):
-    st.header("Step 4: The AutoML Challenger")
+    st.header("Step 5: The AutoML Challenger")
     st.markdown("""
     **Can modern AutoML beat our specialized Linear Model?**
     
@@ -283,6 +317,8 @@ def main() -> None:
     try:
         df = load_sample_dataset()
         display_header()
+        st.markdown("---")
+        display_pipeline_overview()
         st.markdown("---")
         display_toc()
         st.markdown("---")

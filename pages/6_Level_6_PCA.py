@@ -22,9 +22,25 @@ from src.config import RANDOM_STATE
 st.set_page_config(layout="wide")
 
 
-def display_intro_hyperspace() -> None:
+def display_header() -> None:
     """Introduction: The Hyperspace and Curse of Dimensionality."""
     st.title("🔬 Level 6: PCA (Hyperspace)")
+    
+    # Table of Contents
+    st.markdown("""
+    **📋 Table of Contents**
+    
+    1. [🧠 Step 1: Information Theory](#step-1-information-theory-variance-as-information)
+    2. [🥗 Step 2: Selection vs Extraction](#step-2-selection-vs-extraction-salad-vs-smoothie)
+    3. [📐 Step 3: Geometric Essence](#step-3-the-geometric-essence-rotating-the-world)
+    4. [🔥 Step 4: Correlation Heatmap](#step-4-correlation-heatmap)
+    5. [🧮 Step 5: The Math](#step-5-the-math-eigenvalues-eigenvectors)
+    6. [🕵️ Step 6: Biplot Investigator](#step-6-biplot-investigator)
+    7. [📉 Step 7: Dimensionality Collapser](#step-7-dimensionality-collapser)
+    8. [🏆 Step 8: Final Evaluation](#step-8-final-evaluation)
+    9. [💻 Step 9: Code Cheat Sheet](#step-9-pca-code-concept-cheat-sheet)
+    """)
+    
     st.subheader("Enter the Matrix: Hyperspace and the Curse of Dimensionality")
     
     st.markdown("""
@@ -40,9 +56,95 @@ def display_intro_hyperspace() -> None:
     Now, let's move away from the flat rows and columns of Excel and enter the world of multidimensional geometry where data dances.
     """)
 
+
+def display_pipeline_overview() -> None:
+    """Show the PCA pipeline."""
+    st.header("🔄 Level 6 Pipeline")
+    
+    st.markdown("""
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;">
+        <div style="padding: 12px 18px; background: linear-gradient(135deg, #2196F3, #1976D2); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>1. Load & Scale</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 18px; background: linear-gradient(135deg, #9C27B0, #7B1FA2); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>2. Covariance</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 18px; background: linear-gradient(135deg, #00BCD4, #0097A7); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>3. Eig Decomp</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 18px; background: linear-gradient(135deg, #FF9800, #F57C00); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>4. Project</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 18px; background: linear-gradient(135deg, #4CAF50, #388E3C); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>5. Train</b>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("### 🔍 What happens at each step?")
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(33,150,243,0.1); border-radius: 10px; 
+                border-left: 4px solid #2196F3; margin: 10px 0;">
+        <b>📥 Step 1: Load & Scale (Standardization)</b><br>
+        <span style="font-size: 13px;">
+        PCA is sensitive to scale! We MUST convert all features to Z-scores (mean=0, std=1).
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(156,39,176,0.1); border-radius: 10px; 
+                border-left: 4px solid #9C27B0; margin: 10px 0;">
+        <b>📊 Step 2: Covariance Matrix</b><br>
+        <span style="font-size: 13px;">
+        Calculate how every feature correlates with every other feature.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(0,188,212,0.1); border-radius: 10px; 
+                border-left: 4px solid #00BCD4; margin: 10px 0;">
+        <b>📐 Step 3: Eigen Decomposition (The Magic)</b><br>
+        <span style="font-size: 13px;">
+        Find the 'Principal Components' (Eigenvectors) - the directions of maximum spread.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(255,152,0,0.1); border-radius: 10px; 
+                border-left: 4px solid #FF9800; margin: 10px 0;">
+        <b>📉 Step 4: Projection (Dimensionality Reduction)</b><br>
+        <span style="font-size: 13px;">
+        Project the 30D data onto the top 2D or 3D Principal Components.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="padding: 15px; background: rgba(76,175,80,0.1); border-radius: 10px; 
+                border-left: 4px solid #4CAF50; margin: 10px 0;">
+        <b>🎓 Step 5: Train & Evaluate</b><br>
+        <span style="font-size: 13px;">
+        Train the Regression model on the reduced data. Faster + Less Overfitting!
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
 def display_info_theory() -> None:
     """Information Theory: Variance as Information."""
-    st.header("1. Information Theory: Variance as Information")
+    st.header("Step 1: Information Theory: Variance as Information")
     
     st.markdown("""
     Our goal in handling data is to reduce uncertainty and increase prediction accuracy.
@@ -87,7 +189,7 @@ def display_info_theory() -> None:
 
 def display_selection_vs_extraction() -> None:
     """Feature Selection vs Extraction (Salad vs Smoothie)."""
-    st.header("2. Selection vs Extraction: Salad vs Smoothie")
+    st.header("Step 2: Selection vs Extraction: Salad vs Smoothie")
     
     st.markdown("""
     "If there are too many variables, can't we just drop the ones with high correlation?"
@@ -122,7 +224,7 @@ def display_selection_vs_extraction() -> None:
 
 def display_geometry_rotator(df: pd.DataFrame) -> None:
     """Interactive Manual Rotator using Real Data."""
-    st.header("3. Geometric Architecture: Finding My Own Axis (The Manual Rotator)")
+    st.header("Step 3: Geometric Architecture: Finding My Own Axis")
     
     st.markdown("""
     PCA is leaving the data (cloud) as is, and only turning the **Frame of Reference (Compass, Axis)** through which we view the world.
@@ -231,7 +333,7 @@ def display_geometry_rotator(df: pd.DataFrame) -> None:
 
 def display_correlation_heatmap(df: pd.DataFrame) -> None:
     """Correlation Matrix Heatmap."""
-    st.header("4. Correlation and Heatmap: Cousin of Covariance")
+    st.header("Step 4: Correlation Heatmap")
     
     st.markdown("""
     Did **'Correlation Coefficient'** come to mind? Correct!
@@ -273,7 +375,7 @@ def display_correlation_heatmap(df: pd.DataFrame) -> None:
 
 def display_math_deep_dive() -> None:
     """Covariance Matrix and Spectral Theorem."""
-    st.header("5. Anatomy of Covariance Matrix")
+    st.header("Step 5: The Math: Anatomy of Covariance Matrix")
     
     st.markdown("""
     In the engine room of PCA lies the **Covariance Matrix ($\\Sigma$)**.
@@ -291,7 +393,7 @@ def display_math_deep_dive() -> None:
 
 def display_biplot_investigator(df: pd.DataFrame) -> None:
     """Biplot Interactive Visualization."""
-    st.header("6. Case Study & Biplot Investigator")
+    st.header("Step 6: Biplot Investigator")
     st.markdown("Let's investigate what PC1 and PC2 actually mean for Seoul Apartment data using **Biplot**.")
     
     # Prep Sample Data
@@ -364,7 +466,7 @@ def display_biplot_investigator(df: pd.DataFrame) -> None:
 
 def display_dimensionality_collapser(df: pd.DataFrame) -> None:
     """3D to 2D Projection Visualization."""
-    st.header("7. Dimensionality Collapser")
+    st.header("Step 7: Dimensionality Collapser")
     st.markdown("""
     Let's visually confirm how information is lost when going from high to low dimension.
     It is a process of 'pressing (Projecting)' 3D data onto the floor (2D) or a line (1D).
@@ -428,7 +530,7 @@ def display_dimensionality_collapser(df: pd.DataFrame) -> None:
 
 def display_end_to_end_evaluation(df: pd.DataFrame) -> None:
     """Compare PCA model performance with Baseline."""
-    st.header("8. End-to-End Verification: Real Power of PCA")
+    st.header("Step 8: Final Evaluation")
     st.markdown("""
     "So, what is good about using PCA?"
     
@@ -524,7 +626,7 @@ def display_end_to_end_evaluation(df: pd.DataFrame) -> None:
 
 def display_pca_code_cheatsheet() -> None:
     """PCA Code & Concept Explanations in English."""
-    st.header("9. PCA Code & Concept Cheat Sheet")
+    st.header("Step 9: PCA Code & Concept Cheat Sheet")
     st.markdown("""
     To help you transition to the Jupyter Notebook, here are the core PCA concepts and code snippets in **English**.
     """)
@@ -657,7 +759,9 @@ def main() -> None:
     try:
         df = prepare_data_korean_logic()
         
-        display_intro_hyperspace()
+        display_header()
+        st.markdown("---")
+        display_pipeline_overview()
         st.markdown("---")
         display_info_theory()
         st.markdown("---")

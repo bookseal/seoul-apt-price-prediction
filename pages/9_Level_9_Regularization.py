@@ -31,12 +31,41 @@ def display_header() -> None:
 def display_toc() -> None:
     st.markdown("""
     ### 📑 Table of Contents
-    1.  [**Step 1: The Geometry (L1 vs L2)**](#step-1-the-geometry-l1-vs-l2)
-    2.  [**Step 2: Effect of Alpha (Static Demo)**](#step-2-effect-of-alpha-static-demo)
-    3.  [**Step 3: Lasso Path (Feature Selection)**](#step-3-lasso-path-feature-selection)
-    4.  [**Step 4: What is Cross-Validation?**](#step-4-what-is-cross-validation)
-    5.  [**Step 5: Final Evaluation (Poly Degree 3)**](#step-5-final-evaluation-poly-degree-3)
+    1.  [**Step 1: Pipeline Overview**](#step-1-pipeline-overview)
+    2.  [**Step 2: The Geometry (L1 vs L2)**](#step-1-the-geometry-l1-vs-l2)
+    3.  [**Step 3: Effect of Alpha (Static Demo)**](#step-2-effect-of-alpha-static-demo)
+    4.  [**Step 4: Lasso Path (Feature Selection)**](#step-3-lasso-path-feature-selection)
+    5.  [**Step 5: What is Cross-Validation?**](#step-4-what-is-cross-validation)
+    6.  [**Step 6: Final Evaluation (Poly Degree 3)**](#step-5-final-evaluation-poly-degree-3)
     """)
+
+def display_pipeline_overview() -> None:
+    """Show the pipeline."""
+    st.header("Step 1: Pipeline Overview")
+    
+    st.markdown("""
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0;">
+        <div style="padding: 12px 15px; background: linear-gradient(135deg, #2196F3, #1976D2); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>1. Load</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 15px; background: linear-gradient(135deg, #9C27B0, #7B1FA2); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>2. Polynomial</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 15px; background: linear-gradient(135deg, #FF9800, #F57C00); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>3. Scale (Essential!)</b>
+        </div>
+        <div style="padding: 12px 5px; color: #666;">→</div>
+        <div style="padding: 12px 15px; background: linear-gradient(135deg, #4CAF50, #388E3C); 
+                    border-radius: 8px; color: white; text-align: center;">
+            <b>4. Regularize (L1/L2)</b>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 def plot_regularization_geometry():
     """Draw L1 vs L2 constraint contours using Matplotlib."""
@@ -76,7 +105,7 @@ def plot_regularization_geometry():
 
 
 def display_geometry_concept() -> None:
-    st.header("Step 1: The Geometry (L1 vs L2)")
+    st.header("Step 2: The Geometry (L1 vs L2)")
     
     col1, col2 = st.columns([1, 1])
     with col1:
@@ -115,7 +144,7 @@ def display_geometry_concept() -> None:
         """)
 
 def display_alpha_effect_static(df):
-    st.header("Step 2: Effect of Alpha (The 'Brake Pedal')")
+    st.header("Step 3: Effect of Alpha (The 'Brake Pedal')")
     
     st.markdown("""
     **Alpha (α)** is the strength of the penalty. Think of it as a **Brake Pedal** on complexity.
@@ -171,7 +200,7 @@ for alpha in alphas:
             st.caption(f"Active Features: {non_zero}/{len(features)}")
 
 def display_lasso_path_concept(df):
-    st.header("Step 3: Lasso Path (Survival of the Fittest)")
+    st.header("Step 4: Lasso Path (Survival of the Fittest)")
     
     st.markdown("""
     **Visualizing the "Death" of Features:**
@@ -236,7 +265,7 @@ for a in alphas:
     """)
 
 def display_cross_validation_concept():
-    st.header("Step 4: What is Cross-Validation?")
+    st.header("Step 5: What is Cross-Validation?")
     st.markdown("To pick the best Alpha, we use **Cross-Validation** (splitting data multiple times) to avoid 'lucky' results.")
     st.graphviz_chart("""
     digraph CV {
@@ -264,7 +293,7 @@ print(f"Average RMSE: {rmse_avg}")
         """, language='python')
 
 def run_poly_comparison(df):
-    st.header("Step 5: The Danger of Complexity (Degree 12)")
+    st.header("Step 6: The Danger of Complexity (Degree 12)")
     st.markdown("First, let's prove that complex models are dangerous without regularization.")
     
     # 1. Degree 12 (Monster)
@@ -442,6 +471,8 @@ def main() -> None:
         df = load_sample_dataset()
         
         display_header()
+        st.markdown("---")
+        display_pipeline_overview()
         st.markdown("---")
         display_toc()
         st.markdown("---")
