@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Seoul Apartment Price Prediction & Yo-Zeum Seongsu - ML Learning Roadmap
+Seoul Apartment Price Prediction - Linear Regression Learning Roadmap
 
 End-to-end machine learning journey:
-Part 1: Static Modeling (Seoul Apartments)
-Part 2: MLOps & Pipelines (Seongsu Trends)
+Linear Regression Roadmap (Seoul Apartments)
 
 Usage:
     streamlit run app.py
@@ -67,62 +66,43 @@ def home_page():
     """Render the portal home page."""
     set_premium_style()
     
-    st.title("🚀 The ML Engineer Roadmap")
-    st.markdown("### From Beginner to MLOps Architect")
+    st.title("🚀 The Linear Regression Roadmap")
+    st.markdown("### From First Formula to Ultimate White-Box Model")
     
     st.markdown("""
-    Welcome to the ultimate machine learning curriculum. 
-    This platform bridges the gap between **Data Science theory** and **Real-world MLOps systems**.
+    Welcome to a focused machine learning curriculum for **Linear Regression mastery**.
+    This roadmap takes you from intuition to robust modeling on Seoul apartment prices.
     """)
     
     
     st.markdown("---")
     
-    tab1, tab2 = st.tabs(["Part 1: The Modeling Journey", "Part 2: The Systems Journey"])
-    
-    with tab1:
-        st.markdown("""
-        | Level | Topic | Question | Hypothesis | Result |
-        | :--- | :--- | :--- | :--- | :--- |
-        | 1 | [Heuristic](1_Level_1_Heuristic) | Can we catch the average? | Prices cluster around district means. | Baseline RMSE established. |
-        | 2 | [Linear Regression](2_Level_2_Linear_Regression) | Is there a trend? | Price increases linearly with Area. | Simple line captures basic trend. |
-        | 3 | [Multi-Features](3_Level_3_Multi_Features) | Does Year matter? | Newer apartments are more expensive. | Adding features improves accuracy. |
-        | 4 | [3D Regression](4_Level_4_3D_Regression) | Area & Year interact? | We need a plane, not a line. | Visualizing the hyperplane of fit. |
-        | 5 | [High Dimensionality](5_Level_5_High_Dimensional) | More features = Better? | Adding everything will solve it. | Curse of Dimensionality / Overfitting. |
-        | 6 | [PCA](6_Level_6_PCA) | Can we compress info? | Many features are redundant. | Reduced dimensions not losing much variance. |
-        | 7 | [Data Cleaning](7_Level_7_Data_Cleaning) | Are outliers hurting us? | Removing anomalies creates stability. | Massive improvement in RMSE. |
-        | 8 | [Feature Engineering](8_Level_8_Feature_Engineering) | Create new insights? | Area * Year matters more than sum. | Interaction terms capture nuance. |
-        | 9 | [Regularization](9_Level_9_Regularization) | Model too complex? | We need to penalize large weights. | Ridge/Lasso prevents overfitting. |
-        | 10 | [Ultimate Model](10_Level_10_The_Final_Boss) | What is the limit? | Direct Price + Poly5 + Ridge is optimal. | Final Boss Defeated (Lowest RMSE). |
-        """)
-        
-    with tab2:
-        st.markdown("""
-        | Level | Topic | Goal | Description | Tech |
-        | :--- | :--- | :--- | :--- | :--- |
-        | 11 | [Data Creation](11_MLOps_Lv1_Data) | Build a dataset | Generating synthetic trend data. | Faker, Pandas |
-        | 12 | [Preprocessing](12_MLOps_Lv2_Preprocessing) | Scalable cleaning | Robust pipelines for production. | Scikit-Learn |
-        | 13 | [Predictor](13_MLOps_Lv3_Predictor) | Interactive Dashboards | Serving models via Streamlit. | Streamlit |
-        | 14 | [AutoML](14_MLOps_Lv4_AutoML) | Model Selection | Automated model comparison. | AutoML |
-        | 15 | [Automation](15_MLOps_Lv5_Automation) | Scheduling Scripts | Running jobs automatically. | Crontab |
-        | 16 | [CI/CD](16_MLOps_Lv6_CICD) | GitHub Actions | Continuous Integration. | GitHub Actions |
-        | 17 | [MLflow](17_MLOps_Lv7_MLflow) | Experiment Tracking | Logging params & metrics. | MLflow |
-        | 18 | [DVC](18_MLOps_Lv8_DVC) | Data Versioning | Versioning large datasets. | DVC |
-        | 19 | [Monitoring](19_MLOps_Lv9_Monitoring) | Drift Detection | Detecting concept drift. | Evidently AI |
-        | 20 | [Airflow](20_MLOps_Lv10_Airflow) | Orchestration | Complex ML workflows. | Apache Airflow |
-        """)
+    st.markdown("""
+    | Level | Topic | Question | Hypothesis | Result |
+    | :--- | :--- | :--- | :--- | :--- |
+    | 1 | [Heuristic](1_Level_1_Heuristic) | Can we catch the average? | Prices cluster around district means. | Baseline RMSE established. |
+    | 2 | [Linear Regression](2_Level_2_Linear_Regression) | Is there a trend? | Price increases linearly with Area. | Simple line captures basic trend. |
+    | 3 | [Multi-Features](3_Level_3_Multi_Features) | Does Year matter? | Newer apartments are more expensive. | Adding features improves accuracy. |
+    | 4 | [3D Regression](4_Level_4_3D_Regression) | Area & Year interact? | We need a plane, not a line. | Visualizing the hyperplane of fit. |
+    | 5 | [High Dimensionality](5_Level_5_High_Dimensional) | More features = Better? | Adding everything will solve it. | Curse of Dimensionality / Overfitting. |
+    | 6 | [PCA](6_Level_6_PCA) | Can we compress info? | Many features are redundant. | Reduced dimensions not losing much variance. |
+    | 7 | [Data Cleaning](7_Level_7_Data_Cleaning) | Are outliers hurting us? | Removing anomalies creates stability. | Massive improvement in RMSE. |
+    | 8 | [Feature Engineering](8_Level_8_Feature_Engineering) | Create new insights? | Area * Year matters more than sum. | Interaction terms capture nuance. |
+    | 9 | [Regularization](9_Level_9_Regularization) | Model too complex? | We need to penalize large weights. | Ridge/Lasso prevents overfitting. |
+    | 10 | [Ultimate Model](10_Level_10_The_Final_Boss) | What is the limit? | Direct Price + Poly5 + Ridge is optimal. | Final Boss Defeated (Lowest RMSE). |
+    """)
 
     st.markdown("---")
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns([1, 2, 1])
     
-    with col1:
+    with col2:
         st.markdown("""
         <div class="card-container">
-            <div class="track-title highlight-blue">🏙️ Part 1: Data Science</div>
+            <div class="track-title highlight-blue">🏙️ Linear Regression Track</div>
             <p class="track-desc">
-                Dive deep into the mathematics and intuition of modeling. 
-                Build the ultimate predictor for <b>Seoul Apartment Prices</b>.
+                Dive deep into the mathematics and intuition of modeling.
+                Build your best white-box predictor for <b>Seoul Apartment Prices</b>.
             </p>
             <ul class="feature-list">
                 <li>🎯 <b>Level 1-4</b>: Foundational Regression</li>
@@ -131,36 +111,13 @@ def home_page():
                 <li>👑 <b>Level 10</b>: The Mathematical Limit</li>
             </ul>
             <p style="text-align: center; color: #888; font-style: italic; margin-top: 20px;">
-                "I want to build the most accurate model possible."
+                "I want to master linear regression end to end."
             </p>
         </div>
         """, unsafe_allow_html=True)
         st.write("") # Spacer
-        if st.button("Start Part 1: Modeling Track", type="primary", use_container_width=True):
+        if st.button("Start Linear Regression Roadmap", type="primary", use_container_width=True):
             st.switch_page("pages/1_Level_1_Heuristic.py")
-
-    with col2:
-        st.markdown("""
-        <div class="card-container">
-            <div class="track-title highlight-pink">🛍️ Part 2: MLOps</div>
-            <p class="track-desc">
-                Take a model out of the notebook and into production.
-                Automate the trend analysis for <b>Yo-Zeum Seongsu</b>.
-            </p>
-            <ul class="feature-list">
-                <li>🏗️ <b>Level 11-13</b>: Scalable Data Pipelines</li>
-                <li>🤖 <b>Level 14-16</b>: AutoML & CI/CD Automation</li>
-                <li>🧪 <b>Level 17-18</b>: Experiment Tracking (MLflow)</li>
-                <li>🏭 <b>Level 19-20</b>: Orchestration (Airflow)</li>
-            </ul>
-            <p style="text-align: center; color: #888; font-style: italic; margin-top: 20px;">
-                "I want to build systems that run themselves."
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        st.write("") # Spacer
-        if st.button("Start Part 2: MLOps Track", use_container_width=True):
-            st.switch_page("pages/11_MLOps_Lv1_Data.py")
 
 
 
@@ -178,7 +135,7 @@ def main() -> None:
         "🏠 Dashboard": [
             st.Page(home_page, title="Home", icon="🏠"),
         ],
-        "🏙️ Part 1: Data Science": [
+        "🏙️ Linear Regression Roadmap": [
             st.Page("pages/1_Level_1_Heuristic.py", title="L1: Heuristic", icon="🎯"),
             st.Page("pages/2_Level_2_Linear_Regression.py", title="L2: Linear Regression", icon="📐"),
             st.Page("pages/3_Level_3_Multi_Features.py", title="L3: Multi-Features", icon="🏘️"),
@@ -189,18 +146,6 @@ def main() -> None:
             st.Page("pages/8_Level_8_Feature_Engineering.py", title="L8: Feature Engineering", icon="⚗️"),
             st.Page("pages/9_Level_9_Regularization.py", title="L9: Regularization", icon="🛡️"),
             st.Page("pages/10_Level_10_The_Final_Boss.py", title="L10: The Final Boss", icon="👑"),
-        ],
-        "🛍️ Part 2: MLOps (Seongsu)": [
-            st.Page("pages/11_MLOps_Lv1_Data.py", title="L11: Data Creation", icon="🏗️"),
-            st.Page("pages/12_MLOps_Lv2_Preprocessing.py", title="L12: Preprocessing", icon="⚙️"),
-            st.Page("pages/13_MLOps_Lv3_Predictor.py", title="L13: Predictor", icon="📱"),
-            st.Page("pages/14_MLOps_Lv4_AutoML.py", title="L14: AutoML & RMSE", icon="🏎️"),
-            st.Page("pages/15_MLOps_Lv5_Automation.py", title="L15: Automation", icon="🤖"),
-            st.Page("pages/16_MLOps_Lv6_CICD.py", title="L16: CI/CD", icon="♾️"),
-            st.Page("pages/17_MLOps_Lv7_MLflow.py", title="L17: MLflow", icon="🧪"),
-            st.Page("pages/18_MLOps_Lv8_DVC.py", title="L18: DVC", icon="💾"),
-            st.Page("pages/19_MLOps_Lv9_Monitoring.py", title="L19: Monitoring", icon="🐳"),
-            st.Page("pages/20_MLOps_Lv10_Airflow.py", title="L20: Airflow", icon="🏭"),
         ],
     }
     

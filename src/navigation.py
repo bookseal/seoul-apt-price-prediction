@@ -73,11 +73,11 @@ LEVEL_INFO = {
     },
     9: {
         "next": 10,
-        "next_title": "Level 10: AutoML",
+        "next_title": "Level 10: The Final Boss",
         "next_icon": "🏆",
-        "next_page": "pages/10_Level_10_AutoML.py",
-        "teaser": "We've only used Linear Regression. What about other models?",
-        "solution": "**AutoML** compares many models automatically!"
+        "next_page": "pages/10_Level_10_The_Final_Boss.py",
+        "teaser": "Can a white-box linear model reach near state-of-the-art performance?",
+        "solution": "Build the **Ultimate Linear Model** with polynomial features + Ridge."
     },
 }
 
@@ -139,10 +139,10 @@ def display_journey_complete() -> None:
                 border-radius: 15px; border: 3px solid #4CAF50; margin: 20px 0; text-align: center;">
         <h2 style="margin-top: 0;">🎉 Congratulations!</h2>
         <p style="font-size: 18px;">
-            You've completed the entire ML Roadmap!
+            You've completed the entire Linear Regression Roadmap!
         </p>
         <p style="font-size: 14px; color: #666;">
-            From simple heuristics to AutoML - you've come a long way!
+            From simple heuristics to robust white-box modeling - you've come a long way!
         </p>
     </div>
     """, unsafe_allow_html=True)

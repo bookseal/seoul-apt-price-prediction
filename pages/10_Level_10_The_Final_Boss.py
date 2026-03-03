@@ -245,7 +245,7 @@ best_model = compare_models(sort='RMSE')
     display_questions()
     display_summary()
     st.markdown("---")
-    st.header("🎉 Part 1 Complete: You are now a Data Scientist!")
+    st.header("🎉 Roadmap Complete: You mastered the Linear Regression journey!")
     st.balloons()
     
     st.markdown("""
@@ -255,14 +255,13 @@ best_model = compare_models(sort='RMSE')
     *   **Level 7-9**: You mastered Data Cleaning and Regularization.
     *   **Level 10**: You reached the mathematical limit of White Box models.
     
-    ### 🚀 What's Next? The Science of Production
-    Building a model is only 20% of the work. Now you need to **deploy** it, **monitor** it, and **automate** it.
-    
-    **Welcome to Part 2: MLOps.**
+    ### 🚀 What's Next?
+    Apply this same workflow to your own domain data:
+    define a baseline, add features, control complexity, and validate with RMSE.
     """)
     
-    if st.button("Start Part 2: MLOps Track (Level 11)", type="primary", use_container_width=True):
-        st.switch_page("pages/11_MLOps_Lv1_Data.py")
+    if st.button("Back to Home", type="primary", use_container_width=True):
+        st.switch_page("app.py")
 
 
 def display_questions() -> None:
@@ -309,8 +308,7 @@ def display_summary() -> None:
     2.  **AutoML**: Using automatic tools (PyCaret) to find the best model.
     3.  **Trade-off**: Accuracy (AutoML) vs Explainability (Linear).
     
-    **Problem:** We have a great model... on my laptop. How do we share it?
-    **Next:** Part 2: MLOps covers Deployment, Automation, and Monitoring!
+    **Next:** Reuse this roadmap on your own dataset and compare RMSE level by level.
     """)
 
 def main() -> None:
