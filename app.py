@@ -80,17 +80,17 @@ def home_page():
     st.markdown("""
     | Level | Topic | Question | Hypothesis | Result |
     | :--- | :--- | :--- | :--- | :--- |
-    | 1 | [Heuristic](1_Level_1_Heuristic) | Can we catch the average? | Prices cluster around district means. | Baseline RMSE established. |
-    | 2 | [Linear Regression](2_Level_2_Linear_Regression) | Is there a trend? | Price increases linearly with Area. | Simple line captures basic trend. |
-    | 3 | [Multi-Features](3_Level_3_Multi_Features) | Does Year matter? | Newer apartments are more expensive. | Adding features improves accuracy. |
-    | 4 | [3D Regression](4_Level_4_3D_Regression) | Area & Year interact? | We need a plane, not a line. | Visualizing the hyperplane of fit. |
-    | 5 | [High Dimensionality](5_Level_5_High_Dimensional) | More features = Better? | Adding everything will solve it. | Curse of Dimensionality / Overfitting. |
-    | 6 | [PCA](6_Level_6_PCA) | Can we compress info? | Many features are redundant. | Reduced dimensions not losing much variance. |
-    | 7 | [Data Cleaning](7_Level_7_Data_Cleaning) | Are outliers hurting us? | Removing anomalies creates stability. | Massive improvement in RMSE. |
-    | 8 | [Feature Engineering](8_Level_8_Feature_Engineering) | Create new insights? | Area * Year matters more than sum. | Interaction terms capture nuance. |
-    | 9 | [Regularization](9_Level_9_Regularization) | Model too complex? | We need to penalize large weights. | Ridge/Lasso prevents overfitting. |
-    | 10 | [Ultimate Model](10_Level_10_The_Final_Boss) | What is the limit? | Direct Price + Poly5 + Ridge is optimal. | Final Boss Defeated (Lowest RMSE). |
-    """)
+    | 1 | <a href="level-1" target="_self">Heuristic</a> | Can we catch the average? | Prices cluster around district means. | Baseline RMSE established. |
+    | 2 | <a href="level-2" target="_self">Linear Regression</a> | Is there a trend? | Price increases linearly with Area. | Simple line captures basic trend. |
+    | 3 | <a href="level-3" target="_self">Multi-Features</a> | Does Year matter? | Newer apartments are more expensive. | Adding features improves accuracy. |
+    | 4 | <a href="level-4" target="_self">3D Regression</a> | Area & Year interact? | We need a plane, not a line. | Visualizing the hyperplane of fit. |
+    | 5 | <a href="level-5" target="_self">High Dimensionality</a> | More features = Better? | Adding everything will solve it. | Curse of Dimensionality / Overfitting. |
+    | 6 | <a href="level-6" target="_self">PCA</a> | Can we compress info? | Many features are redundant. | Reduced dimensions not losing much variance. |
+    | 7 | <a href="level-7" target="_self">Data Cleaning</a> | Are outliers hurting us? | Removing anomalies creates stability. | Massive improvement in RMSE. |
+    | 8 | <a href="level-8" target="_self">Feature Engineering</a> | Create new insights? | Area * Year matters more than sum. | Interaction terms capture nuance. |
+    | 9 | <a href="level-9" target="_self">Regularization</a> | Model too complex? | We need to penalize large weights. | Ridge/Lasso prevents overfitting. |
+    | 10 | <a href="level-10" target="_self">Ultimate Model</a> | What is the limit? | Direct Price + Poly5 + Ridge is optimal. | Final Boss Defeated (Lowest RMSE). |
+    """, unsafe_allow_html=True)
 
     st.markdown("---")
     
@@ -136,16 +136,16 @@ def main() -> None:
             st.Page(home_page, title="Home", icon="🏠"),
         ],
         "🏙️ Linear Regression Roadmap": [
-            st.Page("pages/1_Level_1_Heuristic.py", title="L1: Heuristic", icon="🎯"),
-            st.Page("pages/2_Level_2_Linear_Regression.py", title="L2: Linear Regression", icon="📐"),
-            st.Page("pages/3_Level_3_Multi_Features.py", title="L3: Multi-Features", icon="🏘️"),
-            st.Page("pages/4_Level_4_3D_Regression.py", title="L4: 3D Regression", icon="🧊"),
-            st.Page("pages/5_Level_5_High_Dimensional.py", title="L5: High-Dimensional", icon="🌌"),
-            st.Page("pages/6_Level_6_PCA.py", title="L6: PCA", icon="📉"),
-            st.Page("pages/7_Level_7_Data_Cleaning.py", title="L7: Data Cleaning", icon="🧹"),
-            st.Page("pages/8_Level_8_Feature_Engineering.py", title="L8: Feature Engineering", icon="⚗️"),
-            st.Page("pages/9_Level_9_Regularization.py", title="L9: Regularization", icon="🛡️"),
-            st.Page("pages/10_Level_10_The_Final_Boss.py", title="L10: The Final Boss", icon="👑"),
+            st.Page("pages/1_Level_1_Heuristic.py", title="L1: Heuristic", icon="🎯", url_path="level-1"),
+            st.Page("pages/2_Level_2_Linear_Regression.py", title="L2: Linear Regression", icon="📐", url_path="level-2"),
+            st.Page("pages/3_Level_3_Multi_Features.py", title="L3: Multi-Features", icon="🏘️", url_path="level-3"),
+            st.Page("pages/4_Level_4_3D_Regression.py", title="L4: 3D Regression", icon="🧊", url_path="level-4"),
+            st.Page("pages/5_Level_5_High_Dimensional.py", title="L5: High-Dimensional", icon="🌌", url_path="level-5"),
+            st.Page("pages/6_Level_6_PCA.py", title="L6: PCA", icon="📉", url_path="level-6"),
+            st.Page("pages/7_Level_7_Data_Cleaning.py", title="L7: Data Cleaning", icon="🧹", url_path="level-7"),
+            st.Page("pages/8_Level_8_Feature_Engineering.py", title="L8: Feature Engineering", icon="⚗️", url_path="level-8"),
+            st.Page("pages/9_Level_9_Regularization.py", title="L9: Regularization", icon="🛡️", url_path="level-9"),
+            st.Page("pages/10_Level_10_The_Final_Boss.py", title="L10: The Final Boss", icon="👑", url_path="level-10"),
         ],
     }
     
