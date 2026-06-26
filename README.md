@@ -21,6 +21,15 @@ Open your browser to the URL shown in the terminal.
 
 This project is divided into 10 levels, each introducing new concepts:
 
+```mermaid
+flowchart LR
+  Data[Real housing prices] --> L1[L1 heuristic]
+  L1 --> LR2[Linear regression]
+  LR2 --> MF[Multi-feature + PCA]
+  MF --> Reg[Regularization · Ridge/Lasso]
+  Reg --> Auto[AutoML]
+```
+
 | Level | Topic | Description |
 |-------|-------|-------------|
 | **1** | **Heuristic** | Simple prediction using median price per district (No ML). |
